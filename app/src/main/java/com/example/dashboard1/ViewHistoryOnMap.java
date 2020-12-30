@@ -50,7 +50,6 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
     private RecyclerView rvLocationView;
     private TextView tvDis;
     private float totalD = 0f;
-    private Double dolkm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
