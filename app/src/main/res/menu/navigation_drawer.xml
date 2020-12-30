@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group>
+        <item
+            android:id="@+id/start_Ride"
+            android:title="Start Ride"/>
+
+        <item
+            android:id="@+id/route"
+            android:title="Route"/>
+
+        <item
+            android:id="@+id/history"
+            android:title="History"/>
+
+    </group>
+
+    <item android:title="Additional Information" >
+
+        <menu>
+
+            <item
+                android:id="@+id/contactUs"
+                android:title="Contact Us"/>
+
+            <item
+                android:id="@+id/about"
+                android:title="About Us"/>
+
+
+        </menu>
+
+    </item>
+
+</menu>
