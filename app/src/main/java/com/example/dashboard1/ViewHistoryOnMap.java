@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -43,13 +44,14 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
     private GoogleMap mgoogleMap;
     private Marker marker;
     private Polyline polyline;
-    private final List<Marker> markerList = new ArrayList<>();
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
     private DocumentReference documentReference;
     private RecyclerView rvLocationView;
     private TextView tvDis;
     private float totalD = 0f;
+    List<String> addr = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,8 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
 
         rvLocationView = (RecyclerView) findViewById(R.id.rvLocationView);
         rvLocationView.setLayoutManager(new LinearLayoutManager(this));
+
+        getSupportActionBar().hide();
 
         String doc = getIntent().getExtras().getString("doc");
         Toast.makeText(getApplicationContext(), doc, Toast.LENGTH_SHORT).show();
@@ -85,32 +89,54 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
                             latLngs.add(new LatLng(flatLngs.get(x).get("latitude"), flatLngs.get(x).get("longitude")));
                         }
 
-                        for (int i = 0; i < latLngs.size(); i++){
-                            LatLng latLng = latLngs.get(i);
-                            mgoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                            markerList.add(marker);
-                            PolylineOptions polylineOptions = new PolylineOptions().addAll(latLngs).clickable(true);
-                            polyline = mgoogleMap.addPolyline(polylineOptions);
-                            polyline.setColor(Color.BLUE);
-                            polyline.setWidth(10);
+                        PolylineOptions polylineOptions = new PolylineOptions().addAll(latLngs).clickable(true);
+                        polyline = mgoogleMap.addPolyline(polylineOptions);
+                        polyline.setColor(Color.BLUE);
+                        polyline.setWidth(10);
 
-                            if (marker != null)
-                            {
-                                marker.remove();
-                            }
-                            marker = mgoogleMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude,latLng.longitude)).title("Marker in current position"));
+                        LatLng initialLatLng = new LatLng(latLngs.get(0).latitude,latLngs.get(0).longitude);
+                        LatLng LastLatLng = new LatLng(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude);
+                        marker = mgoogleMap.addMarker(new MarkerOptions().position(initialLatLng));
+                        marker = mgoogleMap.addMarker(new MarkerOptions().position(LastLatLng));
 
-                            try {
-                                getAddress(latLng.latitude, latLng.longitude);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        getDistance(latLngs);
 
-                            getDistance(latLngs);
+                        double lat = latLngs.get(0).latitude - 0.1;
+                        double lng = latLngs.get(0).longitude - 0.1;
+                        double lat1 = latLngs.get(latLngs.size()-1).latitude + 0.1;
+                        double lng1 = latLngs.get(latLngs.size()-1).longitude + 0.1;
 
-                            mgoogleMap.moveCamera(CameraUpdateFactory.zoomTo(12));
-                            Log.d("docdata", latLng.toString());
-                        }
+
+                        LatLngBounds latLngBounds1 = new LatLngBounds(new LatLng(lat,lng), new LatLng(lat1, lng1));
+
+                        LatLngBounds latLngBounds = LatLngBounds.builder().include(initialLatLng).include(LastLatLng).build();
+                        mgoogleMap.setLatLngBoundsForCameraTarget(latLngBounds);
+                        mgoogleMap.animateCamera((CameraUpdateFactory.newLatLngBounds(latLngBounds1, 1)));
+//                        marker = mgoogleMap.addMarker(new MarkerOptions().position(latLngBounds.getCenter()));
+
+
+
+//                        for (int i = 0; i < latLngs.size(); i++){
+//                            Log.d("docdata123", latLngs.toString());
+//
+//                            for (int j = 0; j < latLngs.size(); j++) {
+//                                if (latLngs.get(i).equals(latLngs.get(j))) {
+//
+//                                    LatLng latLng = latLngs.get(i);
+//                                    Log.d("docdata", latLng.toString());
+//
+//                                    try {
+//                                            getAddress(latLng.latitude, latLng.longitude);
+//                                            rvLocationView.setAdapter(new ViewHistoryAdapter(getApplicationContext(), addr));
+//                                        } catch (IOException e) {
+//                                            e.printStackTrace();
+//                                        }
+//
+//
+//                                }
+//                            }
+//
+//                        }
 
 
 
@@ -125,18 +151,16 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void getAddress(double lat, double lng) throws IOException {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
         List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
         for (int i=0; i<addresses.size(); i++) {
-            List<String> addr = new ArrayList<>();
             addr.add(addresses.get(i).getAddressLine(0));
 
             Log.d("IGA", "Address" + addr);
 
 
-            rvLocationView.setAdapter(new ViewHistoryAdapter(getApplicationContext(), addr));
         }
     }
 
@@ -169,24 +193,6 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
         mgoogleMap = googleMap;
     }
 
-    public void test(){
-        firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    List<String> docList = new ArrayList<>();
-                    for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
-                        Log.d("TAG",queryDocumentSnapshot.getId());
-                        docList.add(queryDocumentSnapshot.getId());
-                        rvLocationView.setAdapter(new DocumentViewAdapter(getApplicationContext(),docList));
-                    }
-                }
-                else {
-                    Log.d("TAG",task.getException().toString());
-                }
-            }
-        });
-    }
 }
 
 
