@@ -111,32 +111,21 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
 
                         LatLngBounds latLngBounds = LatLngBounds.builder().include(initialLatLng).include(LastLatLng).build();
                         mgoogleMap.setLatLngBoundsForCameraTarget(latLngBounds);
-                        mgoogleMap.animateCamera((CameraUpdateFactory.newLatLngBounds(latLngBounds1, 1)));
-//                        marker = mgoogleMap.addMarker(new MarkerOptions().position(latLngBounds.getCenter()));
+                        mgoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds1, 50));
 
 
+                        for (int i = 0; i < latLngs.size(); i++){
+                            LatLng latLng = latLngs.get(i);
 
-//                        for (int i = 0; i < latLngs.size(); i++){
-//                            Log.d("docdata123", latLngs.toString());
-//
-//                            for (int j = 0; j < latLngs.size(); j++) {
-//                                if (latLngs.get(i).equals(latLngs.get(j))) {
-//
-//                                    LatLng latLng = latLngs.get(i);
-//                                    Log.d("docdata", latLng.toString());
-//
-//                                    try {
-//                                            getAddress(latLng.latitude, latLng.longitude);
-//                                            rvLocationView.setAdapter(new ViewHistoryAdapter(getApplicationContext(), addr));
-//                                        } catch (IOException e) {
-//                                            e.printStackTrace();
-//                                        }
-//
-//
-//                                }
-//                            }
-//
-//                        }
+                            try {
+                                getAddress(latLng.latitude, latLng.longitude);
+                                rvLocationView.setAdapter(new ViewHistoryAdapter(getApplicationContext(), addr));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Log.d("docdata", latLng.toString());
+                        }
 
 
 
@@ -171,11 +160,6 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
             LatLng pointA = latLngs.get(i);
             LatLng pointB = latLngs.get(i+1);
 
-//          Log.d("ArrayPoints", "Point A" + String.valueOf(pointA.latitude+" "+pointA.longitude));
-//          Log.d("ArrayPoints", "PointB" + String.valueOf(pointB.latitude+" "+pointB.longitude));
-
-//          LatLng pointA = new LatLng(points.get(i).get("latitude"), points.get(i).get("longitude"));
-//          LatLng pointB = new LatLng(points.get(i+1).get("latitude"), points.get(i+1).get("longitude"));
             float[] results = new float[1];
             Location.distanceBetween (pointA.latitude, pointA.longitude, pointB.latitude, pointB.longitude, results);
             tempTotalDistance +=  results[0];

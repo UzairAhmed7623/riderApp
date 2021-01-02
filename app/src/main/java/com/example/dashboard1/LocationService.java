@@ -1,6 +1,7 @@
 package com.example.dashboard1;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.LauncherActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,6 +11,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
@@ -59,6 +62,7 @@ public class LocationService extends android.app.Service{
     private static LocationService mCurrentService;
     private int counter = 0;
 
+    private LatLng latLng = null;
     private static final String TAG = LocationService.class.getSimpleName();
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location_Helper location_helper;
@@ -67,6 +71,7 @@ public class LocationService extends android.app.Service{
     private FirebaseAuth firebaseAuth;
     private ArrayList<LatLng> latLngs = new ArrayList<>();
     private float totalD = 0f;
+    private LocationManager locationManager;
 
     public LocationService() {
     }
@@ -80,43 +85,48 @@ public class LocationService extends android.app.Service{
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
         locationCallback = new LocationCallback() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onLocationResult(LocationResult locationResult) {
 
                 Location location = locationResult.getLastLocation();
 
-                location_helper = new Location_Helper(location.getLongitude(), location.getLatitude());
+                if (location != null){
 
-                Double Latitude = location_helper.getLatitude();
-                Double Longitude = location_helper.getLongitude();
+                    location_helper = new Location_Helper(location.getLongitude(), location.getLatitude());
 
-                Long timeStamp = System.currentTimeMillis()/1000;
+                    Double Latitude = location_helper.getLatitude();
+                    Double Longitude = location_helper.getLongitude();
 
-                String time = getDate(timeStamp);
+                    latLng = new LatLng(Latitude, Longitude);
 
-                Log.d(TAG,"Longitude: "+Latitude+" Latitude: "+Longitude+" Time: "+time);
+                    Long timeStamp = System.currentTimeMillis()/1000;
 
-                uploadFirebase(Latitude, Longitude);
+                    String time = getDate(timeStamp);
+
+                    Log.d(TAG,"Longitude: "+Latitude+" Latitude: "+Longitude+" Time: "+time);
+
+                    uploadFirebase(Latitude, Longitude);
 
 //                String locationString = new StringBuilder("" + location.getLatitude()).append("/").append(location.getLongitude()).toString();
 
-                if (Latitude != null && Longitude != null){
-                     MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
+                    MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
+
+                    if (latLngs == null) {
+                        latLngs = new ArrayList<LatLng>();
+                    }
+                    latLngs.add(new LatLng(Latitude, Longitude));
+
+                    uploadHistory(latLngs, time);
+
+                    calculateDistance(time);
+
+//                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
                 }
                 else {
                     return;
                 }
 
-                if (latLngs == null) {
-                    latLngs = new ArrayList<LatLng>();
-                }
-                latLngs.add(new LatLng(Latitude, Longitude));
-
-                uploadHistory(latLngs, time);
-
-                calculateDistance(time);
-
-//                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -292,7 +302,8 @@ public class LocationService extends android.app.Service{
             Log.i(TAG, "restarting foreground");
             try {
                 Notification notification = new Notification();
-                startForeground(NOTIFICATION_ID, notification.setNotification(this, "riderApp", "riderApp is running in background!", R.drawable.ic_sleep));
+                startForeground(NOTIFICATION_ID, notification.setNotification(this, "riderApp","Unknown location"
+                        +"(" + latLng.latitude + " , " + latLng.latitude + ")", R.drawable.ic_sleep));
                 Log.i(TAG, "restarting foreground successful");
                 getLocationUpdates();
                 startTimer();

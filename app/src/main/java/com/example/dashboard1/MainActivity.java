@@ -17,6 +17,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,11 +44,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -56,19 +62,28 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private static final float MINIMUM_DISTANCE_BETWEEN_POINTS = 1; // If the user hasn't moved at least 10 meters, we will not take the location into account
+    private static final String TAG = MainActivity.class.getSimpleName();
     static MainActivity instance;
     private TextView tvDis;
     private GoogleMap mgoogleMap;
     private Button btnStopService, logout;
+    private FloatingActionButton btnlocation_plus;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private DrawerLayout drawerLayout;
+    private ArrayList<LatLng> latLngs = new ArrayList<>();
 
     public static MainActivity getInstance() {
         return instance;
@@ -98,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tvDis = (TextView) findViewById(R.id.tvDis);
 
         btnStopService = (Button) findViewById(R.id.btnStopService);
-
+        btnlocation_plus = (FloatingActionButton) findViewById(R.id.btnlocation_plus);
         logout = (Button) findViewById(R.id.logout);
 
         logout.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                Log.d("TAG", locationSettingsResponse.toString());
+                Log.d(TAG, locationSettingsResponse.toString());
             }
         });
         task.addOnFailureListener(this, new OnFailureListener() {
@@ -168,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         ResolvableApiException resolvableApiException = (ResolvableApiException) e;
                         resolvableApiException.startResolutionForResult(MainActivity.this, 1003);
                     } catch (IntentSender.SendIntentException sendEx) {
-                        Log.d("TAG", "Error : " + sendEx);
+                        Log.d(TAG, "Error : " + sendEx);
                     }
                 }
             }
@@ -215,8 +230,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                mgoogleMap.addMarker(new MarkerOptions().position(latLng).title("I am here!"));
                 mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
 
+                btnlocation_plus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "Location: " + latLng);
+                        latLngs.add(latLng);
+
+                        Long timeStamp = System.currentTimeMillis()/1000;
+
+                        String time = getDate(timeStamp);
+
+                        add_Location_Points(latLngs,time);
+
+                    }
+                });
+
             }
         });
+    }
+
+    private void add_Location_Points(ArrayList<LatLng> latLngs, String time) {
+
+        DocumentReference documentReference = firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time);
+        Map<String, Object> location_points = new HashMap<>();
+        location_points.put("Location_Points", latLngs);
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()){
+                        final LatLng latLng = latLngs.get(latLngs.size()-1);
+                        documentReference.update("Location_Points", FieldValue.arrayUnion(latLng));
+                        Log.w(TAG, "Document updated successfully!");
+
+                    }
+                    else {
+                        firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time).set(location_points).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.w(TAG, "Document created Successfully");
+
+                            }
+                        });
+                    }
+                }
+
+            }
+        });
+    }
+
+    private String getDate(Long timestamp){
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.setTimeInMillis(timestamp * 1000);
+        String date = DateFormat.format("dd-MM-yyyy", calendar).toString();
+        return date;
     }
 
     public boolean distanceBetweenPoints(@NonNull Location location1, @NonNull Location location2) {
