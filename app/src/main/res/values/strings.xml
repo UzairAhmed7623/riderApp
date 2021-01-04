@@ -6,8 +6,11 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="title_activity_route">Map</string>
     <string name="title_activity_DocumentView">History</string>
+
+    <string name="launch_activity">Launch activity</string>
+    <string name="remove_location_updates">Remove updates</string>
 
 </resources>

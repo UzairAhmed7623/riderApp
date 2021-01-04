@@ -2,43 +2,36 @@ package com.example.dashboard1;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.LauncherActivity;
+import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.example.dashboard1.Service.Globals;
 import com.example.dashboard1.Service.ProcessMainClass;
-import com.example.dashboard1.utilities.Notification;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -46,8 +39,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.lang.reflect.Array;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -58,11 +49,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LocationService extends android.app.Service{
-    protected static final int NOTIFICATION_ID = 1337;
+    protected static final String NOTIFICATION_ID = "1337";
+    private static final String CHANNEL_ID = "channel_01";
     private static LocationService mCurrentService;
     private int counter = 0;
+    private NotificationManager notificationManager;
 
-    private LatLng latLng = null;
+    private static final String PACKAGE_NAME = "com.example.dashboard1";
+    private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME + ".started_from_notification";
+
+    private LatLng latLng;
     private static final String TAG = LocationService.class.getSimpleName();
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location_Helper location_helper;
@@ -79,6 +75,8 @@ public class LocationService extends android.app.Service{
     @Override
     public void onCreate() {
         super.onCreate();
+
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -104,7 +102,7 @@ public class LocationService extends android.app.Service{
 
                     String time = getDate(timeStamp);
 
-                    Log.d(TAG,"Longitude: "+Latitude+" Latitude: "+Longitude+" Time: "+time);
+                    Log.d(TAG,"Latitude: "+Latitude+" Longitude: "+Longitude+" Time: "+time);
 
                     uploadFirebase(Latitude, Longitude);
 
@@ -121,6 +119,10 @@ public class LocationService extends android.app.Service{
 
                     calculateDistance(time);
 
+                    if (serviceIsRunningInForeground(LocationService.this)) {
+                        notificationManager.notify(1001, getNotification());
+                    }
+
 //                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -130,9 +132,7 @@ public class LocationService extends android.app.Service{
             }
         };
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            restartForeground();
-        }
+
         mCurrentService = this;
     }
 
@@ -142,6 +142,15 @@ public class LocationService extends android.app.Service{
         Log.d(TAG, "restarting Service !!");
         counter = 0;
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            startForeground(1001, getNotification());
+        }
+        else
+            {
+            startForeground(1002, getNotification());
+        }
+
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
             ProcessMainClass bck = new ProcessMainClass();
@@ -150,12 +159,15 @@ public class LocationService extends android.app.Service{
 
         // make sure you call the startForeground on onStartCommand because otherwise
         // when we hide the notification on onScreen it will nto restart in Android 6 and 7
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            restartForeground();
-        }
         getLocationUpdates();
         startTimer();
 
+        boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
+                false);
+        if (startedFromNotification) {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+            stopSelf();
+        }
 
         return START_STICKY;
     }
@@ -297,19 +309,44 @@ public class LocationService extends android.app.Service{
         return null;
     }
 
-    public void restartForeground() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.i(TAG, "restarting foreground");
-            try {
-                Notification notification = new Notification();
-                startForeground(NOTIFICATION_ID, notification.setNotification(this, "riderApp",latLng.latitude + " , " + latLng.longitude, R.drawable.ic_sleep));
-                Log.i(TAG, "restarting foreground successful");
-                getLocationUpdates();
-                startTimer();
-            } catch (Exception e) {
-                Log.e(TAG, "Error in notification " + e.getMessage());
-            }
+    public Notification getNotification() {
+        Intent intent = new Intent(this, LocationService.class);
+
+        Log.i(TAG, "restarting foreground");
+
+        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
+
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_ID)
+                .setSmallIcon(R.drawable.ic_sleep)
+                .setContentTitle("riderApp" + " " + "My Location Points")
+                .setContentText("" + latLng)
+                .setTicker("" + latLng)
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .addAction(R.drawable.ic_launch, getString(R.string.launch_activity), activityPendingIntent)
+                .addAction(R.drawable.ic_cancel, getString(R.string.remove_location_updates), servicePendingIntent);
+
+        Log.i(TAG, "restarting foreground successful");
+
+        // Set the Channel ID for Android O.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelName = "My Background Service";
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+            startForeground(1001, builder.build());
+
         }
+        else
+        {
+            startForeground(1002, builder.build());
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -393,5 +430,17 @@ public class LocationService extends android.app.Service{
         LocationService.mCurrentService = mCurrentService;
     }
 
-
+    public boolean serviceIsRunningInForeground(Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(
+                Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+                Integer.MAX_VALUE)) {
+            if (getClass().getName().equals(service.service.getClassName())) {
+                if (service.foreground) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

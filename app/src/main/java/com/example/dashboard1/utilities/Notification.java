@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.renderscript.RenderScript;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -57,11 +56,10 @@ public class Notification {
                     .setContentTitle(title)
                     .setContentText(text)
                     .setContentIntent(notificationPendingIntent)
-                    .setOngoing(true)
-                    .setTicker(text)
                     .build();
 
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notification = new NotificationCompat.Builder(context, "channel")
                     // to be defined in the MainActivity of the app
                     .setSmallIcon(icon)
@@ -69,17 +67,14 @@ public class Notification {
 //                    .setColor(mContext.getResources().getColor(R.color.colorAccent))
                     .setContentText(text)
                     .setPriority(android.app.Notification.PRIORITY_HIGH)
-                    .setOngoing(true)
-                    .setTicker(text)
                     .setContentIntent(notificationPendingIntent).build();
-        } else {
+        }
+        else {
             notification = new NotificationCompat.Builder(context, "channel")
                     // to be defined in the MainActivity of the app
                     .setSmallIcon(icon)
                     .setContentTitle(title)
                     .setContentText(text)
-                    .setOngoing(true)
-                    .setTicker(text)
                     .setPriority(android.app.Notification.PRIORITY_HIGH)
                     .setContentIntent(notificationPendingIntent).build();
         }
