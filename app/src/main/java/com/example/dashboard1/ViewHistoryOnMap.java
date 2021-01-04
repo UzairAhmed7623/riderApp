@@ -66,7 +66,7 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
         getSupportActionBar().hide();
 
         String doc = getIntent().getExtras().getString("doc");
-        Toast.makeText(getApplicationContext(), doc, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), doc, Toast.LENGTH_SHORT).show();
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(this);
@@ -113,25 +113,49 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
                         mgoogleMap.setLatLngBoundsForCameraTarget(latLngBounds);
                         mgoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds1, 50));
 
-
-                        for (int i = 0; i < latLngs.size(); i++){
-                            LatLng latLng = latLngs.get(i);
-
-                            try {
-                                getAddress(latLng.latitude, latLng.longitude);
-                                rvLocationView.setAdapter(new ViewHistoryAdapter(getApplicationContext(), addr));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            Log.d("docdata", latLng.toString());
-                        }
-
-
-
                     }
                     else{
                         Toast.makeText(getApplicationContext(), task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            }
+        });
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()){
+
+                        if (document.get("Location_Points") != null){
+
+                            List<Map<String,Double>> flatLngs = (List<Map<String, Double>>) document.get("Location_Points");
+                            ArrayList<LatLng> latLngs = new ArrayList<>();
+
+                            for (int x = 0; x < flatLngs.size(); x++){
+                                latLngs.add(new LatLng(flatLngs.get(x).get("latitude"), flatLngs.get(x).get("longitude")));
+                            }
+
+                            for (int i = 0; i < latLngs.size(); i++){
+                                LatLng latLng = latLngs.get(i);
+
+                                try {
+                                    getAddress(latLng.latitude, latLng.longitude);
+                                    rvLocationView.setAdapter(new ViewHistoryAdapter(getApplicationContext(), addr));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Log.d("docdata", latLng.toString());
+                            }
+
+                        }
+                        else {
+                            Toast.makeText(ViewHistoryOnMap.this, "Addresses not found!", Toast.LENGTH_LONG).show();
+                        }
+
                     }
                 }
 

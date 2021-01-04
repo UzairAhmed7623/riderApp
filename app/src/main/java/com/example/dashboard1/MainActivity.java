@@ -211,13 +211,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         mgoogleMap.setMyLocationEnabled(true);
-
-        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-        // position on right bottom
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        rlp.setMargins(0, 1000, 1000, 0);
+//
+//        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+//        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+//        // position on right bottom
+//        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+//        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+//        rlp.setMargins(0, 1000, 1000, 0);
 
     }
 

@@ -302,8 +302,7 @@ public class LocationService extends android.app.Service{
             Log.i(TAG, "restarting foreground");
             try {
                 Notification notification = new Notification();
-                startForeground(NOTIFICATION_ID, notification.setNotification(this, "riderApp","Unknown location"
-                        +"(" + latLng.latitude + " , " + latLng.latitude + ")", R.drawable.ic_sleep));
+                startForeground(NOTIFICATION_ID, notification.setNotification(this, "riderApp",latLng.latitude + " , " + latLng.longitude, R.drawable.ic_sleep));
                 Log.i(TAG, "restarting foreground successful");
                 getLocationUpdates();
                 startTimer();

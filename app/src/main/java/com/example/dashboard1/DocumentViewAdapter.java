@@ -41,7 +41,7 @@ public class DocumentViewAdapter extends RecyclerView.Adapter<DocumentViewAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), doc  + " was clicked!", Toast.LENGTH_LONG).show();
+//                Toast.makeText(view.getContext(), doc  + " was clicked!", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(view.getContext(), ViewHistoryOnMap.class);
                 intent.putExtra("doc", data.get(position));
                 view.getContext().startActivity(intent);
