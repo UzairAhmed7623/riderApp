@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+
             }
         });
 
@@ -222,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void showLocationTextView(double lat, double lng) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+//        MainActivity.this.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
 
                 LatLng latLng = new LatLng(lat, lng);
 //                mgoogleMap.addMarker(new MarkerOptions().position(latLng).title("I am here!"));
@@ -242,11 +243,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         add_Location_Points(latLngs,time);
 
+                        Toast.makeText(MainActivity.this, "Location added successfully!", Toast.LENGTH_LONG).show();
                     }
                 });
 
-            }
-        });
+//            }
+//        });
     }
 
     private void add_Location_Points(ArrayList<LatLng> latLngs, String time) {
@@ -341,6 +343,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return true;
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+//            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+//        } else {
+//            ProcessMainClass bck = new ProcessMainClass();
+//            bck.launchService(getApplicationContext());
+//        }
+//    }
 
     private void setWork() {
         //workmanager periodic work (not less than 15 minutes)

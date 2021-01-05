@@ -1,31 +1,25 @@
 package com.example.dashboard1;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
-import android.app.StatusBarManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -34,17 +28,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dashboard1.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private TextView tvForgotPass, tvSignUp;
     private EditText etEmail, etPassword;
     private Button login;
     private CheckBox checkBox;
@@ -60,9 +53,33 @@ public class LoginActivity extends AppCompatActivity {
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+        tvSignUp = (TextView)findViewById(R.id.tvSignUp);
+        tvForgotPass = (TextView)findViewById(R.id.tvForgotPass);
         login = findViewById(R.id.login);
         loading = findViewById(R.id.loading);
         checkBox = findViewById(R.id.checkbox);
+
+        String forgotPass = "Forgot password?";
+        tvForgotPass.setText(boldSignUptext(forgotPass));
+
+        String signup = "Don't have an account? SignUp";
+        tvSignUp.setText(boldSignUptext(signup));
+
+        tvForgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
+                startActivity(intent);
+            }
+        });
+
+        tvSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, SignUp.class);
+                startActivity(intent);
+            }
+        });
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -104,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     public void rememberLogin(){
@@ -139,4 +155,27 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    public SpannableString boldSignUptext(String text){
+
+        SpannableString spannable = new SpannableString(text);
+
+        if (text.length() <= 16){
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+            spannable.setSpan(styleSpan, 0, 16, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            UnderlineSpan underlineSpan = new UnderlineSpan();
+            spannable.setSpan(underlineSpan, 0, 16, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        else
+        {
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+            spannable.setSpan(styleSpan, 23, 29, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            UnderlineSpan underlineSpan = new UnderlineSpan();
+            spannable.setSpan(underlineSpan, 23, 29, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        return spannable;
+    }
+
 }
