@@ -190,16 +190,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void startLocationService() {
-        Intent intent = new Intent(MainActivity.this, LocationService.class);
-        ContextCompat.startForegroundService(this, intent);
-        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show();
-    }
+//    private void startLocationService() {
+//        Intent intent = new Intent(MainActivity.this, LocationService.class);
+//        ContextCompat.startForegroundService(this, intent);
+//        Toast.makeText(this, "Location updates started", Toast.LENGTH_SHORT).show();
+//    }
 
     private void stopLocationService(View view) {
         Intent intent = new Intent(this, LocationService.class);
         stopService(intent);
-        Toast.makeText(this, "Service stopped", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Location updates stopped", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -341,18 +341,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         return true;
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-//            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-//        } else {
-//            ProcessMainClass bck = new ProcessMainClass();
-//            bck.launchService(getApplicationContext());
-//        }
-//    }
 
     private void setWork() {
         //workmanager periodic work (not less than 15 minutes)

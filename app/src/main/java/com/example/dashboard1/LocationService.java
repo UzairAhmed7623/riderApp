@@ -50,7 +50,7 @@ import java.util.TimerTask;
 
 public class LocationService extends android.app.Service{
     protected static final String NOTIFICATION_ID = "1337";
-    private static final String CHANNEL_ID = "channel_01";
+    private static final String CHANNEL_ID = "riderApp";
     private static LocationService mCurrentService;
     private int counter = 0;
     private NotificationManager notificationManager;
