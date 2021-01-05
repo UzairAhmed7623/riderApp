@@ -67,7 +67,6 @@ public class LocationService extends android.app.Service{
     private FirebaseAuth firebaseAuth;
     private ArrayList<LatLng> latLngs = new ArrayList<>();
     private float totalD = 0f;
-    private LocationManager locationManager;
 
     public LocationService() {
     }
@@ -120,7 +119,12 @@ public class LocationService extends android.app.Service{
                     calculateDistance(time);
 
                     if (serviceIsRunningInForeground(LocationService.this)) {
-                        notificationManager.notify(1001, getNotification());
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                            notificationManager.notify(1001, getNotification());
+                        }
+                        else {
+                            notificationManager.notify(1002, getNotification());
+                        }
                     }
 
 //                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
@@ -333,13 +337,11 @@ public class LocationService extends android.app.Service{
 
         // Set the Channel ID for Android O.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelName = "My Background Service";
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.createNotificationChannel(notificationChannel);
             startForeground(1001, builder.build());
-
         }
         else
         {
