@@ -1,9 +1,5 @@
 package com.example.dashboard1;
 
-import com.google.firebase.firestore.ServerTimestamp;
-
-import java.util.Date;
-
 public class Location_Helper {
     private double Longitude;
     private double Latitude;

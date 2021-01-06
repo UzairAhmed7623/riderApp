@@ -1,5 +1,6 @@
 package com.example.dashboard1.restarter;
 
+import android.annotation.SuppressLint;
 import android.app.job.JobParameters;
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +16,10 @@ import com.example.dashboard1.Service.ProcessMainClass;
 import com.example.dashboard1.restarter.RestartServiceBroadcastReceiver;
 
 
+@SuppressLint("SpecifyJobSchedulerIdRange")
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class JobService extends android.app.job.JobService {
-    private static String TAG= JobService.class.getSimpleName();
+    private static String TAG = JobService.class.getSimpleName();
     private static RestartServiceBroadcastReceiver restartSensorServiceReceiver;
     private static JobService instance;
     private static JobParameters jobParameters;

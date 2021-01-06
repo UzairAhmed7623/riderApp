@@ -9,6 +9,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -22,16 +25,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-
-import com.example.dashboard1.Service.ProcessMainClass;
-import com.example.dashboard1.restarter.RestartServiceBroadcastReceiver;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -65,10 +61,8 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
@@ -84,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient fusedLocationProviderClient;
     private DrawerLayout drawerLayout;
     private ArrayList<LatLng> latLngs = new ArrayList<>();
+
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     public static MainActivity getInstance() {
         return instance;
@@ -157,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);
-//        setWork();
     }
 
     private void isGPSOn() {
@@ -190,13 +186,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-//    private void startLocationService() {
+    private void startLocationService() {
+
+        Calendar calendar = Calendar.getInstance();
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, LocationService.class);
+        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+
+        // schedule for every 10 seconds
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 10 * 1000, pendingIntent);
 //        Intent intent = new Intent(MainActivity.this, LocationService.class);
 //        ContextCompat.startForegroundService(this, intent);
-//        Toast.makeText(this, "Location updates started", Toast.LENGTH_SHORT).show();
-//    }
+        Toast.makeText(this, "Location updates started", Toast.LENGTH_SHORT).show();
+    }
 
     private void stopLocationService(View view) {
+        if (alarmManager != null){
+            alarmManager.cancel(pendingIntent);
+        }
         Intent intent = new Intent(this, LocationService.class);
         stopService(intent);
         Toast.makeText(this, "Location updates stopped", Toast.LENGTH_LONG).show();
@@ -222,9 +231,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void showLocationTextView(double lat, double lng) {
-//        MainActivity.this.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
                 LatLng latLng = new LatLng(lat, lng);
 //                mgoogleMap.addMarker(new MarkerOptions().position(latLng).title("I am here!"));
@@ -246,8 +255,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-//            }
-//        });
+            }
+        });
     }
 
     private void add_Location_Points(ArrayList<LatLng> latLngs, String time) {
@@ -315,9 +324,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                 boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                 if (providerEnabled) {
-
-                    setWork();
-//                    startLocationService();
+                    startLocationService();
                 }
                 else {
                     isGPSOn();
@@ -343,24 +350,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-//            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-//        } else {
-//            ProcessMainClass bck = new ProcessMainClass();
-//            bck.launchService(getApplicationContext());
-//        }
-//    }
-
-    private void setWork() {
-        //workmanager periodic work (not less than 15 minutes)
-        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                .Builder(MyWorkManager.class, 15, TimeUnit.MINUTES)
-                .build();
-        WorkManager workManager  = WorkManager.getInstance(this);
-        workManager.enqueue(periodicWorkRequest);
-    }
 }

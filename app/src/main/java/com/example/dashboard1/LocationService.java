@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.format.DateFormat;
@@ -88,8 +87,10 @@ public class LocationService extends android.app.Service{
 
                 Location location = locationResult.getLastLocation();
 
-                if (location != null){
-
+                if (location == null){
+                    return;
+                }
+                else {
                     location_helper = new Location_Helper(location.getLongitude(), location.getLatitude());
 
                     Double Latitude = location_helper.getLatitude();
@@ -129,9 +130,6 @@ public class LocationService extends android.app.Service{
 
 //                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    return;
-                }
 
             }
         };
@@ -147,18 +145,16 @@ public class LocationService extends android.app.Service{
         counter = 0;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             startForeground(1001, getNotification());
         }
-        else
-            {
+        else {
             startForeground(1002, getNotification());
         }
 
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(this);
+            ProcessMainClass processMainClass = new ProcessMainClass();
+            processMainClass.launchService(this);
         }
 
         // make sure you call the startForeground on onStartCommand because otherwise
@@ -424,13 +420,7 @@ public class LocationService extends android.app.Service{
         }
     }
 
-    public static LocationService getmCurrentService() {
-        return mCurrentService;
-    }
 
-    public static void setmCurrentService(LocationService mCurrentService) {
-        LocationService.mCurrentService = mCurrentService;
-    }
 
     public boolean serviceIsRunningInForeground(Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(
