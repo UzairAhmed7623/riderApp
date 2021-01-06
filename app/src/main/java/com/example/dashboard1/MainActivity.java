@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(this, LocationService.class);
-        pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        pendingIntent = PendingIntent.getService(this, 1001, intent, 0);
 
         // schedule for every 10 seconds
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 10 * 1000, pendingIntent);
@@ -203,9 +203,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void stopLocationService(View view) {
-        if (alarmManager != null){
-            alarmManager.cancel(pendingIntent);
-        }
+//        if (alarmManager != null){
+//            alarmManager.cancel(pendingIntent);
+//        }
         Intent intent = new Intent(this, LocationService.class);
         stopService(intent);
         Toast.makeText(this, "Location updates stopped", Toast.LENGTH_LONG).show();
