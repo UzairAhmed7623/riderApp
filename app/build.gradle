@@ -54,5 +54,6 @@ dependencies {
 
     def work_version = "2.4.0"
     implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.cardview:cardview:1.0.0"
 
 }

@@ -109,8 +109,8 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
 
                         LatLngBounds latLngBounds1 = new LatLngBounds(new LatLng(lat,lng), new LatLng(lat1, lng1));
 
-                        LatLngBounds latLngBounds = LatLngBounds.builder().include(initialLatLng).include(LastLatLng).build();
-                        mgoogleMap.setLatLngBoundsForCameraTarget(latLngBounds);
+//                        LatLngBounds latLngBounds = LatLngBounds.builder().include(initialLatLng).include(LastLatLng).build();
+//                        mgoogleMap.setLatLngBoundsForCameraTarget(latLngBounds);
                         mgoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds1, 50));
 
                     }

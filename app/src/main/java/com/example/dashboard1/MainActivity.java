@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final float MINIMUM_DISTANCE_BETWEEN_POINTS = 1; // If the user hasn't moved at least 10 meters, we will not take the location into account
     private static final String TAG = MainActivity.class.getSimpleName();
     static MainActivity instance;
+    private static final int ALARM_ID = 1001;
     private TextView tvDis;
     private GoogleMap mgoogleMap;
     private Button btnStopService, logout;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
+    private Intent intent;
 
     public static MainActivity getInstance() {
         return instance;
@@ -188,27 +190,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void startLocationService() {
 
-        Calendar calendar = Calendar.getInstance();
+        alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        intent = new Intent(this, AlarmReceiver.class);
+        intent.setAction("Background-Service");
 
-        Intent intent = new Intent(this, LocationService.class);
-        pendingIntent = PendingIntent.getService(this, 1001, intent, 0);
-
+        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), ALARM_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // schedule for every 10 seconds
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 10 * 1000, pendingIntent);
-//        Intent intent = new Intent(MainActivity.this, LocationService.class);
-//        ContextCompat.startForegroundService(this, intent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, 10 * 1000, pendingIntent);
+
         Toast.makeText(this, "Location updates started", Toast.LENGTH_SHORT).show();
     }
 
     private void stopLocationService(View view) {
-//        if (alarmManager != null){
-//            alarmManager.cancel(pendingIntent);
-//        }
-        Intent intent = new Intent(this, LocationService.class);
-        stopService(intent);
-        Toast.makeText(this, "Location updates stopped", Toast.LENGTH_LONG).show();
+
+        if (pendingIntent == null){
+            Toast.makeText(MainActivity.this, "Please start updates first and then press stop button!",Toast.LENGTH_LONG).show();
+        }
+        else {
+            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), ALARM_ID, intent, 0);
+            pendingIntent.cancel();
+            alarmManager.cancel(pendingIntent);
+
+            Intent intent1 = new Intent(this, LocationService.class);
+            stopService(intent1);
+            Toast.makeText(this, "Location updates stopped", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
@@ -220,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         mgoogleMap.setMyLocationEnabled(true);
+        mgoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
 //
 //        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
 //        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -236,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void run() {
 
                 LatLng latLng = new LatLng(lat, lng);
-//                mgoogleMap.addMarker(new MarkerOptions().position(latLng).title("I am here!"));
                 mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
 
                 btnlocation_plus.setOnClickListener(new View.OnClickListener() {

@@ -3,6 +3,7 @@ package com.example.dashboard1;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,7 +11,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.format.DateFormat;
@@ -21,8 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.example.dashboard1.Service.Globals;
-import com.example.dashboard1.Service.ProcessMainClass;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -44,16 +45,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class LocationService extends android.app.Service{
     protected static final String NOTIFICATION_ID = "1337";
     private static final String CHANNEL_ID = "riderApp";
-    private static LocationService mCurrentService;
-    private int counter = 0;
     private NotificationManager notificationManager;
-
     private static final String PACKAGE_NAME = "com.example.dashboard1";
     private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME + ".started_from_notification";
 
@@ -108,7 +104,14 @@ public class LocationService extends android.app.Service{
 
 //                String locationString = new StringBuilder("" + location.getLatitude()).append("/").append(location.getLongitude()).toString();
 
-                    MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
+//                    Intent dialogIntent = new Intent(getApplicationContext(), MainActivity.class);
+//                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(dialogIntent);
+
+
+                    if (isRunning(getApplicationContext())){
+                        MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
+                    }
 
                     if (latLngs == null) {
                         latLngs = new ArrayList<LatLng>();
@@ -127,22 +130,16 @@ public class LocationService extends android.app.Service{
                             notificationManager.notify(1002, getNotification());
                         }
                     }
-
 //                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
                 }
-
             }
         };
-
-
-        mCurrentService = this;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.d(TAG, "restarting Service !!");
-        counter = 0;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(1001, getNotification());
@@ -151,16 +148,7 @@ public class LocationService extends android.app.Service{
             startForeground(1002, getNotification());
         }
 
-        // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
-        if (intent == null) {
-            ProcessMainClass processMainClass = new ProcessMainClass();
-            processMainClass.launchService(this);
-        }
-
-        // make sure you call the startForeground on onStartCommand because otherwise
-        // when we hide the notification on onScreen it will nto restart in Android 6 and 7
         getLocationUpdates();
-        startTimer();
 
         boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
                 false);
@@ -169,12 +157,12 @@ public class LocationService extends android.app.Service{
             stopSelf();
         }
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     private void getLocationUpdates() {
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(9000);
 
@@ -291,7 +279,9 @@ public class LocationService extends android.app.Service{
                         totalD = tempTotalDistance / 1000;
 //                        Log.d("Distance", "totalD: "+String.valueOf(totalD));
                         float dis = Float.parseFloat(String.format("%.1f", totalD));
-                        MainActivity.getInstance().calculateDistance(dis);
+                        if (isRunning(getApplicationContext())){
+                            MainActivity.getInstance().calculateDistance(dis);
+                        }
 //                        Log.d("Distance", "dis: "+String.valueOf(dis));
                     }
 
@@ -310,6 +300,7 @@ public class LocationService extends android.app.Service{
     }
 
     public Notification getNotification() {
+
         Intent intent = new Intent(this, LocationService.class);
 
         Log.i(TAG, "restarting foreground");
@@ -351,12 +342,6 @@ public class LocationService extends android.app.Service{
     public void onDestroy() {
         super.onDestroy();
 
-        Log.i(TAG, "onDestroy called");
-        // restart the never ending service
-        Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
-        sendBroadcast(broadcastIntent);
-        stoptimertask();
-
         Log.d(TAG,"onDestroy: called");
 //        stopForeground(true);
 
@@ -367,72 +352,34 @@ public class LocationService extends android.app.Service{
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         Log.i(TAG, "onTaskRemoved called");
-        // restart the never ending service
-        Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
-        sendBroadcast(broadcastIntent);
-        // do not call stoptimertask because on some phones it is called asynchronously
-        // after you swipe out the app and therefore sometimes
-        // it will stop the timer after it was restarted
-        // stoptimertask();
+
+
     }
-
-    /**
-     * static to avoid multiple timers to be created when the service is called several times
-     */
-    private static Timer timer;
-    private static TimerTask timerTask;
-    long oldTime = 0;
-
-    public void startTimer() {
-        Log.i(TAG, "Starting timer");
-
-        //set a new Timer - if one is already running, cancel it to avoid two running at the same time
-        stoptimertask();
-        timer = new Timer();
-        //initialize the TimerTask's job
-        initializeTimerTask();
-
-        Log.i(TAG, "Scheduling...");
-        //schedule the timer, to wake up every 1 second
-        timer.schedule(timerTask, 1000, 1000); //
-    }
-
-    /**
-     * it sets the timer to print the counter every x seconds
-     */
-    public void initializeTimerTask() {
-        Log.i(TAG, "initialising TimerTask");
-        timerTask = new TimerTask() {
-            public void run() {
-                Log.i("in timer", "in timer ++++  " + (counter++));
-            }
-        };
-    }
-
-    /**
-     * not needed
-     */
-    public void stoptimertask() {
-        //stop the timer, if it's not already null
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-
 
     public boolean serviceIsRunningInForeground(Context context) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(
-                Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
-                Integer.MAX_VALUE)) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+
             if (getClass().getName().equals(service.service.getClassName())) {
+
                 if (service.foreground) {
                     return true;
                 }
             }
         }
+        return false;
+    }
+
+    public boolean isRunning(Context ctx) {
+        ActivityManager activityManager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
+
+        for (ActivityManager.AppTask task : tasks) {
+            if (ctx.getPackageName().equalsIgnoreCase(task.getTaskInfo().baseActivity.getPackageName()))
+                return true;
+        }
+
         return false;
     }
 }
