@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.CalendarView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class History extends AppCompatActivity {
     private DocumentReference documentReference;
     private FirebaseAuth firebaseAuth;
     private ArrayList<String> docList = new ArrayList<>();
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,12 @@ public class History extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("user").document(firebaseAuth.getUid());
 
-        ProgressDialog dialog = ProgressDialog.show(History.this, "Loading", "Please wait...", true);
+        progressDialog = new ProgressDialog(History.this);
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
 
         firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -56,11 +63,28 @@ public class History extends AppCompatActivity {
                     for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
                         Log.d("TAG",queryDocumentSnapshot.getId());
                         docList.add(queryDocumentSnapshot.getId());
-                        dialog.dismiss();
+                        progressDialog.dismiss();
+
+//                        Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                progressDialog.dismiss();
+//                            }
+//                        },3000);
                     }
                 }
                 else {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    },3000);
                     Log.d("TAG",task.getException().toString());
+                    Toast.makeText(History.this, task.getException().toString(), Toast.LENGTH_LONG);
+
                 }
             }
         });

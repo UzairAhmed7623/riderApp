@@ -2,7 +2,6 @@ package com.example.dashboard1;
 
 import androidx.annotation.NonNull;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -40,8 +40,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextView tvForgotPass, tvSignUp;
     private EditText etEmail, etPassword;
-    private Button login;
     private CheckBox checkBox;
+    private View view;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         tvSignUp = (TextView)findViewById(R.id.tvSignUp);
         tvForgotPass = (TextView)findViewById(R.id.tvForgotPass);
-        login = findViewById(R.id.login);
+        view = findViewById(R.id.progressButton);
         checkBox = findViewById(R.id.checkbox);
 
         String forgotPass = "Forgot password?";
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         rememberLogin();
 
-        login.setOnClickListener(v -> {
+        view.setOnClickListener(v -> {
             String email = etEmail.getText().toString();
             String passWord = etPassword.getText().toString();
 
@@ -96,7 +96,9 @@ public class LoginActivity extends AppCompatActivity {
 
             }
             else {
-                ProgressDialog dialog = ProgressDialog.show(LoginActivity.this, "Loading", "Please wait...", true);
+                ProgressButton progressButton = new ProgressButton(LoginActivity.this, view);
+                progressButton.buttonActivated();
+
                 firebaseAuth.signInWithEmailAndPassword(email, passWord).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -104,7 +106,13 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                             String Id = firebaseUser.getUid();
                             Toast.makeText(LoginActivity.this, Id, Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressButton.buttonFinished();
+                                }
+                            }, 3000);
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -114,7 +122,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(LoginActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressButton.buttonFinished();
+                            }
+                        }, 3000);
                     }
                 });
             }
