@@ -6,12 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +32,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import cc.cloudist.acplibrary.ACProgressConstant;
+import cc.cloudist.acplibrary.ACProgressFlower;
+import cc.cloudist.acplibrary.ACProgressPie;
+
 public class History extends AppCompatActivity {
 
     private CalendarView calHistoryView;
@@ -36,12 +44,13 @@ public class History extends AppCompatActivity {
     private DocumentReference documentReference;
     private FirebaseAuth firebaseAuth;
     private ArrayList<String> docList = new ArrayList<>();
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+        getSupportActionBar().hide();
 
         calHistoryView = (CalendarView)findViewById(R.id.calHistoryView);
 
@@ -49,12 +58,12 @@ public class History extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("user").document(firebaseAuth.getUid());
 
-        progressDialog = new ProgressDialog(History.this);
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Please wait...");
-        progressDialog.setCancelable(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
+        ACProgressFlower dialog = new ACProgressFlower.Builder(this)
+                .direction(ACProgressConstant.DIRECT_CLOCKWISE)
+                .themeColor(Color.WHITE)
+                .text("Please wait...")
+                .fadeColor(Color.DKGRAY).build();
+        dialog.show();
 
         firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -63,15 +72,13 @@ public class History extends AppCompatActivity {
                     for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
                         Log.d("TAG",queryDocumentSnapshot.getId());
                         docList.add(queryDocumentSnapshot.getId());
-                        progressDialog.dismiss();
-
-//                        Handler handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                progressDialog.dismiss();
-//                            }
-//                        },3000);
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                            }
+                        },3000);
                     }
                 }
                 else {
@@ -79,7 +86,7 @@ public class History extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            progressDialog.dismiss();
+                            dialog.dismiss();
                         }
                     },3000);
                     Log.d("TAG",task.getException().toString());
