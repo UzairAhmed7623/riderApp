@@ -20,27 +20,6 @@
         app:headerLayout="@layout/navigation_header"
         android:layout_gravity="start">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="© Copyright - 2020"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="14dp"
-            android:layout_marginBottom="30dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="InkHorn Solutions"
-            android:textStyle="bold"
-            android:linksClickable="true"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="14dp"
-            android:layout_marginBottom="10dp"/>
 
 
     </com.google.android.material.navigation.NavigationView>

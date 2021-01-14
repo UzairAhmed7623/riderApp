@@ -1,8 +1,8 @@
 package com.example.dashboard1;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SignUp extends AppCompatActivity {
 

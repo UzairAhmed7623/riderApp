@@ -1,13 +1,5 @@
 package com.example.dashboard1;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -18,16 +10,25 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -44,7 +45,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -72,17 +73,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int ALARM_ID = 1001;
     private TextView tvDis;
     private GoogleMap mgoogleMap;
-    private Button btnStopService, logout;
-    private FloatingActionButton btnlocation_plus;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private DrawerLayout drawerLayout;
     private ArrayList<LatLng> latLngs = new ArrayList<>();
-
+    boolean check = true;
+    private Menu menu;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private Intent intent;
+    private BottomSheetDialog bottomSheetDialog;
 
     public static MainActivity getInstance() {
         return instance;
@@ -102,45 +103,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         navigation_View.setNavigationItemSelectedListener(this);
 
-
-
         tvDis = (TextView) findViewById(R.id.tvDis);
-
-        btnStopService = (Button) findViewById(R.id.btnStopService);
-        btnlocation_plus = (FloatingActionButton) findViewById(R.id.btnlocation_plus);
-        logout = (Button) findViewById(R.id.logout);
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("remember", "false");
-                editor.apply();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-
-            }
-        });
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        btnStopService.setOnClickListener(this::stopLocationService);
-
         Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
             @Override
             public void onPermissionGranted(PermissionGrantedResponse response) {
-                Toast.makeText(MainActivity.this, "Granted", Toast.LENGTH_SHORT).show();
-
+                isGPSOn();
             }
 
             @Override
@@ -202,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toast.makeText(this, "Location updates started", Toast.LENGTH_SHORT).show();
     }
 
-    private void stopLocationService(View view) {
+    private void stopLocationService() {
 
         if (pendingIntent == null){
             Toast.makeText(MainActivity.this, "Please start updates first and then press stop button!",Toast.LENGTH_LONG).show();
@@ -247,21 +225,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng latLng = new LatLng(lat, lng);
                 mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
 
-                btnlocation_plus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d(TAG, "Location: " + latLng);
-                        latLngs.add(latLng);
-
-                        Long timeStamp = System.currentTimeMillis()/1000;
-
-                        String time = getDate(timeStamp);
-
-                        add_Location_Points(latLngs,time);
-
-                        Toast.makeText(MainActivity.this, "Location added successfully!", Toast.LENGTH_LONG).show();
-                    }
-                });
+                latLngs.add(latLng);
 
             }
         });
@@ -328,19 +292,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()){
-            case R.id.start_Ride:
-                LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-                boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                if (providerEnabled) {
-                    startLocationService();
-                }
-                else {
-                    isGPSOn();
-                }
-                break;
-
-            case R.id.route:
-                startActivity(new Intent(MainActivity.this,Route.class));
+            case R.id.profile:
+                startActivity(new Intent(MainActivity.this, Profile.class));
                 break;
 
             case R.id.history:
@@ -348,14 +301,96 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case R.id.contactUs:
+                View bottomSheetLayout1 = getLayoutInflater().inflate(R.layout.contact_us_dialog, null);
+                (bottomSheetLayout1.findViewById(R.id.button_ok)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                bottomSheetDialog = new BottomSheetDialog(this);
+                bottomSheetDialog.setContentView(bottomSheetLayout1);
+                bottomSheetDialog.show();
+                bottomSheetDialog.setCancelable(false);
+                break;
 
             case R.id.about:
+                final View bottomSheetLayout2 = getLayoutInflater().inflate(R.layout.about_dialog, null);
+                (bottomSheetLayout2.findViewById(R.id.button_ok)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.dismiss();
+                    }
+                });
 
+                bottomSheetDialog = new BottomSheetDialog(this);
+                bottomSheetDialog.setContentView(bottomSheetLayout2);
+                bottomSheetDialog.show();
+                bottomSheetDialog.setCancelable(false);
+                break;
 
+            case R.id.signOut:
+                SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("remember", "false");
+                editor.apply();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+
+            case R.id.nav_log_version:
+                String url = "https://inkhornsolutions.com/\n";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+                break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        getMenuInflater().inflate(R.menu.toolbarmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+
+            case R.id.addLocation:
+                Long timeStamp = System.currentTimeMillis()/1000;
+                String time = getDate(timeStamp);
+                add_Location_Points(latLngs, time);
+                Toast.makeText(MainActivity.this, "Location added successfully!", Toast.LENGTH_LONG).show();
+
+            case R.id.location:
+                if (check){
+                    menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_on));
+                    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    if (providerEnabled) {
+                        startLocationService();
+                    }
+                    else {
+                        isGPSOn();
+                    }
+                    check = false;
+                    Toast.makeText(instance, "check", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_off));
+                    stopLocationService();
+                    check = true;
+                    Toast.makeText(instance, "not", Toast.LENGTH_SHORT).show();
+                }
+        }
+
+        return true;
+    }
 }

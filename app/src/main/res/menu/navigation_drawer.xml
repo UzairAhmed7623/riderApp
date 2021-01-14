@@ -6,34 +6,49 @@
 
     <group>
         <item
-            android:id="@+id/start_Ride"
-            android:title="Start Ride"/>
-
-        <item
-            android:id="@+id/route"
-            android:title="Route"/>
+            android:id="@+id/profile"
+            android:title="Profile"/>
 
         <item
             android:id="@+id/history"
             android:title="History"/>
 
+
     </group>
 
-    <item android:title="Additional Information" >
+    <group>
+        <item android:title="Others" >
 
-        <menu>
+            <menu>
 
-            <item
-                android:id="@+id/contactUs"
-                android:title="Contact Us"/>
+                <item
+                    android:id="@+id/contactUs"
+                    android:title="Contact Us"/>
 
-            <item
-                android:id="@+id/about"
-                android:title="About Us"/>
+                <item
+                    android:id="@+id/about"
+                    android:title="About Us"/>
 
 
-        </menu>
+            </menu>
 
-    </item>
+        </item>
+    </group>
+
+    <group android:id="@+id/asd">
+        <item
+            android:id="@+id/signOut"
+            android:title="SignOut"/>
+    </group>
+
+    <group
+        android:id="@+id/nav_footer">
+        <item
+            android:id="@+id/nav_log_version"
+            app:actionLayout="@layout/navigation_footer"
+            tools:ignore="MenuTitle" />
+
+    </group>
+
 
 </menu>

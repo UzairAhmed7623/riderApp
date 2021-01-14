@@ -45,54 +45,29 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#E200B552"
-
+                    android:background="#02AA4E"
+                    app:menu="@menu/toolbarmenu"
                     >
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        >
+<!--                    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        >-->
 
-                        <TextView
-                            android:layout_width="98dp"
-                            android:layout_height="30dp"
-                            android:text="@string/app_name"
-                            android:textColor="@android:color/white"
-                            android:textSize="20dp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+<!--                        <TextView-->
+<!--                            android:layout_width="98dp"-->
+<!--                            android:layout_height="30dp"-->
+<!--                            android:text="@string/app_name"-->
+<!--                            android:textColor="@android:color/white"-->
+<!--                            android:textSize="20dp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                            app:layout_constraintEnd_toEndOf="parent"-->
+<!--                            app:layout_constraintHorizontal_bias="0.0"-->
+<!--                            app:layout_constraintStart_toStartOf="parent"-->
+<!--                            app:layout_constraintTop_toTopOf="parent" />-->
 
-                        <Button
-                            android:id="@+id/btnStopService"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="right"
-                            android:background="@drawable/locationoff"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.792"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="1.0" />
-
-                        <Button
-                            android:id="@+id/logout"
-                            android:layout_width="28dp"
-                            android:layout_height="29dp"
-                            android:layout_gravity="right"
-                            android:background="@drawable/logout"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.953"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
                 </androidx.appcompat.widget.Toolbar>
@@ -119,19 +94,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.161" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnlocation_plus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.628"
-        app:srcCompat="@drawable/plus_location" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

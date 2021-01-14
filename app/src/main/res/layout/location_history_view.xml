@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/location_history_view"
+        android:background="@drawable/signin"
         android:gravity="center"
         android:paddingLeft="15dp"
         android:text="Date"

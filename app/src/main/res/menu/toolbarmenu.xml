@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/addLocation"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/location_add"
+        android:title="Add location" />
+
+    <item
+        android:id="@+id/location"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/location_off"
+        android:title="location" />
+
+</menu>

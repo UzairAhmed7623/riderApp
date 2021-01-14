@@ -32,7 +32,7 @@ public class ViewHistoryAdapter extends RecyclerView.Adapter<ViewHistoryAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHistoryAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String locName = addr.get(position);
         holder.tvLocationHistoryView.setText(locName);
     }
