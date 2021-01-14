@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:allowBackup="true"
@@ -18,13 +19,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignUp"></activity>
+        <activity android:name=".Profile" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".SignUp" />
         <activity android:name=".ForgotPassword" />
-        <activity android:name=".ViewHistoryOnMap" />
-        <activity
-            android:name=".History"
-            android:label="@string/title_activity_DocumentView" />
-
+        <activity android:name=".ViewHistoryOnMap" android:parentActivityName=".History"/>
+        <activity android:name=".History" android:label="@string/title_activity_DocumentView" android:parentActivityName=".MainActivity"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

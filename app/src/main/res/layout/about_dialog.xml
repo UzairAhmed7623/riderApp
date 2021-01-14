@@ -6,14 +6,36 @@
     android:orientation="vertical"
     android:padding="15dp">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:text="Title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left">
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btnOk"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/phoneshape"
+                android:src="@drawable/cancel"
+                android:text="OK" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_detail"
@@ -23,19 +45,19 @@
         android:text="string/"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:gravity="right"
-        android:orientation="horizontal">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:gravity="right"-->
+<!--        android:orientation="horizontal">-->
 
-        <Button
-            android:id="@+id/button_ok"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/signin"
-            android:text="OK" />
-    </LinearLayout>
+<!--        <Button-->
+<!--            android:id="@+id/button_ok"-->
+<!--            style="@style/Widget.AppCompat.Button.Colored"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/signin"-->
+<!--            android:text="OK" />-->
+<!--    </LinearLayout>-->
 </LinearLayout>

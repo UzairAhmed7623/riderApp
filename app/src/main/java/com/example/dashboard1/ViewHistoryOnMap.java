@@ -1,6 +1,7 @@
 package com.example.dashboard1;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,7 +63,10 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
         rvLocationView = (RecyclerView) findViewById(R.id.rvLocationView);
         rvLocationView.setLayoutManager(new LinearLayoutManager(this));
 
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#02AA4E")));
+        actionBar.setTitle("HistoryDetails");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String doc = getIntent().getExtras().getString("doc");
 //        Toast.makeText(getApplicationContext(), doc, Toast.LENGTH_SHORT).show();

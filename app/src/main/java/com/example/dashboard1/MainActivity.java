@@ -12,6 +12,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.telephony.PhoneNumberUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -302,10 +304,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case R.id.contactUs:
                 View bottomSheetLayout1 = getLayoutInflater().inflate(R.layout.contact_us_dialog, null);
-                (bottomSheetLayout1.findViewById(R.id.button_ok)).setOnClickListener(new View.OnClickListener() {
+                (bottomSheetLayout1.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         bottomSheetDialog.dismiss();
+                    }
+                });
+
+                (bottomSheetLayout1.findViewById(R.id.btnContact)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.dismiss();
+                        Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.CALL_PHONE).withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                String ph = "tel:" + "03133394722";
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(ph));
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                permissionToken.continuePermissionRequest();
+                            }
+                        }).check();
                     }
                 });
 
@@ -317,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case R.id.about:
                 final View bottomSheetLayout2 = getLayoutInflater().inflate(R.layout.about_dialog, null);
-                (bottomSheetLayout2.findViewById(R.id.button_ok)).setOnClickListener(new View.OnClickListener() {
+                (bottomSheetLayout2.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         bottomSheetDialog.dismiss();
@@ -366,8 +393,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.addLocation:
                 Long timeStamp = System.currentTimeMillis()/1000;
                 String time = getDate(timeStamp);
-                add_Location_Points(latLngs, time);
-                Toast.makeText(MainActivity.this, "Location added successfully!", Toast.LENGTH_LONG).show();
+                if (latLngs.size() >0){
+                    add_Location_Points(latLngs, time);
+                    Toast.makeText(MainActivity.this, "Location added successfully!", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(this, "Null location cannot be added!", Toast.LENGTH_SHORT).show();
+                }
+                break;
 
             case R.id.location:
                 if (check){
@@ -389,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     check = true;
                     Toast.makeText(instance, "not", Toast.LENGTH_SHORT).show();
                 }
+                break;
         }
 
         return true;
