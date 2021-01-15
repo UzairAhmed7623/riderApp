@@ -117,23 +117,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
-            @Override
-            public void onPermissionGranted(PermissionGrantedResponse response) {
-                isGPSOn();
-            }
-
-            @Override
-            public void onPermissionDenied(PermissionDeniedResponse response) {
-                Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                token.continuePermissionRequest();
-            }
-        }).check();
-
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);
     }
@@ -151,6 +134,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 Log.d(TAG, locationSettingsResponse.toString());
+                if (check){
+                    menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_on));
+                    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    if (providerEnabled) {
+                        startLocationService();
+                    }
+                    else {
+                        isGPSOn();
+                    }
+                    check = false;
+                    Toast.makeText(instance, "check", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_off));
+                    stopLocationService();
+                    check = true;
+                    Toast.makeText(instance, "not", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         task.addOnFailureListener(this, new OnFailureListener() {
@@ -403,25 +405,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case R.id.location:
-                if (check){
-                    menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_on));
-                    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-                    boolean providerEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                    if (providerEnabled) {
-                        startLocationService();
-                    }
-                    else {
+                Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
                         isGPSOn();
+
                     }
-                    check = false;
-                    Toast.makeText(instance, "check", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_off));
-                    stopLocationService();
-                    check = true;
-                    Toast.makeText(instance, "not", Toast.LENGTH_SHORT).show();
-                }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+
                 break;
         }
 
