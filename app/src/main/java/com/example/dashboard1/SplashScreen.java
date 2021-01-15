@@ -8,11 +8,12 @@ import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {
 
     Animation anim;
-    ImageView imageView;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +22,7 @@ public class SplashScreen extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        imageView=(ImageView)findViewById(R.id.imageView2); // Declare an imageView to show the animation.
+        textView = (TextView) findViewById(R.id.textView);
         anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash); // Create the animation.
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -39,7 +40,7 @@ public class SplashScreen extends AppCompatActivity {
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        imageView.startAnimation(anim);
+        textView.startAnimation(anim);
 
     }
 }
