@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -19,11 +19,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Profile" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".SplashScreen"></activity>
+        <activity
+            android:name=".Profile"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".SignUp" />
         <activity android:name=".ForgotPassword" />
-        <activity android:name=".ViewHistoryOnMap" android:parentActivityName=".History"/>
-        <activity android:name=".History" android:label="@string/title_activity_DocumentView" android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".ViewHistoryOnMap"
+            android:parentActivityName=".History" />
+        <activity
+            android:name=".History"
+            android:label="@string/title_activity_DocumentView"
+            android:parentActivityName=".MainActivity" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -38,7 +47,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -49,17 +57,16 @@
             android:enabled="true"
             android:excludeFromRecents="true"
             android:exported="true"
-            android:foregroundServiceType="location"/>
+            android:foregroundServiceType="location" />
 
-        <receiver android:name=".AlarmReceiver"
+        <receiver
+            android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="Background-Service"/>
+                <action android:name="Background-Service" />
             </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>
