@@ -12,12 +12,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class Profile extends AppCompatActivity {
 
     private EditText etFirstName, etLastName, etEmailAddress, etPhoneNumber;
     private Button btnSave;
     private ImageButton ivAddImage;
-    private ImageView ivProfile;
+    private CircleImageView ivProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +37,24 @@ public class Profile extends AppCompatActivity {
         etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
         btnSave = (Button) findViewById(R.id.btnSave);
         ivAddImage = (ImageButton) findViewById(R.id.ivAddImage);
-        ivProfile = (ImageView) findViewById(R.id.ivProfile);
+        ivProfile = (CircleImageView) findViewById(R.id.ivProfile);
 
         String fName = etFirstName.getText().toString().trim();
         String lName = etLastName.getText().toString().trim();
         String email = etEmailAddress.getText().toString().trim();
         String phone = etPhoneNumber.getText().toString().trim();
 
+        ivAddImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(Profile.this, "Clicked!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(Profile.this, "Button Clicked!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Profile.this, "Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
     }
