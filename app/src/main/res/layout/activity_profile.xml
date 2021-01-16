@@ -412,20 +412,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSave"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/signin"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
                     android:text="save"
-                    android:textColor="@android:color/white"
+                    android:layout_gravity="center"
                     android:textSize="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:cornerRadius="10dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
 
             </LinearLayout>
 
