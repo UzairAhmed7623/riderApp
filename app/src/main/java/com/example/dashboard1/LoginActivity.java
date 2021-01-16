@@ -30,7 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView tvForgotPass, tvSignUp;
-    private EditText etEmail, etPassword;
+    private EditText etPhoneNumber, etPassword;
     private CheckBox checkBox;
     private View view;
     private FirebaseAuth firebaseAuth;
@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        etEmail = findViewById(R.id.etEmail);
+        etPhoneNumber = findViewById(R.id.etPhoneNumber);
         etPassword = findViewById(R.id.etPassword);
         tvSignUp = (TextView)findViewById(R.id.tvSignUp);
         tvForgotPass = (TextView)findViewById(R.id.tvForgotPass);
@@ -76,11 +76,11 @@ public class LoginActivity extends AppCompatActivity {
         rememberLogin();
 
         view.setOnClickListener(v -> {
-            String email = etEmail.getText().toString();
+            String phoneNumber = etPhoneNumber.getText().toString();
             String passWord = etPassword.getText().toString();
 
-            if (etEmail.getText().toString().isEmpty()) {
-                etEmail.setError("Please write your email!");
+            if (etPhoneNumber.getText().toString().isEmpty()) {
+                etPhoneNumber.setError("Please write your email!");
             }
             else if (etPassword.getText().toString().isEmpty()) {
                 etPassword.setError("Please write your password!");
@@ -90,38 +90,38 @@ public class LoginActivity extends AppCompatActivity {
                 ProgressButton progressButton = new ProgressButton(LoginActivity.this, view);
                 progressButton.buttonActivated();
 
-                firebaseAuth.signInWithEmailAndPassword(email, passWord).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                            String Id = firebaseUser.getUid();
-                            Toast.makeText(LoginActivity.this, Id, Toast.LENGTH_SHORT).show();
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressButton.buttonFinished();
-                                }
-                            }, 3000);
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressButton.buttonFinished();
-                            }
-                        }, 3000);
-                    }
-                });
+//                firebaseAuth.signInWithCredential(email, passWord).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+//                            String Id = firebaseUser.getUid();
+//                            Toast.makeText(LoginActivity.this, Id, Toast.LENGTH_SHORT).show();
+//                            Handler handler = new Handler();
+//                            handler.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    progressButton.buttonFinished();
+//                                }
+//                            }, 3000);
+//                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                            startActivity(intent);
+//                            finish();
+//                        }
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(LoginActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+//                        Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                progressButton.buttonFinished();
+//                            }
+//                        }, 3000);
+//                    }
+//                });
             }
         });
 

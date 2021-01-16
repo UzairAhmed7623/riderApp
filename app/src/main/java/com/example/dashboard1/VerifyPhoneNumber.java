@@ -1,6 +1,7 @@
 package com.example.dashboard1;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.arch.core.executor.TaskExecutor;
 
@@ -22,7 +23,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class VerifyPhoneNumber extends AppCompatActivity {
@@ -32,6 +38,8 @@ public class VerifyPhoneNumber extends AppCompatActivity {
     private Button btnVerify;
     private FirebaseAuth firebaseAuth;
     private ProgressBar progressbar;
+    private FirebaseFirestore firebaseFirestore;
+    private String pass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +47,32 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         setContentView(R.layout.activity_verify_phone_number);
 
         firebaseAuth = firebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         etOtp = (TextInputLayout) findViewById(R.id.etOtp);
         btnVerify = (Button) findViewById(R.id.btnVerify);
         progressbar = (ProgressBar) findViewById(R.id.progressbar);
 
+        progressbar.setVisibility(View.GONE);
+
         String phone = getIntent().getStringExtra("phone_number");
+        pass = getIntent().getStringExtra("password");
 
         verification(phone);
+
+        btnVerify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String otp = etOtp.getEditText().getText().toString();
+                if (otp.isEmpty() || otp.length() < 6){
+                    etOtp.setError("Wrong OTP!");
+                    etOtp.requestFocus();
+                    return;
+                }
+                progressbar.setVisibility(View.VISIBLE);
+                verifyCode(otp);
+            }
+        });
 
     }
 
@@ -81,6 +107,9 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
             Toast.makeText(VerifyPhoneNumber.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(VerifyPhoneNumber.this, SignUp.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
     };
 
@@ -94,6 +123,20 @@ public class VerifyPhoneNumber extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
+
+                    String ph = task.getResult().getUser().getPhoneNumber();
+
+                    HashMap<String, Object> newUser = new HashMap<>();
+                    newUser.put("Phone", ph);
+                    newUser.put("Password", pass);
+
+                    firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                        }
+                    });
+
                     Intent intent = new Intent(VerifyPhoneNumber.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

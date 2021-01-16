@@ -38,10 +38,12 @@ public class SignUp extends AppCompatActivity {
                 else if (etPassword.getEditText().getText().toString().isEmpty()) {
                     etPassword.setError("Please write your password!");
                 }
-
-                Intent intent = new Intent(SignUp.this, VerifyPhoneNumber.class);
-                intent.putExtra("phone_number", phone_number);
-                startActivity(intent);
+                else {
+                    Intent intent = new Intent(SignUp.this, VerifyPhoneNumber.class);
+                    intent.putExtra("phone_number", phone_number);
+                    intent.putExtra("password", password);
+                    startActivity(intent);
+                }
             }
         });
     }
