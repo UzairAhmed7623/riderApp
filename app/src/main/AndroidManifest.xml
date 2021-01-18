@@ -19,42 +19,28 @@
         android:roundIcon="@mipmap/launcher_icon_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VerifyPhoneNumber">
-
-        </activity>
+        <activity android:name=".Password_Creation"></activity>
+        <activity android:name=".VerifyPhoneNumber"></activity>
         <activity android:name=".SplashScreen">
-
-        </activity>
-        <activity
-            android:name=".Profile"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".SignUp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ForgotPassword" />
-        <activity
-            android:name=".ViewHistoryOnMap"
-            android:parentActivityName=".History" />
-        <activity
-            android:name=".History"
-            android:label="@string/title_activity_DocumentView"
-            android:parentActivityName=".MainActivity" />
+        <activity android:name=".Profile" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".SignUp" android:parentActivityName=".LoginActivity"></activity>
+        <activity android:name=".ForgotPassword"></activity>
+        <activity android:name=".ViewHistoryOnMap" android:parentActivityName=".History"></activity>
+        <activity android:name=".History" android:label="@string/title_activity_DocumentView" android:parentActivityName=".MainActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".Route"
-            android:label="@string/title_activity_route" />
+        <activity android:name=".Route" android:label="@string/title_activity_route"></activity>
         <activity android:name=".LoginActivity"></activity>
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <service
             android:name=".LocationService"

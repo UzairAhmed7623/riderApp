@@ -3,6 +3,7 @@ package com.example.dashboard1;
 import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -11,14 +12,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class ProgressButton {
 
-    private CardView cardView;
-    private ConstraintLayout constraintLayout;
     private ProgressBar progressBar;
     private TextView tvLogin;
-    Animation fadein;
+
     ProgressButton(Context context, View view){
-        cardView = view.findViewById(R.id.cardView);
-        constraintLayout = view.findViewById(R.id.constraintLayout);
         progressBar = view.findViewById(R.id.progressBar);
         tvLogin = view.findViewById(R.id.tvLogin);
 
@@ -32,6 +29,11 @@ public class ProgressButton {
     public void buttonFinished(){
         progressBar.setVisibility(View.GONE);
         tvLogin.setText("Try again!");
+    }
+
+    public void buttonFinishedSuccessfully(){
+        progressBar.setVisibility(View.GONE);
+        tvLogin.setText("Success");
     }
 
 }

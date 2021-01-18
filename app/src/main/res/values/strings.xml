@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">riderApp</string>
     <string name="prompt_phone_number">Phone Number</string>
-    <string name="prompt_password">Password</string>
+    <string name="prompt_password">Pin</string>
     <string name="action_sign_in">Sign in</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

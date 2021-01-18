@@ -8,6 +8,7 @@ import androidx.arch.core.executor.TaskExecutor;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -46,6 +47,8 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_phone_number);
 
+        getSupportActionBar().hide();
+
         firebaseAuth = firebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
@@ -53,10 +56,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         btnVerify = (Button) findViewById(R.id.btnVerify);
         progressbar = (ProgressBar) findViewById(R.id.progressbar);
 
-        progressbar.setVisibility(View.GONE);
-
         String phone = getIntent().getStringExtra("phone_number");
-        pass = getIntent().getStringExtra("password");
 
         verification(phone);
 
@@ -79,10 +79,10 @@ public class VerifyPhoneNumber extends AppCompatActivity {
     private void verification(String phone) {
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(firebaseAuth)
-                        .setPhoneNumber("+92" + phone)       // Phone number to verify
+                        .setPhoneNumber(phone)       // Phone number to verify
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
                         .setActivity(VerifyPhoneNumber.this)                 // Activity (for callback binding)
-                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .setCallbacks(mCallbacks) // OnVerificationStateChangedCallbacks
                         .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
@@ -128,16 +128,9 @@ public class VerifyPhoneNumber extends AppCompatActivity {
 
                     HashMap<String, Object> newUser = new HashMap<>();
                     newUser.put("Phone", ph);
-                    newUser.put("Password", pass);
 
-                    firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-                        }
-                    });
-
-                    Intent intent = new Intent(VerifyPhoneNumber.this, LoginActivity.class);
+                    Intent intent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
+                    intent.putExtra("phone", ph);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }
