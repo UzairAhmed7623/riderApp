@@ -76,7 +76,7 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        documentReference = firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(doc);
+        documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").document(doc);
 
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -118,7 +118,7 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
 
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), task.getException().toString(),Toast.LENGTH_LONG).show();
                     }
                 }
 

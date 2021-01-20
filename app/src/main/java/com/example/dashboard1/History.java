@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -66,6 +67,9 @@ public class History extends AppCompatActivity {
         lottieHistory.setVisibility(View.VISIBLE);
         lottieLayout.setVisibility(View.VISIBLE);
 
+
+
+
         firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -77,7 +81,7 @@ public class History extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                lottieLayout.setVisibility(View.INVISIBLE);
+                                lottieLayout.setVisibility(View.GONE);
                                 lottieHistory.setVisibility(View.GONE);
                             }
                         },2500);
@@ -88,7 +92,7 @@ public class History extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            lottieLayout.setVisibility(View.INVISIBLE);
+                            lottieLayout.setVisibility(View.GONE);
                             lottieHistory.setVisibility(View.GONE);
                         }
                     },2500);

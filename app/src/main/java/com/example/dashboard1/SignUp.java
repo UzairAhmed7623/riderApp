@@ -41,8 +41,9 @@ public class SignUp extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#02AA4E")));
-        actionBar.setTitle("Verification");
+        actionBar.hide();
+//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#02AA4E")));
+//        actionBar.setTitle("Verification");
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         etPhoneNumber = (TextInputLayout) findViewById(R.id.etPhoneNumber);

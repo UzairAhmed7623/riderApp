@@ -13,18 +13,22 @@ import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,13 +40,16 @@ import java.util.logging.Logger;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView tvForgotPass, tvSignUp;
-    private EditText etPassword;
+    private TextInputLayout etPassword;
     private TextView etPhoneNumber;
     private CheckBox checkBox;
-    private View view;
+    private Button btnSignIn;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private  String phoneNumber, password;
+    private String phoneNumber, password;
+    private LottieAnimationView lottieLogin;
+    private LinearLayout lottieLayoutLogin;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +62,13 @@ public class LoginActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         etPhoneNumber = (TextView) findViewById(R.id.etPhoneNumber);
-        etPassword = findViewById(R.id.etPassword);
+        etPassword =  (TextInputLayout) findViewById(R.id.etPassword);
         tvSignUp = (TextView)findViewById(R.id.tvSignUp);
         tvForgotPass = (TextView)findViewById(R.id.tvForgotPass);
-        view = findViewById(R.id.progressButton);
-        checkBox = findViewById(R.id.checkbox);
+        btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        checkBox = (CheckBox) findViewById(R.id.checkbox);
+        lottieLayoutLogin = (LinearLayout) findViewById(R.id.lottieLayoutLogin);
+        lottieLogin = (LottieAnimationView) findViewById(R.id.lottieLogin);
 
         String forgotPass = "Forgot password?";
         tvForgotPass.setText(boldSignUptext(forgotPass));
@@ -97,37 +106,46 @@ public class LoginActivity extends AppCompatActivity {
 
                             etPhoneNumber.setText(phone);
 
-                            view.setOnClickListener((View v) -> {
-                                password = etPassword.getText().toString();
+                            btnSignIn.setOnClickListener((View v) -> {
+                                password = etPassword.getEditText().getText().toString();
 
-                                if (etPassword.getText().toString().isEmpty()) {
-                                    etPassword.setError("Please write your password!");
+                                if (etPassword.getEditText().getText().toString().isEmpty()) {
+                                    Toast.makeText(LoginActivity.this, "Please write your pin!", Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    ProgressButton progressButton = new ProgressButton(LoginActivity.this, view);
-                                    progressButton.buttonActivated();
+                                    lottieLayoutLogin.setVisibility(View.VISIBLE);
+                                    lottieLogin.setVisibility(View.VISIBLE);
 
                                     if (password.equals(pass)) {
                                         Handler handler = new Handler();
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                progressButton.buttonFinishedSuccessfully();
+                                                lottieLayoutLogin.setVisibility(View.GONE);
+                                                lottieLogin.setVisibility(View.GONE);
                                             }
-                                        }, 1000);
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        }, 2500);
+
+                                        Handler handler1 = new Handler();
+                                        handler1.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }, 2500);
                                     }
                                     else {
-                                        Toast.makeText(LoginActivity.this, "Wrong Pin!", Toast.LENGTH_SHORT).show();
                                         Handler handler = new Handler();
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                progressButton.buttonFinished();
+                                                lottieLayoutLogin.setVisibility(View.GONE);
+                                                lottieLogin.setVisibility(View.GONE);
                                             }
-                                        }, 1000);
+                                        }, 2500);
+                                        Toast.makeText(LoginActivity.this, "Wrong Pin!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
