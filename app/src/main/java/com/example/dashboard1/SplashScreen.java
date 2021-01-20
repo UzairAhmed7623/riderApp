@@ -9,11 +9,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SplashScreen extends AppCompatActivity {
 
-    private Animation anim;
-    private TextView textView;
+    private LottieAnimationView lottieSplash;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,25 +26,38 @@ public class SplashScreen extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        textView = (TextView) findViewById(R.id.textView);
-        anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash); // Create the animation.
-        anim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
+        firebaseAuth = FirebaseAuth.getInstance();
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        lottieSplash = (LottieAnimationView) findViewById(R.id.lottieSplash);
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        textView.startAnimation(anim);
+        lottieSplash.playAnimation();
+
+        if (firebaseAuth.getUid() != null){
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    lottieSplash.cancelAnimation();
+                    Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            }, 2500);
+        }
+        else {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    lottieSplash.cancelAnimation();
+                    Intent intent = new Intent(SplashScreen.this, SignUp.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            }, 2500);
+        }
+
+
 
     }
 }

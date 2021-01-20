@@ -43,7 +43,7 @@ public class SignUp extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#02AA4E")));
         actionBar.setTitle("Verification");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         etPhoneNumber = (TextInputLayout) findViewById(R.id.etPhoneNumber);
         btnVerify = (Button) findViewById(R.id.btnVerify);

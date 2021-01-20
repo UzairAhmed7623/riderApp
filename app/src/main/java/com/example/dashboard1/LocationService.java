@@ -186,27 +186,41 @@ public class LocationService extends android.app.Service{
         Map<String, Object> user = new HashMap<>();
         user.put("Location", latLng);
 
-        firebaseFirestore.collection("user").document(firebaseAuth.getUid())
-                .set(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
+        documentReference.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG, "DocumentSnapshot successfully written!");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error adding document", e);
 
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+            }
+        });
+
+//        firebaseFirestore.collection("Users").document(firebaseAuth.getUid())
+//                .set(user)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        Log.d(TAG, "DocumentSnapshot successfully written!");
+//
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w(TAG, "Error adding document", e);
+//                    }
+//                });
 
     }
 
     private void uploadHistory(ArrayList<LatLng> latLngs, String time) {
 
-        DocumentReference documentReference = firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time);
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").document(time);
         Map<String, Object> location = new HashMap<>();
         location.put("History", latLngs);
 
@@ -221,7 +235,7 @@ public class LocationService extends android.app.Service{
 
                     }
                     else {
-                        firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time).set(location).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").document(time).set(location).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Log.w(TAG, "Document created Successfully");
@@ -238,7 +252,7 @@ public class LocationService extends android.app.Service{
     private void calculateDistance(String time) {
 
 
-        DocumentReference documentReference = firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time);
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").document(time);
 
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -308,7 +322,7 @@ public class LocationService extends android.app.Service{
         PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_ID)
-                .setSmallIcon(R.drawable.ic_sleep)
+                .setSmallIcon(R.mipmap.launcher_icon_foreground)
                 .setContentTitle("riderApp" + " " + "My Location Points")
                 .setContentText("" + latLng)
                 .setTicker("" + latLng)

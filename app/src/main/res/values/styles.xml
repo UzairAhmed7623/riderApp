@@ -17,8 +17,8 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="CalenderViewCustom" parent="Theme.AppCompat.DayNight">
-        <item name="colorAccent">#00B552</item>
+    <style name="CalenderViewCustom" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorAccent">#02AA4E</item>
     </style>
 
     <style name="CalenderViewDateCustomText" parent="android:TextAppearance.DeviceDefault.Small">

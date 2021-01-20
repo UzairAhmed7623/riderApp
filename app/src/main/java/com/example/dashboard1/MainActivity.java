@@ -143,13 +143,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         isGPSOn();
                     }
                     check = false;
-                    Toast.makeText(instance, "check", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(instance, "check", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     menu.getItem(1).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.location_off));
                     stopLocationService();
                     check = true;
-                    Toast.makeText(instance, "not", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(instance, "not", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void add_Location_Points(ArrayList<LatLng> latLngs, String time) {
 
-        DocumentReference documentReference = firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time);
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").document(time);
         Map<String, Object> location_points = new HashMap<>();
         location_points.put("Location_Points", latLngs);
 
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     }
                     else {
-                        firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").document(time).set(location_points).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").document(time).set(location_points).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Log.w(TAG, "Document created Successfully");

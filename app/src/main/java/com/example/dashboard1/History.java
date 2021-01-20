@@ -6,7 +6,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +42,8 @@ public class History extends AppCompatActivity {
     private DocumentReference documentReference;
     private FirebaseAuth firebaseAuth;
     private ArrayList<String> docList = new ArrayList<>();
+    private LottieAnimationView lottieHistory;
+    private LinearLayout lottieLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +55,18 @@ public class History extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        lottieLayout = (LinearLayout) findViewById(R.id.lottieLayout);
+        lottieHistory = (LottieAnimationView) findViewById(R.id.lottieHistory);
         calHistoryView = (CalendarView)findViewById(R.id.calHistoryView);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("user").document(firebaseAuth.getUid());
 
-        ACProgressFlower dialog = new ACProgressFlower.Builder(this)
-                .direction(ACProgressConstant.DIRECT_CLOCKWISE)
-                .themeColor(Color.WHITE)
-                .text("Please wait...")
-                .fadeColor(ContextCompat.getColor(getApplicationContext(), R.color.myColor))
-                .bgCornerRadius(35)
-                .build();
-        dialog.show();
+        lottieHistory.setVisibility(View.VISIBLE);
+        lottieLayout.setVisibility(View.VISIBLE);
 
-        firebaseFirestore.collection("user").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
@@ -76,9 +77,10 @@ public class History extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                dialog.dismiss();
+                                lottieLayout.setVisibility(View.INVISIBLE);
+                                lottieHistory.setVisibility(View.GONE);
                             }
-                        },3000);
+                        },2500);
                     }
                 }
                 else {
@@ -86,9 +88,11 @@ public class History extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            dialog.dismiss();
+                            lottieLayout.setVisibility(View.INVISIBLE);
+                            lottieHistory.setVisibility(View.GONE);
                         }
-                    },3000);
+                    },2500);
+
                     Log.d("TAG",task.getException().toString());
                     Toast.makeText(History.this, task.getException().toString(), Toast.LENGTH_LONG);
 

@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -19,17 +21,19 @@
         android:roundIcon="@mipmap/launcher_icon_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Password_Creation"></activity>
-        <activity android:name=".VerifyPhoneNumber"></activity>
-        <activity android:name=".SplashScreen">
+        <activity android:name=".Password_Creation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".VerifyPhoneNumber"></activity>
+        <activity android:name=".SplashScreen">
+
+        </activity>
         <activity android:name=".Profile" android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".SignUp" android:parentActivityName=".LoginActivity"></activity>
+        <activity android:name=".SignUp" ></activity>
         <activity android:name=".ForgotPassword"></activity>
         <activity android:name=".ViewHistoryOnMap" android:parentActivityName=".History"></activity>
         <activity android:name=".History" android:label="@string/title_activity_DocumentView" android:parentActivityName=".MainActivity"></activity>

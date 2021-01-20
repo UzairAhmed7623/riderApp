@@ -31,6 +31,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.logging.Logger;
+
 public class LoginActivity extends AppCompatActivity {
 
     private TextView tvForgotPass, tvSignUp;
@@ -83,56 +85,66 @@ public class LoginActivity extends AppCompatActivity {
 
         rememberLogin();
 
-        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()){
-                        String phone = documentSnapshot.getString("Phone");
-                        String pass = documentSnapshot.getString("Pin");
+        if (firebaseAuth.getUid() != null){
+            firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()){
+                            String phone = documentSnapshot.getString("Phone");
+                            String pass = documentSnapshot.getString("Pin");
 
-                        etPhoneNumber.setText(phone);
+                            etPhoneNumber.setText(phone);
 
-                        view.setOnClickListener((View v) -> {
-                            password = etPassword.getText().toString();
+                            view.setOnClickListener((View v) -> {
+                                password = etPassword.getText().toString();
 
-                            if (etPassword.getText().toString().isEmpty()) {
-                                etPassword.setError("Please write your password!");
-                            }
-                            else {
-                                ProgressButton progressButton = new ProgressButton(LoginActivity.this, view);
-                                progressButton.buttonActivated();
-
-                                if (password.equals(pass)) {
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            progressButton.buttonFinishedSuccessfully();
-                                        }
-                                    }, 1000);
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                if (etPassword.getText().toString().isEmpty()) {
+                                    etPassword.setError("Please write your password!");
                                 }
                                 else {
-                                    Toast.makeText(LoginActivity.this, "Wrong Pin!", Toast.LENGTH_SHORT).show();
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            progressButton.buttonFinished();
-                                        }
-                                    }, 1000);
-                                }
-                            }
+                                    ProgressButton progressButton = new ProgressButton(LoginActivity.this, view);
+                                    progressButton.buttonActivated();
 
-                        });
+                                    if (password.equals(pass)) {
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressButton.buttonFinishedSuccessfully();
+                                            }
+                                        }, 1000);
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                    else {
+                                        Toast.makeText(LoginActivity.this, "Wrong Pin!", Toast.LENGTH_SHORT).show();
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressButton.buttonFinished();
+                                            }
+                                        }, 1000);
+                                    }
+                                }
+
+                            });
+                        }
+                        else {
+                            Toast.makeText(LoginActivity.this, "Phone number not found!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+        else {
+            Intent intent = new Intent(LoginActivity.this, SignUp.class);
+            startActivity(intent);
+        }
+
 
     }
 
@@ -145,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
         else if (checkBox1.equals("false")){
-            Toast.makeText(this, "Please Sign In.", Toast.LENGTH_SHORT).show();
+            Log.d("TAG", "Please SignIn.");
         }
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
