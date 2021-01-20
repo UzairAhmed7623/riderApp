@@ -16,6 +16,7 @@
         android:textColor="@android:color/white"
         android:textSize="65dp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
@@ -76,6 +77,8 @@
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/myColor"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
@@ -85,6 +88,7 @@
                 android:paddingStart="45dp"
                 android:hint="@string/prompt_password"
                 android:inputType="numberPassword"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
