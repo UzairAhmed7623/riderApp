@@ -105,49 +105,57 @@ public class Password_Creation extends AppCompatActivity {
                                 lottiePasswordCreation2.setVisibility(View.GONE);
                             }
                         },2500);
-                        HashMap<String, Object> new_User = new HashMap<>();
-                        new_User.put("Phone", phone);
-                        new_User.put("Pin", pin);
 
-                        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(new_User).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        Handler handler1 = new Handler();
+                        handler1.postDelayed(new Runnable() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
+                            public void run() {
+                                HashMap<String, Object> new_User = new HashMap<>();
+                                new_User.put("Phone", phone);
+                                new_User.put("Pin", pin);
 
-                                    lottiePasswordCreation.setVisibility(View.VISIBLE);
-                                    lottieLayoutPassword.setVisibility(View.VISIBLE);
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            lottieLayoutPassword.setVisibility(View.GONE);
-                                            lottiePasswordCreation.setVisibility(View.GONE);
-                                        }
-                                    },2500);
-                                    Handler handler1 = new Handler();
-                                    handler1.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Intent intent = new Intent(Password_Creation.this, LoginActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                        }
-                                    },2500);
-                                }
-                                else {
+                                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(new_User).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
 
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            lottieLayoutPassword2.setVisibility(View.GONE);
-                                            lottiePasswordCreation2.setVisibility(View.GONE);
+                                            lottiePasswordCreation.setVisibility(View.VISIBLE);
+                                            lottieLayoutPassword.setVisibility(View.VISIBLE);
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    lottieLayoutPassword.setVisibility(View.GONE);
+                                                    lottiePasswordCreation.setVisibility(View.GONE);
+                                                }
+                                            },2500);
+                                            Handler handler1 = new Handler();
+                                            handler1.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent intent = new Intent(Password_Creation.this, LoginActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(intent);
+                                                }
+                                            },2500);
                                         }
-                                    },2500);
-                                    Toast.makeText(Password_Creation.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                }
+                                        else {
+
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    lottieLayoutPassword2.setVisibility(View.GONE);
+                                                    lottiePasswordCreation2.setVisibility(View.GONE);
+                                                }
+                                            },2500);
+                                            Toast.makeText(Password_Creation.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
                             }
-                        });
+                        }, 2500);
+
                     }
                     else {
                         lottiePasswordCreation2.setVisibility(View.VISIBLE);

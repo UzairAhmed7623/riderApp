@@ -9,13 +9,14 @@
         android:id="@+id/tvLocationHistoryView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:background="@drawable/signin"
         android:gravity="center"
-        android:paddingLeft="15dp"
         android:text="Date"
+        android:backgroundTint="@color/myColor"
         android:layout_gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="16dp" />
+        android:textSize="16dp"
+        android:layout_margin="5dp"
+        android:padding="5dp"/>
 
 </LinearLayout>

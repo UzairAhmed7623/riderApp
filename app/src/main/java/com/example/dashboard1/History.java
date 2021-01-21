@@ -38,13 +38,11 @@ import cc.cloudist.acplibrary.ACProgressFlower;
 public class History extends AppCompatActivity {
 
     private CalendarView calHistoryView;
-    private RecyclerView rvHistory;
     private FirebaseFirestore firebaseFirestore;
-    private DocumentReference documentReference;
     private FirebaseAuth firebaseAuth;
     private ArrayList<String> docList = new ArrayList<>();
     private LottieAnimationView lottieHistory;
-    private LinearLayout lottieLayout;
+    private LinearLayout lottieLayout_Histoy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +54,15 @@ public class History extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        lottieLayout = (LinearLayout) findViewById(R.id.lottieLayout);
+        lottieLayout_Histoy = (LinearLayout) findViewById(R.id.lottieLayout_Histoy);
         lottieHistory = (LottieAnimationView) findViewById(R.id.lottieHistory);
         calHistoryView = (CalendarView)findViewById(R.id.calHistoryView);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("user").document(firebaseAuth.getUid());
 
         lottieHistory.setVisibility(View.VISIBLE);
-        lottieLayout.setVisibility(View.VISIBLE);
-
-
-
+        lottieLayout_Histoy.setVisibility(View.VISIBLE);
 
         firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -77,11 +71,12 @@ public class History extends AppCompatActivity {
                     for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
                         Log.d("TAG",queryDocumentSnapshot.getId());
                         docList.add(queryDocumentSnapshot.getId());
+
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                lottieLayout.setVisibility(View.GONE);
+                                lottieLayout_Histoy.setVisibility(View.GONE);
                                 lottieHistory.setVisibility(View.GONE);
                             }
                         },2500);
@@ -92,7 +87,7 @@ public class History extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            lottieLayout.setVisibility(View.GONE);
+                            lottieLayout_Histoy.setVisibility(View.GONE);
                             lottieHistory.setVisibility(View.GONE);
                         }
                     },2500);

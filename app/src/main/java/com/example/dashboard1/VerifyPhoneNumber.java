@@ -8,12 +8,15 @@ import androidx.arch.core.executor.TaskExecutor;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
@@ -38,9 +41,9 @@ public class VerifyPhoneNumber extends AppCompatActivity {
     private TextInputLayout etOtp;
     private Button btnVerify;
     private FirebaseAuth firebaseAuth;
-    private ProgressBar progressbar;
     private FirebaseFirestore firebaseFirestore;
-    private String pass;
+    private LottieAnimationView lottie_Verify_Phone;
+    private LinearLayout lottieLayout_Verify_Phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,8 @@ public class VerifyPhoneNumber extends AppCompatActivity {
 
         etOtp = (TextInputLayout) findViewById(R.id.etOtp);
         btnVerify = (Button) findViewById(R.id.btnVerify);
-        progressbar = (ProgressBar) findViewById(R.id.progressbar);
+        lottieLayout_Verify_Phone = (LinearLayout) findViewById(R.id.lottieLayout_Verify_Phone);
+        lottie_Verify_Phone = (LottieAnimationView) findViewById(R.id.lottie_Verify_Phone);
 
         String phone = getIntent().getStringExtra("phone_number");
 
@@ -69,7 +73,9 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                     etOtp.requestFocus();
                     return;
                 }
-                progressbar.setVisibility(View.VISIBLE);
+                lottieLayout_Verify_Phone.setVisibility(View.VISIBLE);
+                lottie_Verify_Phone.setVisibility(View.VISIBLE);
+
                 verifyCode(otp);
             }
         });
@@ -99,17 +105,35 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             String code = phoneAuthCredential.getSmsCode();
             if (code != null){
-                progressbar.setVisibility(View.VISIBLE);
+                lottieLayout_Verify_Phone.setVisibility(View.VISIBLE);
+                lottie_Verify_Phone.setVisibility(View.VISIBLE);
                 verifyCode(code);
             }
         }
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-            Toast.makeText(VerifyPhoneNumber.this, e.getMessage(), Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(VerifyPhoneNumber.this, SignUp.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    lottieLayout_Verify_Phone.setVisibility(View.GONE);
+                    lottie_Verify_Phone.setVisibility(View.GONE);
+                }
+            }, 2500);
+
+            Handler handler1 = new Handler();
+            handler1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(VerifyPhoneNumber.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(VerifyPhoneNumber.this, SignUp.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            }, 2500);
+
         }
     };
 
@@ -124,12 +148,27 @@ public class VerifyPhoneNumber extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
 
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            lottieLayout_Verify_Phone.setVisibility(View.GONE);
+                            lottie_Verify_Phone.setVisibility(View.GONE);
+                        }
+                    }, 2500);
+
                     String ph = task.getResult().getUser().getPhoneNumber();
 
-                    Intent intent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
-                    intent.putExtra("phone", ph);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                    Handler handler1 = new Handler();
+                    handler1.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
+                            intent.putExtra("phone", ph);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        }
+                    }, 2500);
                 }
                 else {
                     Toast.makeText(VerifyPhoneNumber.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
