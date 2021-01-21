@@ -1,5 +1,6 @@
 package com.example.dashboard1;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -11,6 +12,7 @@ import android.text.Spanned;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -39,14 +41,14 @@ import java.util.logging.Logger;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextView tvForgotPass, tvSignUp;
+    private TextView tvForgotPass, tvSignUp, textView, tvInkHornSolution;
     private TextInputLayout etPassword;
-    private TextView etPhoneNumber;
+    private TextView tvPhoneNumber;
     private CheckBox checkBox;
     private Button btnSignIn;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private String phoneNumber, password;
+    private String password;
     private LottieAnimationView lottieLogin;
     private LinearLayout lottieLayoutLogin;
 
@@ -61,7 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        etPhoneNumber = (TextView) findViewById(R.id.etPhoneNumber);
+        tvPhoneNumber = (TextView) findViewById(R.id.tvPhoneNumber);
+        textView = (TextView) findViewById(R.id.textView);
+        tvInkHornSolution = (TextView) findViewById(R.id.tvInkHornSolution);
         etPassword =  (TextInputLayout) findViewById(R.id.etPassword);
         tvSignUp = (TextView)findViewById(R.id.tvSignUp);
         tvForgotPass = (TextView)findViewById(R.id.tvForgotPass);
@@ -87,8 +91,16 @@ public class LoginActivity extends AppCompatActivity {
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, SignUp.class);
-                startActivity(intent);
+                Intent loginIntent = new Intent(LoginActivity.this, SignUp.class);
+
+                Pair[] pair = new Pair[4];
+                pair[0] = new Pair<>(textView, "rider");
+                pair[1] = new Pair<>(tvPhoneNumber, "phone");
+                pair[2] = new Pair<>(btnSignIn, "signVerify");
+                pair[3] = new Pair<>(tvInkHornSolution, "inkhorn");
+
+                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, pair);
+                startActivity(loginIntent, activityOptions.toBundle());
             }
         });
 
@@ -104,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                             String phone = documentSnapshot.getString("Phone");
                             String pass = documentSnapshot.getString("Pin");
 
-                            etPhoneNumber.setText(phone);
+                            tvPhoneNumber.setText(phone);
 
                             btnSignIn.setOnClickListener((View v) -> {
                                 password = etPassword.getEditText().getText().toString();

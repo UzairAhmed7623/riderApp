@@ -10,7 +10,6 @@
     android:background="@drawable/splash_background"
     tools:context=".SplashScreen">
 
-
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieSplash"
         android:layout_width="match_parent"

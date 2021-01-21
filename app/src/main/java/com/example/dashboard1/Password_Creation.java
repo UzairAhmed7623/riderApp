@@ -3,6 +3,7 @@ package com.example.dashboard1;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -34,6 +36,7 @@ import java.util.HashMap;
 
 public class Password_Creation extends AppCompatActivity {
 
+    private TextView textView, tvInkHornSolutionPass;
     private TextInputLayout etPin, etRe_Pin;
     private Button btnSignUp;
     private FirebaseAuth firebaseAuth;
@@ -50,7 +53,9 @@ public class Password_Creation extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        etPin =  (TextInputLayout) findViewById(R.id.etPin);
+        textView = (TextView) findViewById(R.id.textView);
+        tvInkHornSolutionPass = (TextView) findViewById(R.id.tvInkHornSolutionPass);
+        etPin = (TextInputLayout) findViewById(R.id.etPin);
         etRe_Pin = (TextInputLayout) findViewById(R.id.etRe_Pin);
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
         lottieLayoutPassword = (LinearLayout) findViewById(R.id.lottieLayoutPassword);
@@ -134,8 +139,9 @@ public class Password_Creation extends AppCompatActivity {
                                                 @Override
                                                 public void run() {
                                                     Intent intent = new Intent(Password_Creation.this, LoginActivity.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                    startActivity(intent);
+                                                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Password_Creation.this);
+                                                    startActivity(intent, activityOptions.toBundle());
+                                                    finish();
                                                 }
                                             },2500);
                                         }

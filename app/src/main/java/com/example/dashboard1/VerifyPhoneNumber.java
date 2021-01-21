@@ -6,14 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.arch.core.executor.TaskExecutor;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -37,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VerifyPhoneNumber extends AppCompatActivity {
 
+    private TextView textView, tvInkHornSolutionVerify;
     private String verificationCodeBySystem;
     private TextInputLayout etOtp;
     private Button btnVerify;
@@ -55,6 +59,8 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         firebaseAuth = firebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
+        textView = (TextView) findViewById(R.id.textView);
+        tvInkHornSolutionVerify = (TextView) findViewById(R.id.tvInkHornSolutionVerify);
         etOtp = (TextInputLayout) findViewById(R.id.etOtp);
         btnVerify = (Button) findViewById(R.id.btnVerify);
         lottieLayout_Verify_Phone = (LinearLayout) findViewById(R.id.lottieLayout_Verify_Phone);
@@ -163,10 +169,17 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                     handler1.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
-                            intent.putExtra("phone", ph);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
+                            Intent VerifyIntent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
+                            VerifyIntent.putExtra("phone", ph);
+
+                            Pair[] pair = new Pair[4];
+                            pair[0] = new Pair<>(textView, "rider");
+                            pair[1] = new Pair<>(etOtp, "phone");
+                            pair[2] = new Pair<>(btnVerify, "signVerify");
+                            pair[3] = new Pair<>(tvInkHornSolutionVerify, "inkhorn");
+
+                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(VerifyPhoneNumber.this, pair);
+                            startActivity(VerifyIntent, activityOptions.toBundle());
                         }
                     }, 2500);
                 }

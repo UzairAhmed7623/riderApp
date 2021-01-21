@@ -1,14 +1,17 @@
 package com.example.dashboard1;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,6 +35,7 @@ import java.util.HashMap;
 
 public class SignUp extends AppCompatActivity {
 
+    private TextView textView, tvInkHornSolutionSign;
     private TextInputLayout etPhoneNumber;
     private Button btnVerify;
     private FirebaseFirestore firebaseFirestore;
@@ -51,6 +55,8 @@ public class SignUp extends AppCompatActivity {
 //        actionBar.setTitle("Verification");
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        textView = (TextView) findViewById(R.id.textView);
+        tvInkHornSolutionSign = (TextView) findViewById(R.id.tvInkHornSolutionSign);
         etPhoneNumber = (TextInputLayout) findViewById(R.id.etPhoneNumber);
         btnVerify = (Button) findViewById(R.id.btnVerify);
         lottieLayoutSignUp = (LinearLayout) findViewById(R.id.lottieLayoutSignUp);
@@ -113,9 +119,17 @@ public class SignUp extends AppCompatActivity {
                                     handler1.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Intent intent = new Intent(SignUp.this, VerifyPhoneNumber.class);
-                                            intent.putExtra("phone_number", phone_number);
-                                            startActivity(intent);
+                                            Intent SignUpIntent = new Intent(SignUp.this, VerifyPhoneNumber.class);
+                                            SignUpIntent.putExtra("phone_number", phone_number);
+
+                                            Pair[] pair = new Pair[4];
+                                            pair[0] = new Pair<>(textView, "rider");
+                                            pair[1] = new Pair<>(etPhoneNumber, "phone");
+                                            pair[2] = new Pair<>(btnVerify, "signVerify");
+                                            pair[3] = new Pair<>(tvInkHornSolutionSign, "inkhorn");
+
+                                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SignUp.this, pair);
+                                            startActivity(SignUpIntent, activityOptions.toBundle());
                                         }
                                     }, 2500);
                                 }

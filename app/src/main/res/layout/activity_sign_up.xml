@@ -15,14 +15,14 @@
         android:text="Rider"
         android:textColor="@android:color/white"
         android:textSize="65dp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-black"
+        android:fontFamily="@font/futra"
+        android:transitionName="rider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.118" />
+        app:layout_constraintVertical_bias="0.148"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,7 +62,8 @@
                     android:inputType="phone"
                     android:textSize="16dp"
                     android:hint="3012345678"
-                    android:paddingStart="70dp"/>
+                    android:paddingStart="70dp"
+                    android:transitionName="phone" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,6 +102,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
             app:cornerRadius="10dp"
+            android:transitionName="signVerify"
             style="@style/Widget.MaterialComponents.Button" />
 
     </LinearLayout>
@@ -132,6 +134,7 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tvInkHornSolutionSign"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Designed by inkhorn solutions"
@@ -140,6 +143,7 @@
         android:textColor="@android:color/white"
         android:textSize="14dp"
         android:textStyle="bold"
+        android:transitionName="inkhorn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
