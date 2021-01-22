@@ -144,4 +144,10 @@ public class SignUp extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        SplashScreen.getInstance().finish();
+        super.onBackPressed();
+    }
 }

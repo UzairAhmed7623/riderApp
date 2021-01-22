@@ -51,7 +51,12 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private LottieAnimationView lottieLogin;
     private LinearLayout lottieLayoutLogin;
+    private String checkBox1;
+    static LoginActivity loginActivityInstance;
 
+    public static LoginActivity getInstance() {
+        return loginActivityInstance;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         getSupportActionBar().hide();
+
+        loginActivityInstance = this;
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -180,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void rememberLogin(){
         SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
-        String checkBox1 = sharedPreferences.getString("remember", "");
+        checkBox1 = sharedPreferences.getString("remember", "");
         if (checkBox1.equals("true")){
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -198,14 +205,14 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("remember", "true");
                     editor.apply();
-                    Toast.makeText(LoginActivity.this, "Checked", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this, "Checked", Toast.LENGTH_SHORT).show();
                 }
                 else if (!compoundButton.isChecked()){
                     SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("remember", "false");
                     editor.apply();
-                    Toast.makeText(LoginActivity.this, "UnChecked", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this, "UnChecked", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -233,4 +240,9 @@ public class LoginActivity extends AppCompatActivity {
         return spannable;
     }
 
+    @Override
+    public void onBackPressed() {
+        SplashScreen.getInstance().finish();
+        super.onBackPressed();
+    }
 }

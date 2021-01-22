@@ -20,8 +20,6 @@
         app:headerLayout="@layout/navigation_header"
         android:layout_gravity="start">
 
-
-
     </com.google.android.material.navigation.NavigationView>
 
 

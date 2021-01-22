@@ -43,10 +43,12 @@
 
     <group
         android:id="@+id/nav_footer">
+
         <item
             android:id="@+id/nav_log_version"
             app:actionLayout="@layout/navigation_footer"
             tools:ignore="MenuTitle" />
+
 
     </group>
 

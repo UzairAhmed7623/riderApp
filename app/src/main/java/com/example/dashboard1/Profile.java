@@ -42,7 +42,9 @@ public class Profile extends AppCompatActivity {
         String fName = etFirstName.getText().toString().trim();
         String lName = etLastName.getText().toString().trim();
         String email = etEmailAddress.getText().toString().trim();
-        String phone = etPhoneNumber.getText().toString().trim();
+        String phone = etPhoneNumber.getText().toString();
+
+        etPhoneNumber.setText("03047917623");
 
         ivAddImage.setOnClickListener(new View.OnClickListener() {
             @Override

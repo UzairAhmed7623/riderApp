@@ -1,6 +1,8 @@
 package com.example.dashboard1;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -286,6 +288,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         else {
+            LoginActivity.getInstance().finish();
+            SplashScreen.getInstance().finish();
             super.onBackPressed();
         }
     }
@@ -407,7 +411,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         isGPSOn();
-
                     }
 
                     @Override
