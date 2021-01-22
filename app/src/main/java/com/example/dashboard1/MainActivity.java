@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private PendingIntent pendingIntent;
     private Intent intent;
     private BottomSheetDialog bottomSheetDialog;
+    private TextView tvUserName;
 
     public static MainActivity getInstance() {
         return instance;
@@ -98,10 +100,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         instance = this;
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         NavigationView navigation_View = findViewById(R.id.navigation_View);
+        View header_View = navigation_View.getHeaderView(0);
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -110,12 +116,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         toggle.syncState();
         navigation_View.setNavigationItemSelectedListener(this);
 
+        tvUserName = (TextView) header_View.findViewById(R.id.tvUserName);
+        headerTextView();
+
         tvDis = (TextView) findViewById(R.id.tvDis);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);
@@ -279,6 +285,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void calculateDistance(float dis) {
         tvDis.setText(String.valueOf(dis));
+    }
+
+    public void headerTextView(){
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()){
+                        String fuser_Name = documentSnapshot.getString("First Name");
+                        String luser_Name = documentSnapshot.getString("Last Name");
+                        tvUserName.setText(fuser_Name +" "+luser_Name);;
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, "No data found!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Log.d("TAG", task.getException().getMessage());
+                }
+            }
+        });
     }
 
     @Override

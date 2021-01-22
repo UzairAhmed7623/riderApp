@@ -42,8 +42,8 @@ import java.util.logging.Logger;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView tvForgotPass, tvSignUp, textView, tvInkHornSolution;
+    private EditText etPhoneNumber;
     private TextInputLayout etPassword;
-    private TextView tvPhoneNumber;
     private CheckBox checkBox;
     private Button btnSignIn;
     private FirebaseFirestore firebaseFirestore;
@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        tvPhoneNumber = (TextView) findViewById(R.id.tvPhoneNumber);
+        etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
         textView = (TextView) findViewById(R.id.textView);
         tvInkHornSolution = (TextView) findViewById(R.id.tvInkHornSolution);
         etPassword =  (TextInputLayout) findViewById(R.id.etPassword);
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 Pair[] pair = new Pair[4];
                 pair[0] = new Pair<>(textView, "rider");
-                pair[1] = new Pair<>(tvPhoneNumber, "phone");
+                pair[1] = new Pair<>(etPhoneNumber, "phone");
                 pair[2] = new Pair<>(btnSignIn, "signVerify");
                 pair[3] = new Pair<>(tvInkHornSolution, "inkhorn");
 
@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                             String phone = documentSnapshot.getString("Phone");
                             String pass = documentSnapshot.getString("Pin");
 
-                            tvPhoneNumber.setText(phone);
+                            etPhoneNumber.setText(phone);
 
                             btnSignIn.setOnClickListener((View v) -> {
                                 password = etPassword.getEditText().getText().toString();

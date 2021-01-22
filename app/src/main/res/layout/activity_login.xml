@@ -37,42 +37,61 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.819">
 
-        <TextView
-            android:id="@+id/tvPhoneNumber"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:transitionName="phone"
-            android:height="50dp"
-            android:textSize="20dp"
-            android:gravity="fill_vertical"
-            android:background="@drawable/signin"
-            android:foregroundGravity="left"
-            android:drawableLeft="@drawable/phone"
-            android:drawableTint="@color/myColor"
-            android:drawablePadding="5dp"
-            android:inputType="phone"
-            android:textColor="#9A4C4C4C"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.472" />
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:id="@+id/etPhoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="45dp"
+                android:inputType="phone"
+                android:enabled="false"
+                android:transitionName="phone"
+                android:hint="Phone number"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.584" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/phone"
+            android:backgroundTint="@color/myColor"
+            android:layout_marginStart="30dp" />
+
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp">
+            android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusBottomEnd="10dp"
@@ -103,6 +122,7 @@
                 android:paddingStart="10dp"
                 android:background="@drawable/ic_round_lock_24"
                 android:backgroundTint="@color/myColor"
+                android:layout_marginTop="2dp"
                 android:layout_marginStart="30dp" />
 
         </FrameLayout>
