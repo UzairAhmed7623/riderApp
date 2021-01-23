@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextView tvForgotPass, tvSignUp, textView, tvInkHornSolution;
+    private TextView tvForgotPass, textView, tvInkHornSolution;
     private EditText etPhoneNumber;
     private TextInputLayout etPassword;
     private CheckBox checkBox;
@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.textView);
         tvInkHornSolution = (TextView) findViewById(R.id.tvInkHornSolution);
         etPassword = (TextInputLayout) findViewById(R.id.etPassword);
-        tvSignUp = (TextView) findViewById(R.id.tvSignUp);
         tvForgotPass = (TextView) findViewById(R.id.tvForgotPass);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
         checkBox = (CheckBox) findViewById(R.id.checkbox);
@@ -85,9 +84,6 @@ public class LoginActivity extends AppCompatActivity {
         String forgotPass = "Forgot password?";
         tvForgotPass.setText(boldSignUptext(forgotPass));
 
-        String signup = "Don't have an account? SignUp";
-        tvSignUp.setText(boldSignUptext(signup));
-
         tvForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,21 +92,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        tvSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent loginIntent = new Intent(LoginActivity.this, SignUp.class);
-
-                Pair[] pair = new Pair[4];
-                pair[0] = new Pair<>(textView, "rider");
-                pair[1] = new Pair<>(etPhoneNumber, "phone");
-                pair[2] = new Pair<>(btnSignIn, "signVerify");
-                pair[3] = new Pair<>(tvInkHornSolution, "inkhorn");
-
-                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, pair);
-                startActivity(loginIntent, activityOptions.toBundle());
-            }
-        });
+//        tvSignUp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent loginIntent = new Intent(LoginActivity.this, SignUp.class);
+//
+//                Pair[] pair = new Pair[4];
+//                pair[0] = new Pair<>(textView, "rider");
+//                pair[1] = new Pair<>(etPhoneNumber, "phone");
+//                pair[2] = new Pair<>(btnSignIn, "signVerify");
+//                pair[3] = new Pair<>(tvInkHornSolution, "inkhorn");
+//
+//                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, pair);
+//                startActivity(loginIntent, activityOptions.toBundle());
+//            }
+//        });
 
         rememberLogin();
 
@@ -174,13 +170,14 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
-        } else {
+        }
+        else {
             Intent intent = new Intent(LoginActivity.this, SignUp.class);
             startActivity(intent);
         }
     }
 
-        public void rememberLogin(){
+    public void rememberLogin(){
         SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
         checkBox1 = sharedPreferences.getString("remember", "");
         if (checkBox1.equals("true")){

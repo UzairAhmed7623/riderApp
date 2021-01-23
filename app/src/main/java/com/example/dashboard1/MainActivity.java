@@ -144,9 +144,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (task.isSuccessful()){
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()){
-                        String fuser_Name = documentSnapshot.getString("First Name");
-                        String luser_Name = documentSnapshot.getString("Last Name");
-                        tvUserName.setText(fuser_Name +" "+luser_Name);;
+                        if (documentSnapshot.getString("First Name") != null && documentSnapshot.getString("Last Name") != null){
+                            String fuser_Name = documentSnapshot.getString("First Name");
+                            String luser_Name = documentSnapshot.getString("Last Name");
+                            tvUserName.setText(fuser_Name +" "+luser_Name);
+                        }
+                        else {
+                            Log.d("TAG", "No data found!");
+                        }
                     }
                     else {
                         Toast.makeText(MainActivity.this, "No data found!", Toast.LENGTH_SHORT).show();
@@ -167,9 +172,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (task.isSuccessful()){
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()){
-                        String imageUri = documentSnapshot.getString("imageProfile");
-                        Glide.with(MainActivity.this).load(imageUri).into(ivProfilePic);
-
+                        if (documentSnapshot.getString("imageProfile") != null){
+                            String imageUri = documentSnapshot.getString("imageProfile");
+                            Glide.with(MainActivity.this).load(imageUri).into(ivProfilePic);
+                        }
+                        else {
+                            Log.d("TAG", "Not found!");
+                        }
                     }
                     else {
                         Log.d("TAG", "No data found!");
