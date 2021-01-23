@@ -1,6 +1,7 @@
 package com.example.dashboard1;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlarmManager;
@@ -15,6 +16,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -68,6 +71,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private static final float MINIMUM_DISTANCE_BETWEEN_POINTS = 1; // If the user hasn't moved at least 10 meters, we will not take the location into account
@@ -88,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Intent intent;
     private BottomSheetDialog bottomSheetDialog;
     private TextView tvUserName;
+    private CircleImageView ivProfilePic;
 
     public static MainActivity getInstance() {
         return instance;
@@ -119,12 +125,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tvUserName = (TextView) header_View.findViewById(R.id.tvUserName);
         headerTextView();
 
+        ivProfilePic = (CircleImageView) header_View.findViewById(R.id.ivProfilePic);
+        headerImage();
+
         tvDis = (TextView) findViewById(R.id.tvDis);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);
+    }
+
+    public void headerTextView(){
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()){
+                        String fuser_Name = documentSnapshot.getString("First Name");
+                        String luser_Name = documentSnapshot.getString("Last Name");
+                        tvUserName.setText(fuser_Name +" "+luser_Name);;
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, "No data found!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Log.d("TAG", task.getException().getMessage());
+                }
+            }
+        });
+    }
+
+    public void headerImage(){
+        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()){
+                        String imageUri = documentSnapshot.getString("imageProfile");
+                        Glide.with(MainActivity.this).load(imageUri).into(ivProfilePic);
+
+                    }
+                    else {
+                        Log.d("TAG", "No data found!");
+                    }
+                }
+                else {
+                    Log.d("TAG", task.getException().getMessage());
+                }
+            }
+        });
     }
 
     private void isGPSOn() {
@@ -176,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    @SuppressLint("ShortAlarm")
     private void startLocationService() {
 
         alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
@@ -285,29 +341,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void calculateDistance(float dis) {
         tvDis.setText(String.valueOf(dis));
-    }
-
-    public void headerTextView(){
-        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()){
-                        String fuser_Name = documentSnapshot.getString("First Name");
-                        String luser_Name = documentSnapshot.getString("Last Name");
-                        tvUserName.setText(fuser_Name +" "+luser_Name);;
-                    }
-                    else {
-                        Toast.makeText(MainActivity.this, "No data found!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Log.d("TAG", task.getException().getMessage());
-                }
-            }
-        });
     }
 
     @Override
@@ -435,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 break;
 
-            case R.id.location:
+            case R.id.startLocation:
                 Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {

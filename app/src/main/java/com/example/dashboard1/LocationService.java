@@ -3,6 +3,7 @@ package com.example.dashboard1;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -105,11 +106,6 @@ public class LocationService extends android.app.Service{
 //                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                    startActivity(dialogIntent);
 
-
-                    if (isRunning(getApplicationContext())){
-                        MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
-                    }
-
                     if (latLngs == null) {
                         latLngs = new ArrayList<LatLng>();
                     }
@@ -118,6 +114,10 @@ public class LocationService extends android.app.Service{
                     uploadHistory(latLngs, time);
 
                     calculateDistance(time);
+
+                    if (isRunning(getApplicationContext())){
+                        MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
+                    }
 
                     if (serviceIsRunningInForeground(LocationService.this)) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -147,14 +147,15 @@ public class LocationService extends android.app.Service{
 
         getLocationUpdates();
 
-        boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
-                false);
+
+
+        boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION, false);
         if (startedFromNotification) {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
             stopSelf();
         }
 
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     private void getLocationUpdates() {
@@ -178,8 +179,6 @@ public class LocationService extends android.app.Service{
     }
 
     public void uploadFirebase(double latitude, double longitude){
-//        String[] Lat = String.valueOf(latitude).split("\\s,\\s");
-//        String[] Lng = String.valueOf(longitude).split("\\s,\\s");
 
         LatLng latLng = new LatLng(latitude,longitude);
 

@@ -1,5 +1,6 @@
 package com.example.dashboard1;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
@@ -22,8 +23,10 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.Query;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,6 +35,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.Queue;
 
 public class SignUp extends AppCompatActivity {
 
@@ -39,10 +43,10 @@ public class SignUp extends AppCompatActivity {
     private TextInputLayout etPhoneNumber;
     private Button btnVerify;
     private FirebaseFirestore firebaseFirestore;
-    private DocumentReference documentReference;
     private FirebaseAuth firebaseAuth;
     private LottieAnimationView lottieSignUp;
     private LinearLayout lottieLayoutSignUp;
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +68,6 @@ public class SignUp extends AppCompatActivity {
 
         firebaseAuth = firebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        documentReference = firebaseFirestore.collection("Users").document();
 
         btnVerify.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,13 +76,15 @@ public class SignUp extends AppCompatActivity {
                 String phone_number = "+92" + etPhoneNumber.getEditText().getText().toString();
 
                 if (etPhoneNumber.getEditText().getText().toString().isEmpty() || etPhoneNumber.getEditText().getText().toString().length() < 10) {
-                    etPhoneNumber.setError("Please write a valid phone!");
+                    Snackbar.make(findViewById(android.R.id.content), "Please write a valid phone number!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                 }
 
                 else {
 
                     lottieLayoutSignUp.setVisibility(View.VISIBLE);
                     lottieSignUp.setVisibility(View.VISIBLE);
+
+                    if (firebaseAuth.getUid() != null) {
 
                     firebaseFirestore.collection("Users").whereEqualTo("Phone", phone_number).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -97,48 +102,43 @@ public class SignUp extends AppCompatActivity {
                                         }
                                     }, 2500);
 
-                                    Handler handler1 = new Handler();
-                                    handler1.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            etPhoneNumber.setError("Phone number already registered!");
-                                        }
-                                    }, 2500);
+                                    Snackbar.make(findViewById(android.R.id.content), "Phone number already registered!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                                 }
-                                else {
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            lottieLayoutSignUp.setVisibility(View.GONE);
-                                            lottieSignUp.setVisibility(View.GONE);
-                                        }
-                                    }, 2500);
-
-                                    Handler handler1 = new Handler();
-                                    handler1.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Intent SignUpIntent = new Intent(SignUp.this, VerifyPhoneNumber.class);
-                                            SignUpIntent.putExtra("phone_number", phone_number);
-
-                                            Pair[] pair = new Pair[4];
-                                            pair[0] = new Pair<>(textView, "rider");
-                                            pair[1] = new Pair<>(etPhoneNumber, "phone");
-                                            pair[2] = new Pair<>(btnVerify, "signVerify");
-                                            pair[3] = new Pair<>(tvInkHornSolutionSign, "inkhorn");
-
-                                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SignUp.this, pair);
-                                            startActivity(SignUpIntent, activityOptions.toBundle());
-                                        }
-                                    }, 2500);
-                                }
-                            }
-                            else {
-                                Toast.makeText(SignUp.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            } else {
+                                Snackbar.make(findViewById(android.R.id.content), task.getException().getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                             }
                         }
                     });
+                }
+                    else {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                lottieLayoutSignUp.setVisibility(View.GONE);
+                                lottieSignUp.setVisibility(View.GONE);
+                            }
+                        }, 2500);
+
+                        Handler handler1 = new Handler();
+                        handler1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent SignUpIntent = new Intent(SignUp.this, VerifyPhoneNumber.class);
+                                SignUpIntent.putExtra("phone_number", phone_number);
+
+                                Pair[] pair = new Pair[4];
+                                pair[0] = new Pair<>(textView, "rider");
+                                pair[1] = new Pair<>(etPhoneNumber, "phone");
+                                pair[2] = new Pair<>(btnVerify, "signVerify");
+                                pair[3] = new Pair<>(tvInkHornSolutionSign, "inkhorn");
+
+                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SignUp.this, pair);
+                                startActivity(SignUpIntent, activityOptions.toBundle());
+                            }
+                        }, 2500);
+                    }
+
                 }
 
             }

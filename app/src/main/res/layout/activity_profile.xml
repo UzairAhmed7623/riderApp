@@ -13,8 +13,8 @@
         android:layout_height="150dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:scrollY="5dp"
-        android:background="@drawable/circle_image"
+        app:civ_border_color="@color/myColor"
+        app:civ_border_width="2dp"
         android:src="@drawable/image_place_holder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,15 +27,12 @@
         android:id="@+id/ivAddImage"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="125dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginBottom="5dp"
-        android:background="@android:color/white"
+        android:layout_marginEnd="4.5dp"
+        android:background="@android:color/transparent"
         android:src="@drawable/add_image"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfile"
         app:layout_constraintCircleRadius="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/ivProfile"
-        app:layout_constraintTop_toTopOf="@+id/ivProfile" />
+        app:layout_constraintEnd_toEndOf="@+id/ivProfile" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"

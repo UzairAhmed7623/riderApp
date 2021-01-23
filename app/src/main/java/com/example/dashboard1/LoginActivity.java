@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout lottieLayoutLogin;
     private String checkBox1;
     static LoginActivity loginActivityInstance;
+    String phone, pin;
 
     public static LoginActivity getInstance() {
         return loginActivityInstance;
@@ -73,9 +74,9 @@ public class LoginActivity extends AppCompatActivity {
         etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
         textView = (TextView) findViewById(R.id.textView);
         tvInkHornSolution = (TextView) findViewById(R.id.tvInkHornSolution);
-        etPassword =  (TextInputLayout) findViewById(R.id.etPassword);
-        tvSignUp = (TextView)findViewById(R.id.tvSignUp);
-        tvForgotPass = (TextView)findViewById(R.id.tvForgotPass);
+        etPassword = (TextInputLayout) findViewById(R.id.etPassword);
+        tvSignUp = (TextView) findViewById(R.id.tvSignUp);
+        tvForgotPass = (TextView) findViewById(R.id.tvForgotPass);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
         checkBox = (CheckBox) findViewById(R.id.checkbox);
         lottieLayoutLogin = (LinearLayout) findViewById(R.id.lottieLayoutLogin);
@@ -113,13 +114,13 @@ public class LoginActivity extends AppCompatActivity {
 
         rememberLogin();
 
-        if (firebaseAuth.getUid() != null){
+        if (firebaseAuth.getUid() != null) {
             firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
-                        if (documentSnapshot.exists()){
+                        if (documentSnapshot.exists()) {
                             String phone = documentSnapshot.getString("Phone");
                             String pass = documentSnapshot.getString("Pin");
 
@@ -130,8 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 if (etPassword.getEditText().getText().toString().isEmpty()) {
                                     Toast.makeText(LoginActivity.this, "Please write your pin!", Toast.LENGTH_SHORT).show();
-                                }
-                                else {
+                                } else {
                                     lottieLayoutLogin.setVisibility(View.VISIBLE);
                                     lottieLogin.setVisibility(View.VISIBLE);
 
@@ -154,8 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 finish();
                                             }
                                         }, 2500);
-                                    }
-                                    else {
+                                    } else {
                                         Handler handler = new Handler();
                                         handler.postDelayed(new Runnable() {
                                             @Override
@@ -169,23 +168,19 @@ public class LoginActivity extends AppCompatActivity {
                                 }
 
                             });
-                        }
-                        else {
+                        } else {
                             Toast.makeText(LoginActivity.this, "Phone number not found!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             });
-        }
-        else {
+        } else {
             Intent intent = new Intent(LoginActivity.this, SignUp.class);
             startActivity(intent);
         }
-
-
     }
 
-    public void rememberLogin(){
+        public void rememberLogin(){
         SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
         checkBox1 = sharedPreferences.getString("remember", "");
         if (checkBox1.equals("true")){

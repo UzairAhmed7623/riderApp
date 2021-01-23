@@ -23,6 +23,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -165,23 +167,51 @@ public class VerifyPhoneNumber extends AppCompatActivity {
 
                     String ph = task.getResult().getUser().getPhoneNumber();
 
-                    Handler handler1 = new Handler();
-                    handler1.postDelayed(new Runnable() {
+                    firebaseFirestore.collection("Users").whereEqualTo("Phone", ph).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
-                        public void run() {
-                            Intent VerifyIntent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
-                            VerifyIntent.putExtra("phone", ph);
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                            Pair[] pair = new Pair[4];
-                            pair[0] = new Pair<>(textView, "rider");
-                            pair[1] = new Pair<>(etOtp, "phone");
-                            pair[2] = new Pair<>(btnVerify, "signVerify");
-                            pair[3] = new Pair<>(tvInkHornSolutionVerify, "inkhorn");
+                            if (task.isSuccessful()) {
+                                if (task.getResult().size() > 0) {
 
-                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(VerifyPhoneNumber.this, pair);
-                            startActivity(VerifyIntent, activityOptions.toBundle());
+                                    Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            lottieLayout_Verify_Phone.setVisibility(View.GONE);
+                                            lottie_Verify_Phone.setVisibility(View.GONE);
+                                        }
+                                    }, 2500);
+
+                                    Intent intent = new Intent(VerifyPhoneNumber.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else {
+                                    Handler handler1 = new Handler();
+                                    handler1.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Intent VerifyIntent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
+                                            VerifyIntent.putExtra("phone", ph);
+
+                                            Pair[] pair = new Pair[4];
+                                            pair[0] = new Pair<>(textView, "rider");
+                                            pair[1] = new Pair<>(etOtp, "phone");
+                                            pair[2] = new Pair<>(btnVerify, "signVerify");
+                                            pair[3] = new Pair<>(tvInkHornSolutionVerify, "inkhorn");
+
+                                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(VerifyPhoneNumber.this, pair);
+                                            startActivity(VerifyIntent, activityOptions.toBundle());
+                                        }
+                                    }, 2500);
+                                }
+                            }
+                            else {
+                                Snackbar.make(findViewById(android.R.id.content), task.getException().getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
+                            }
                         }
-                    }, 2500);
+                    });
                 }
                 else {
                     Toast.makeText(VerifyPhoneNumber.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();

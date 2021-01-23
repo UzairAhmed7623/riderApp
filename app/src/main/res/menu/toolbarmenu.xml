@@ -9,7 +9,7 @@
         android:title="Add location" />
 
     <item
-        android:id="@+id/location"
+        android:id="@+id/startLocation"
         app:showAsAction="ifRoom"
         android:icon="@drawable/location_off"
         android:title="location" />
