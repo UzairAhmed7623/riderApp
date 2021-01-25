@@ -51,8 +51,7 @@ public class History extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#02AA4E")));
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         lottieLayout_Histoy = (LinearLayout) findViewById(R.id.lottieLayout_Histoy);
         lottieHistory = (LottieAnimationView) findViewById(R.id.lottieHistory);
@@ -63,6 +62,8 @@ public class History extends AppCompatActivity {
 
         lottieHistory.setVisibility(View.VISIBLE);
         lottieLayout_Histoy.setVisibility(View.VISIBLE);
+
+        calHistoryView.setEnabled(false);
 
         firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -78,6 +79,8 @@ public class History extends AppCompatActivity {
                             public void run() {
                                 lottieLayout_Histoy.setVisibility(View.GONE);
                                 lottieHistory.setVisibility(View.GONE);
+                                calHistoryView.setEnabled(true);
+                                setCalHistoryView();
                             }
                         },2500);
                     }
@@ -89,6 +92,7 @@ public class History extends AppCompatActivity {
                         public void run() {
                             lottieLayout_Histoy.setVisibility(View.GONE);
                             lottieHistory.setVisibility(View.GONE);
+                            calHistoryView.setEnabled(true);
                         }
                     },2500);
 
@@ -99,6 +103,12 @@ public class History extends AppCompatActivity {
             }
         });
 
+
+
+
+    }
+
+    public void setCalHistoryView(){
         calHistoryView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
@@ -113,6 +123,7 @@ public class History extends AppCompatActivity {
                     Intent intent = new Intent(History.this, ViewHistoryOnMap.class);
                     intent.putExtra("doc", date);
                     startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
                 else {
                     Log.d("LocationDate1","Not matched");
@@ -121,7 +132,6 @@ public class History extends AppCompatActivity {
 
             }
         });
-
     }
 
     public String getDateFormat(int year, int month, int dayOfMonth){

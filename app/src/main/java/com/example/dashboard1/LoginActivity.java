@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout lottieLayoutLogin;
     private String checkBox1;
     static LoginActivity loginActivityInstance;
-    String phone, pin;
 
     public static LoginActivity getInstance() {
         return loginActivityInstance;
@@ -89,24 +88,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
-
-//        tvSignUp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent loginIntent = new Intent(LoginActivity.this, SignUp.class);
-//
-//                Pair[] pair = new Pair[4];
-//                pair[0] = new Pair<>(textView, "rider");
-//                pair[1] = new Pair<>(etPhoneNumber, "phone");
-//                pair[2] = new Pair<>(btnSignIn, "signVerify");
-//                pair[3] = new Pair<>(tvInkHornSolution, "inkhorn");
-//
-//                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, pair);
-//                startActivity(loginIntent, activityOptions.toBundle());
-//            }
-//        });
 
         rememberLogin();
 
@@ -131,6 +115,9 @@ public class LoginActivity extends AppCompatActivity {
                                     lottieLayoutLogin.setVisibility(View.VISIBLE);
                                     lottieLogin.setVisibility(View.VISIBLE);
 
+                                    tvForgotPass.setEnabled(false); etPhoneNumber.setEnabled(false); etPassword.setEnabled(false); checkBox.setEnabled(false); btnSignIn.setEnabled(false);
+
+
                                     if (password.equals(pass)) {
                                         Handler handler = new Handler();
                                         handler.postDelayed(new Runnable() {
@@ -138,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                                             public void run() {
                                                 lottieLayoutLogin.setVisibility(View.GONE);
                                                 lottieLogin.setVisibility(View.GONE);
+                                                tvForgotPass.setEnabled(true); etPhoneNumber.setEnabled(true); etPassword.setEnabled(true); checkBox.setEnabled(true); btnSignIn.setEnabled(true);
                                             }
                                         }, 2500);
 
@@ -148,15 +136,18 @@ public class LoginActivity extends AppCompatActivity {
                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                 startActivity(intent);
                                                 finish();
+                                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                             }
                                         }, 2500);
-                                    } else {
+                                    }
+                                    else {
                                         Handler handler = new Handler();
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
                                                 lottieLayoutLogin.setVisibility(View.GONE);
                                                 lottieLogin.setVisibility(View.GONE);
+                                                tvForgotPass.setEnabled(true); etPhoneNumber.setEnabled(true); etPassword.setEnabled(true); checkBox.setEnabled(true); btnSignIn.setEnabled(true);
                                             }
                                         }, 2500);
                                         Toast.makeText(LoginActivity.this, "Wrong Pin!", Toast.LENGTH_SHORT).show();
@@ -165,6 +156,15 @@ public class LoginActivity extends AppCompatActivity {
 
                             });
                         } else {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lottieLayoutLogin.setVisibility(View.GONE);
+                                    lottieLogin.setVisibility(View.GONE);
+                                    tvForgotPass.setEnabled(true); etPhoneNumber.setEnabled(true); etPassword.setEnabled(true); checkBox.setEnabled(true); btnSignIn.setEnabled(true);
+                                }
+                            }, 2500);
                             Toast.makeText(LoginActivity.this, "Phone number not found!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -174,6 +174,8 @@ public class LoginActivity extends AppCompatActivity {
         else {
             Intent intent = new Intent(LoginActivity.this, SignUp.class);
             startActivity(intent);
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 
@@ -184,6 +186,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
         else if (checkBox1.equals("false")){
             Log.d("TAG", "Please SignIn.");
@@ -230,11 +233,5 @@ public class LoginActivity extends AppCompatActivity {
             spannable.setSpan(underlineSpan, 23, 29, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         return spannable;
-    }
-
-    @Override
-    public void onBackPressed() {
-        SplashScreen.getInstance().finish();
-        super.onBackPressed();
     }
 }

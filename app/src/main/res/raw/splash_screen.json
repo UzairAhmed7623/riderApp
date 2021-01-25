@@ -1,1 +1,3089 @@
-{"v":"5.7.5","fr":29.9700012207031,"ip":0,"op":90.0000036657751,"w":1080,"h":1920,"nm":"rider","ddd":0,"assets":[{"id":"image_0","w":500,"h":500,"u":"","p":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0BAMAAAA5+MK5AAAAJHpUWHRDcmVhdG9yAAAImXNMyU9KVXBMK0ktUnBNS0tNLikGAEF6Bs5qehXFAAAACXBIWXMAAAABAAAAAQBPJcTWAAAAD1BMVEVHcEz///////////////8T4DEaAAAABHRSTlMAN4DLpYIW/AAABC1JREFUeNrt3YltG0kUBNA5FABXOwHINgOQDQYgUp1/TLuCYPiiJM4MdoH+9V4GBVZ3/+bwGAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA/9h4iI0+PcRGnx9joy9PsdGPl9jop9joY2uxG3xrqVv8XWupW/yxtXPqLtda6D737y6Xus/NL9Ez97nlJXrmPHd8iX6JXeqZi316jf6QutQzT/bja/Tn2KXe2iF1qSeO8cv36HnH2+l79Ba71POOt/lH9HPqUs873n4s9bTjbfopedjtbfk5etbxdvw5elTjx1+SRw1086/Rz7F9Tzrefut70kA3/x49p/HL79FzGt9aauOnP6M/pfY9p/GnP6OHDHRX+p4y0C3Xol9i+57R+Kt9z2j83fXoCY0/Xo8e0PjxjeQBjZ/fin6O7Xv9pzBv9r3+FWZ+O/o5tu/VrzDv9L164+f3op9T+1698a2lNn5+P/pT2lU9o/Gn96MXvsJMHyQv3Pjlo+iX2L7XbfyHfa97aV8+jn6J7XvVxt/Q96qNX26Jfonte83GjzclL9n4u9uiV7y0H2+L3mL7XvHSfndr9HNs3+td2m/ue73Gz7dHP6f2vV7j2wqH1L5Xe5tqWRO91hXm1FIbP61KXuoKs6yLfonte6UrzLgyeaGBbl4bvc5Ad1wbvc5A11arcrxN66NXOd7u1ke/pC71MsfbuCF5keNt2hK9xu1t2RL9ErvUayz2TUu9xmKftkV/TF3qNRb7tqVeYoxvGx1Sl3qFfW7eGv2custV2OeOW6M/x+5y/e9z0/boD6m7XP+Xt2V79HPqLtf/PnfaHr3ze+u4I3nnW/y0J3rfW/y8J3rfV/ZlT/S+t/jjnuh9T/F7NvjOT7e2S+zZ1vfpNu2L3vPpNu+L3vPpdpcbfdkX/Sk3es8zzXFf9IvoccNc3+NccPTWYifZ3Ojj3ugH0UUXXXTRRRdd9P6nOdEDb249X19ET4y+8w2q59zoPb83t+RG3/n0pef34Xc+c3vqOPrOJ62PudEfOo4+BEc/pU40Ow/2vj9GtKQe6zsP9r4/Mhj8QdHgjwcPsRv8ri2+9y+6BX/3ZY5d6nv2uUPn0bePssHfae3/m8xz6lLf8dxt6N8pdalvPtkfC0SfQo+2zY2v8RtUS2rfNza+RN83Nb7KDyzOqX3fMtXU+R3ZJW9+37zRHcpEX3t9q/QfIGPapW3ry17rvyDG2Bd91SZf7v+tbh7png/Vok9pg9z6ypf8y85T2jSzsvKPQ0k33OC+DkX9HbnQX32JTf7BQHs5VI7+3uv+bSjuS2zyYbi/Pr5+GgKMVxb85yHE/a+D3fPnw5Dj/sv39M/fPg1pxr9eHAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4H/wD8TdTWSBNluMAAAAASUVORK5CYII=","e":1},{"id":"image_1","w":500,"h":500,"u":"","p":"data:image/png;base64,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","e":1}],"fonts":{"list":[{"fName":"FuturaNDAlt-Bold","fFamily":"FuturaNDAlt-Bold","fStyle":"?","ascent":83.008657226339}]},"layers":[{"ddd":0,"ind":1,"ty":5,"nm":"Rider","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.112],"y":[1]},"o":{"x":[0],"y":[0]},"t":0,"s":[0]},{"t":25.8000010508555,"s":[100]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[544.585,971.005,0],"ix":2,"l":2},"a":{"a":0,"k":[116,-24,0],"ix":1,"l":2},"s":{"a":1,"k":[{"i":{"x":[0.112,0.112,0.667],"y":[1,1,1]},"o":{"x":[0,0,0.333],"y":[0,0,0]},"t":0,"s":[37,37,100]},{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[1,1,0.333],"y":[0,0,0]},"t":25.8,"s":[332,332,100]},{"i":{"x":[0.162,0.162,0.833],"y":[1,1,1]},"o":{"x":[0,0,0.167],"y":[0,0,0]},"t":43,"s":[220,220,100]},{"t":52.0000021180034,"s":[291,291,100]}],"ix":6,"l":2}},"ao":0,"t":{"d":{"k":[{"s":{"s":68,"f":"FuturaNDAlt-Bold","t":"Rider","ca":0,"j":0,"tr":120,"lh":81.6,"ls":0,"fc":[1,1,1],"sc":[1,1,1],"sw":0.00999999977648,"of":true},"t":0}]},"p":{},"m":{"g":1,"a":{"a":0,"k":[0,0],"ix":2}},"a":[]},"ip":0,"op":90.0000036657751,"st":0,"bm":0},{"ddd":0,"ind":3,"ty":2,"nm":"drop.png","cl":"png","refId":"image_0","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0],"y":[1]},"o":{"x":[0.252],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.753],"y":[1]},"o":{"x":[1],"y":[0]},"t":15,"s":[100]},{"t":29.0000011811942,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.03,"y":1},"o":{"x":0.2,"y":0},"t":0,"s":[555,1240,0],"to":[0,32.333,0],"ti":[0,-32.333,0]},{"t":30.0000012219251,"s":[555,1434,0]}],"ix":2,"l":2},"a":{"a":0,"k":[250,250,0],"ix":1,"l":2},"s":{"a":0,"k":[18.8,18.8,100],"ix":6,"l":2}},"ao":0,"ip":0,"op":90.0000036657751,"st":0,"bm":0},{"ddd":0,"ind":4,"ty":2,"nm":"bike12.png","cl":"png","refId":"image_1","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.593],"y":[0]},"t":10,"s":[0]},{"t":44.0000017921567,"s":[100]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[540,1518,0],"ix":2,"l":2},"a":{"a":0,"k":[250,250,0],"ix":1,"l":2},"s":{"a":0,"k":[61.6,61.6,100],"ix":6,"l":2}},"ao":0,"hasMask":true,"masksProperties":[{"inv":false,"mode":"a","pt":{"a":1,"k":[{"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":10,"s":[{"i":[[201.299,-113.636],[0,0],[0,0],[-205.357,111.201],[0,0],[0,0]],"o":[[-201.299,113.636],[0,0],[0,0],[205.357,-111.201],[0,0],[0,0]],"v":[[252.435,55.195],[-97.403,113.636],[-99.026,128.247],[258.117,114.448],[642.045,129.87],[646.916,118.506]],"c":true}]},{"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":23.334,"s":[{"i":[[201.299,-113.636],[0,0],[0,0],[-205.357,111.201],[0,0],[0,0]],"o":[[-201.299,113.636],[0,0],[0,0],[205.357,-111.201],[0,0],[0,0]],"v":[[256.494,66.558],[-97.403,113.636],[-97.403,215.909],[259.74,230.519],[646.916,251.623],[646.916,118.506]],"c":true}]},{"i":{"x":0.667,"y":1},"o":{"x":0.333,"y":0},"t":36.666,"s":[{"i":[[201.299,-113.636],[0,0],[0,0],[-206.305,-109.432],[0,0],[0,0]],"o":[[-201.299,113.636],[0,0],[0,0],[186.688,99.026],[0,0],[0,0]],"v":[[256.494,66.558],[-97.403,113.636],[-97.403,376.623],[253.247,361.201],[646.915,312.5],[646.916,118.506]],"c":true}]},{"t":50.0000020365418,"s":[{"i":[[201.299,-113.636],[0,0],[0,0],[-236.185,-155.292],[0,0],[0,0]],"o":[[-201.299,113.636],[0,0],[0,0],[324.676,213.475],[0,0],[0,0]],"v":[[256.494,66.558],[-97.403,113.636],[-97.403,616.071],[253.246,507.304],[646.915,603.085],[646.916,118.506]],"c":true}]}],"ix":1},"o":{"a":0,"k":100,"ix":3},"x":{"a":0,"k":0,"ix":4},"nm":"Mask 1"}],"ip":0,"op":90.0000036657751,"st":0,"bm":0}],"markers":[],"chars":[{"ch":"R","size":68,"style":"?","w":70.9,"data":{"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-2.067,-1.633],[0,-2.933],[2.066,-1.633],[3.866,0],[0,0],[0,0]],"o":[[3.866,0],[2.066,1.634],[0,2.934],[-2.067,1.634],[0,0],[0,0],[0,0]],"v":[[31.2,-60.3],[40.1,-57.85],[43.2,-51],[40.1,-44.15],[31.2,-41.7],[27.5,-41.7],[27.5,-60.3]],"c":true},"ix":2},"nm":"R","mn":"ADBE Vector Shape - Group","hd":false},{"ind":1,"ty":"sh","ix":2,"ks":{"a":0,"k":{"i":[[0,11.6],[4.3,4.4],[8,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],"o":[[0,-6.733],[-4.3,-4.4],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[10.933,-2.533]],"v":[[63.3,-52.1],[56.85,-68.8],[38.4,-75.4],[7.9,-75.4],[7.9,0],[27.5,0],[27.5,-29],[46.2,0],[70.6,0],[46.9,-30.9]],"c":true},"ix":2},"nm":"R","mn":"ADBE Vector Shape - Group","hd":false}],"nm":"R","np":5,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}]},"fFamily":"FuturaNDAlt-Bold"},{"ch":"i","size":68,"style":"?","w":30.5,"data":{"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0],[0,0],[0,0]],"o":[[0,0],[0,0],[0,0],[0,0]],"v":[[6.2,0],[24.3,0],[24.3,-51.3],[6.2,-51.3]],"c":true},"ix":2},"nm":"i","mn":"ADBE Vector Shape - Group","hd":false},{"ind":1,"ty":"sh","ix":2,"ks":{"a":0,"k":{"i":[[-2.8,0],[-2,2],[0,2.8],[2,2],[2.8,0],[2,-2],[0,-2.8],[-2,-2]],"o":[[2.8,0],[2,-2],[0,-2.8],[-2,-2],[-2.8,0],[-2,2],[0,2.8],[2,2]],"v":[[15.2,-60.8],[22.4,-63.8],[25.4,-71],[22.4,-78.2],[15.2,-81.2],[8,-78.2],[5,-71],[8,-63.8]],"c":true},"ix":2},"nm":"i","mn":"ADBE Vector Shape - Group","hd":false}],"nm":"i","np":5,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}]},"fFamily":"FuturaNDAlt-Bold"},{"ch":"d","size":68,"style":"?","w":70.1,"data":{"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-2.3,2.267],[-3.2,0],[-2.3,-2.266],[0,-3.266],[2.3,-2.266],[3.2,0],[2.266,2.267],[0,3.334]],"o":[[2.3,-2.266],[3.2,0],[2.3,2.267],[0,3.2],[-2.3,2.267],[-3.267,0],[-2.267,-2.266],[0,-3.133]],"v":[[26.45,-33.9],[34.7,-37.3],[42.95,-33.9],[46.4,-25.6],[42.95,-17.4],[34.7,-14],[26.4,-17.4],[23,-25.8]],"c":true},"ix":2},"nm":"d","mn":"ADBE Vector Shape - Group","hd":false},{"ind":1,"ty":"sh","ix":2,"ks":{"a":0,"k":{"i":[[6.4,0],[4.8,-5.266],[0,-7.533],[-4.934,-5.233],[-7.4,0],[-3.867,4.867],[0,0],[0,0],[0,0],[0,0],[0,0]],"o":[[-7.534,0],[-4.8,5.267],[0,7.8],[4.933,5.234],[6.6,0],[0,0],[0,0],[0,0],[0,0],[0,0],[-4.2,-4.466]],"v":[[29.9,-52.9],[11.4,-45],[4.2,-25.8],[11.6,-6.25],[30.1,1.6],[45.8,-5.7],[45.8,0],[64,0],[64,-83],[45.8,-83],[45.8,-46.2]],"c":true},"ix":2},"nm":"d","mn":"ADBE Vector Shape - Group","hd":false}],"nm":"d","np":5,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}]},"fFamily":"FuturaNDAlt-Bold"},{"ch":"e","size":68,"style":"?","w":64.7,"data":{"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-1.8,1.467],[-2.734,0],[-1.867,-1.533],[-0.6,-2.533],[0,0]],"o":[[1.8,-1.466],[2.666,0],[1.866,1.534],[0,0],[0.466,-2.666]],"v":[[26.4,-39.3],[33.2,-41.5],[40,-39.2],[43.7,-33.1],[23,-33.1]],"c":true},"ix":2},"nm":"e","mn":"ADBE Vector Shape - Group","hd":false},{"ind":1,"ty":"sh","ix":2,"ks":{"a":0,"k":{"i":[[0,0],[4.933,5.1],[8.733,0],[5.133,-4.966],[0,-8.6],[-5.367,-5],[-8.734,0],[-3.534,11.734],[0,0],[3.933,0],[0,7.8],[0,0]],"o":[[0,-8.933],[-4.934,-5.1],[-8.734,0],[-5.134,4.967],[0,8.2],[5.366,5],[14.133,0],[0,0],[-2,3.2],[-7.334,0],[0,0],[0,0]],"v":[[60.6,-24.5],[53.2,-45.55],[32.7,-53.2],[11.9,-45.75],[4.2,-25.4],[12.25,-5.6],[33.4,1.9],[59.9,-15.7],[42.4,-15.7],[33.5,-10.9],[22.5,-22.6],[60.6,-22.6]],"c":true},"ix":2},"nm":"e","mn":"ADBE Vector Shape - Group","hd":false}],"nm":"e","np":5,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}]},"fFamily":"FuturaNDAlt-Bold"},{"ch":"r","size":68,"style":"?","w":46.5,"data":{"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0],[-8.4,0],[-2.4,-1.2],[0,0],[1.4,0],[4.066,-6.333],[0,0],[0,0],[0,0]],"o":[[0,0],[0,-9.8],[2.8,0],[0,0],[-0.934,-0.133],[-7.2,0],[0,0],[0,0],[0,0],[0,0]],"v":[[24.3,0],[24.3,-22],[36.9,-36.7],[44.7,-34.9],[44.7,-52.2],[41.2,-52.4],[24.3,-42.9],[24.3,-51.3],[6.2,-51.3],[6.2,0]],"c":true},"ix":2},"nm":"r","mn":"ADBE Vector Shape - Group","hd":false}],"nm":"r","np":3,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}]},"fFamily":"FuturaNDAlt-Bold"}]}
+{
+	"v": "5.7.5",
+	"fr": 60,
+	"ip": 0,
+	"op": 360,
+	"w": 1080,
+	"h": 1920,
+	"nm": "final",
+	"ddd": 0,
+	"assets": [
+		{
+			"id": "image_0",
+			"w": 411,
+			"h": 731,
+			"u": "",
+			"p": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZsAAALbAgMAAABRRsWaAAAAJHpUWHRDcmVhdG9yAAAImXNMyU9KVXBMK0ktUnBNS0tNLikGAEF6Bs5qehXFAAAACXBIWXMAAAABAAAAAQBPJcTWAAAACVBMVEVHcEz////////mcEUwAAAAAnRSTlMAgnUlLzQAAAChSURBVHja7dohAYBAAATBf4PAY0hNhJdwKWlxIGYKbIEdAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgN84OpmZVelsuSudPU+lcyY6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo65U7rC2h9DjNXpdP6UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgKy/uT3ef8QUP4AAAAABJRU5ErkJggg==",
+			"e": 1
+		},
+		{
+			"id": "image_1",
+			"w": 411,
+			"h": 731,
+			"u": "",
+			"p": "data:image/png;base64,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",
+			"e": 1
+		},
+		{
+			"id": "image_2",
+			"w": 374,
+			"h": 417,
+			"u": "",
+			"p": "data:image/png;base64,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",
+			"e": 1
+		},
+		{
+			"id": "comp_0",
+			"layers": [
+				{
+					"ddd": 0,
+					"ind": 1,
+					"ty": 5,
+					"nm": "R",
+					"sr": 1,
+					"ks": {
+						"o": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": [
+											0
+										],
+										"y": [
+											1
+										]
+									},
+									"o": {
+										"x": [
+											0.941
+										],
+										"y": [
+											0
+										]
+									},
+									"t": 20,
+									"s": [
+										0
+									]
+								},
+								{
+									"t": 50,
+									"s": [
+										100
+									]
+								}
+							],
+							"ix": 11
+						},
+						"r": {
+							"a": 0,
+							"k": 0,
+							"ix": 10
+						},
+						"p": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": 0.047,
+										"y": 1
+									},
+									"o": {
+										"x": 0.959,
+										"y": 0
+									},
+									"t": 20,
+									"s": [
+										766.926,
+										1269.096,
+										0
+									],
+									"to": [
+										0,
+										-54.833,
+										0
+									],
+									"ti": [
+										0,
+										54.833,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0.047,
+										"y": 0.047
+									},
+									"o": {
+										"x": 0.333,
+										"y": 0.333
+									},
+									"t": 50,
+									"s": [
+										766.926,
+										940.096,
+										0
+									],
+									"to": [
+										0,
+										0,
+										0
+									],
+									"ti": [
+										0,
+										0,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0.047,
+										"y": 1
+									},
+									"o": {
+										"x": 0.953,
+										"y": 0
+									},
+									"t": 60,
+									"s": [
+										766.926,
+										940.096,
+										0
+									],
+									"to": [
+										20.167,
+										0,
+										0
+									],
+									"ti": [
+										-20.167,
+										0,
+										0
+									]
+								},
+								{
+									"t": 90,
+									"s": [
+										887.926,
+										940.096,
+										0
+									]
+								}
+							],
+							"ix": 2,
+							"l": 2
+						},
+						"a": {
+							"a": 0,
+							"k": [
+								12.351,
+								-13.962,
+								0
+							],
+							"ix": 1,
+							"l": 2
+						},
+						"s": {
+							"a": 0,
+							"k": [
+								578.513,
+								578.513,
+								100
+							],
+							"ix": 6,
+							"l": 2
+						}
+					},
+					"ao": 0,
+					"t": {
+						"d": {
+							"k": [
+								{
+									"s": {
+										"s": 36,
+										"f": "FuturaNDAlt-BoldOblique",
+										"t": "R",
+										"ca": 0,
+										"j": 0,
+										"tr": 0,
+										"lh": 43.2,
+										"ls": 0,
+										"fc": [
+											0.922,
+											0.922,
+											0.922
+										]
+									},
+									"t": 0
+								}
+							]
+						},
+						"p": {
+							
+						},
+						"m": {
+							"g": 1,
+							"a": {
+								"a": 0,
+								"k": [
+									0,
+									0
+								],
+								"ix": 2
+							}
+						},
+						"a": [
+							
+						]
+					},
+					"ip": 20,
+					"op": 380,
+					"st": 20,
+					"bm": 0
+				},
+				{
+					"ddd": 0,
+					"ind": 2,
+					"ty": 5,
+					"nm": "E",
+					"sr": 1,
+					"ks": {
+						"o": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": [
+											0
+										],
+										"y": [
+											1
+										]
+									},
+									"o": {
+										"x": [
+											0.941
+										],
+										"y": [
+											0
+										]
+									},
+									"t": 15,
+									"s": [
+										0
+									]
+								},
+								{
+									"t": 45,
+									"s": [
+										100
+									]
+								}
+							],
+							"ix": 11
+						},
+						"r": {
+							"a": 0,
+							"k": 0,
+							"ix": 10
+						},
+						"p": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.941,
+										"y": 0
+									},
+									"t": 15,
+									"s": [
+										656.926,
+										1269.096,
+										0
+									],
+									"to": [
+										0,
+										-54.833,
+										0
+									],
+									"ti": [
+										0,
+										54.833,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0,
+										"y": 0
+									},
+									"o": {
+										"x": 0.333,
+										"y": 0.333
+									},
+									"t": 45,
+									"s": [
+										656.926,
+										940.096,
+										0
+									],
+									"to": [
+										0,
+										0,
+										0
+									],
+									"ti": [
+										0,
+										0,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.935,
+										"y": 0
+									},
+									"t": 60,
+									"s": [
+										656.926,
+										940.096,
+										0
+									],
+									"to": [
+										10.5,
+										0,
+										0
+									],
+									"ti": [
+										-10.5,
+										0,
+										0
+									]
+								},
+								{
+									"t": 90,
+									"s": [
+										719.926,
+										940.096,
+										0
+									]
+								}
+							],
+							"ix": 2,
+							"l": 2
+						},
+						"a": {
+							"a": 0,
+							"k": [
+								12.351,
+								-13.962,
+								0
+							],
+							"ix": 1,
+							"l": 2
+						},
+						"s": {
+							"a": 0,
+							"k": [
+								578.513,
+								578.513,
+								100
+							],
+							"ix": 6,
+							"l": 2
+						}
+					},
+					"ao": 0,
+					"t": {
+						"d": {
+							"k": [
+								{
+									"s": {
+										"s": 36,
+										"f": "FuturaNDAlt-BoldOblique",
+										"t": "E",
+										"ca": 0,
+										"j": 0,
+										"tr": 0,
+										"lh": 43.2,
+										"ls": 0,
+										"fc": [
+											0.922,
+											0.922,
+											0.922
+										]
+									},
+									"t": 0
+								}
+							]
+						},
+						"p": {
+							
+						},
+						"m": {
+							"g": 1,
+							"a": {
+								"a": 0,
+								"k": [
+									0,
+									0
+								],
+								"ix": 2
+							}
+						},
+						"a": [
+							
+						]
+					},
+					"ip": 15,
+					"op": 375,
+					"st": 15,
+					"bm": 0
+				},
+				{
+					"ddd": 0,
+					"ind": 3,
+					"ty": 5,
+					"nm": "D",
+					"sr": 1,
+					"ks": {
+						"o": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": [
+											0
+										],
+										"y": [
+											1
+										]
+									},
+									"o": {
+										"x": [
+											0.941
+										],
+										"y": [
+											0
+										]
+									},
+									"t": 10,
+									"s": [
+										0
+									]
+								},
+								{
+									"t": 40,
+									"s": [
+										100
+									]
+								}
+							],
+							"ix": 11
+						},
+						"r": {
+							"a": 0,
+							"k": 0,
+							"ix": 10
+						},
+						"p": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.941,
+										"y": 0
+									},
+									"t": 10,
+									"s": [
+										502.926,
+										1269.096,
+										0
+									],
+									"to": [
+										0,
+										-54.833,
+										0
+									],
+									"ti": [
+										0,
+										54.833,
+										0
+									]
+								},
+								{
+									"t": 40,
+									"s": [
+										502.926,
+										940.096,
+										0
+									]
+								}
+							],
+							"ix": 2,
+							"l": 2
+						},
+						"a": {
+							"a": 0,
+							"k": [
+								12.351,
+								-13.962,
+								0
+							],
+							"ix": 1,
+							"l": 2
+						},
+						"s": {
+							"a": 0,
+							"k": [
+								578.513,
+								578.513,
+								100
+							],
+							"ix": 6,
+							"l": 2
+						}
+					},
+					"ao": 0,
+					"t": {
+						"d": {
+							"k": [
+								{
+									"s": {
+										"s": 36,
+										"f": "FuturaNDAlt-BoldOblique",
+										"t": "D",
+										"ca": 0,
+										"j": 0,
+										"tr": 0,
+										"lh": 43.2,
+										"ls": 0,
+										"fc": [
+											0.922,
+											0.922,
+											0.922
+										]
+									},
+									"t": 0
+								}
+							]
+						},
+						"p": {
+							
+						},
+						"m": {
+							"g": 1,
+							"a": {
+								"a": 0,
+								"k": [
+									0,
+									0
+								],
+								"ix": 2
+							}
+						},
+						"a": [
+							
+						]
+					},
+					"ip": 10,
+					"op": 370,
+					"st": 10,
+					"bm": 0
+				},
+				{
+					"ddd": 0,
+					"ind": 4,
+					"ty": 5,
+					"nm": "I",
+					"sr": 1,
+					"ks": {
+						"o": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": [
+											0
+										],
+										"y": [
+											1
+										]
+									},
+									"o": {
+										"x": [
+											0.941
+										],
+										"y": [
+											0
+										]
+									},
+									"t": 5,
+									"s": [
+										0
+									]
+								},
+								{
+									"t": 35,
+									"s": [
+										100
+									]
+								}
+							],
+							"ix": 11
+						},
+						"r": {
+							"a": 0,
+							"k": 0,
+							"ix": 10
+						},
+						"p": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.941,
+										"y": 0
+									},
+									"t": 5,
+									"s": [
+										442.926,
+										1269.096,
+										0
+									],
+									"to": [
+										0,
+										-54.833,
+										0
+									],
+									"ti": [
+										0,
+										54.833,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0,
+										"y": 0
+									},
+									"o": {
+										"x": 0.333,
+										"y": 0.333
+									},
+									"t": 35,
+									"s": [
+										442.926,
+										940.096,
+										0
+									],
+									"to": [
+										0,
+										0,
+										0
+									],
+									"ti": [
+										0,
+										0,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.917,
+										"y": 0
+									},
+									"t": 60,
+									"s": [
+										442.926,
+										940.096,
+										0
+									],
+									"to": [
+										-12.667,
+										0,
+										0
+									],
+									"ti": [
+										12.667,
+										0,
+										0
+									]
+								},
+								{
+									"t": 90,
+									"s": [
+										366.926,
+										940.096,
+										0
+									]
+								}
+							],
+							"ix": 2,
+							"l": 2
+						},
+						"a": {
+							"a": 0,
+							"k": [
+								12.351,
+								-13.962,
+								0
+							],
+							"ix": 1,
+							"l": 2
+						},
+						"s": {
+							"a": 0,
+							"k": [
+								578.513,
+								578.513,
+								100
+							],
+							"ix": 6,
+							"l": 2
+						}
+					},
+					"ao": 0,
+					"t": {
+						"d": {
+							"k": [
+								{
+									"s": {
+										"s": 36,
+										"f": "FuturaNDAlt-BoldOblique",
+										"t": "I",
+										"ca": 0,
+										"j": 0,
+										"tr": 0,
+										"lh": 43.2,
+										"ls": 0,
+										"fc": [
+											0.922,
+											0.922,
+											0.922
+										]
+									},
+									"t": 0
+								}
+							]
+						},
+						"p": {
+							
+						},
+						"m": {
+							"g": 1,
+							"a": {
+								"a": 0,
+								"k": [
+									0,
+									0
+								],
+								"ix": 2
+							}
+						},
+						"a": [
+							
+						]
+					},
+					"ip": 5,
+					"op": 365,
+					"st": 5,
+					"bm": 0
+				},
+				{
+					"ddd": 0,
+					"ind": 5,
+					"ty": 5,
+					"nm": "R",
+					"sr": 1,
+					"ks": {
+						"o": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": [
+											0
+										],
+										"y": [
+											1
+										]
+									},
+									"o": {
+										"x": [
+											0.941
+										],
+										"y": [
+											0
+										]
+									},
+									"t": 0,
+									"s": [
+										0
+									]
+								},
+								{
+									"t": 30,
+									"s": [
+										100
+									]
+								}
+							],
+							"ix": 11
+						},
+						"r": {
+							"a": 0,
+							"k": 0,
+							"ix": 10
+						},
+						"p": {
+							"a": 1,
+							"k": [
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.941,
+										"y": 0
+									},
+									"t": 0,
+									"s": [
+										304.926,
+										1269.096,
+										0
+									],
+									"to": [
+										0,
+										-54.833,
+										0
+									],
+									"ti": [
+										0,
+										54.833,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0,
+										"y": 0
+									},
+									"o": {
+										"x": 0.333,
+										"y": 0.333
+									},
+									"t": 30,
+									"s": [
+										304.926,
+										940.096,
+										0
+									],
+									"to": [
+										0,
+										0,
+										0
+									],
+									"ti": [
+										0,
+										0,
+										0
+									]
+								},
+								{
+									"i": {
+										"x": 0,
+										"y": 1
+									},
+									"o": {
+										"x": 0.935,
+										"y": 0
+									},
+									"t": 60,
+									"s": [
+										304.926,
+										940.096,
+										0
+									],
+									"to": [
+										-21.5,
+										0,
+										0
+									],
+									"ti": [
+										21.5,
+										0,
+										0
+									]
+								},
+								{
+									"t": 90,
+									"s": [
+										175.926,
+										940.096,
+										0
+									]
+								}
+							],
+							"ix": 2,
+							"l": 2
+						},
+						"a": {
+							"a": 0,
+							"k": [
+								12.351,
+								-13.962,
+								0
+							],
+							"ix": 1,
+							"l": 2
+						},
+						"s": {
+							"a": 0,
+							"k": [
+								578.513,
+								578.513,
+								100
+							],
+							"ix": 6,
+							"l": 2
+						}
+					},
+					"ao": 0,
+					"t": {
+						"d": {
+							"k": [
+								{
+									"s": {
+										"s": 36,
+										"f": "FuturaNDAlt-BoldOblique",
+										"t": "R",
+										"ca": 0,
+										"j": 0,
+										"tr": 0,
+										"lh": 43.2,
+										"ls": 0,
+										"fc": [
+											0.922,
+											0.922,
+											0.922
+										]
+									},
+									"t": 0
+								}
+							]
+						},
+						"p": {
+							
+						},
+						"m": {
+							"g": 1,
+							"a": {
+								"a": 0,
+								"k": [
+									0,
+									0
+								],
+								"ix": 2
+							}
+						},
+						"a": [
+							
+						]
+					},
+					"ip": 0,
+					"op": 360,
+					"st": 0,
+					"bm": 0
+				}
+			]
+		}
+	],
+	"fonts": {
+		"list": [
+			{
+				"fName": "FuturaNDAlt-BoldOblique",
+				"fFamily": "FuturaNDAlt-BoldOblique",
+				"fStyle": "?",
+				"ascent": 82.4996948242188
+			}
+		]
+	},
+	"layers": [
+		{
+			"ddd": 0,
+			"ind": 1,
+			"ty": 0,
+			"nm": "Letters",
+			"refId": "comp_0",
+			"sr": 1,
+			"ks": {
+				"o": {
+					"a": 0,
+					"k": 100,
+					"ix": 11
+				},
+				"r": {
+					"a": 0,
+					"k": 0,
+					"ix": 10
+				},
+				"p": {
+					"a": 0,
+					"k": [
+						540,
+						960,
+						0
+					],
+					"ix": 2,
+					"l": 2
+				},
+				"a": {
+					"a": 0,
+					"k": [
+						540,
+						960,
+						0
+					],
+					"ix": 1,
+					"l": 2
+				},
+				"s": {
+					"a": 0,
+					"k": [
+						100,
+						100,
+						100
+					],
+					"ix": 6,
+					"l": 2
+				}
+			},
+			"ao": 0,
+			"hasMask": true,
+			"masksProperties": [
+				{
+					"inv": false,
+					"mode": "a",
+					"pt": {
+						"a": 1,
+						"k": [
+							{
+								"i": {
+									"x": 0.667,
+									"y": 1
+								},
+								"o": {
+									"x": 0.167,
+									"y": 0
+								},
+								"t": 0,
+								"s": [
+									{
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												980,
+												796
+											],
+											[
+												72,
+												796
+											],
+											[
+												72,
+												1620
+											],
+											[
+												980,
+												1616
+											]
+										],
+										"c": true
+									}
+								]
+							},
+							{
+								"i": {
+									"x": 0,
+									"y": 1
+								},
+								"o": {
+									"x": 0,
+									"y": 0
+								},
+								"t": 132,
+								"s": [
+									{
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												980,
+												796
+											],
+											[
+												72,
+												796
+											],
+											[
+												72,
+												1104
+											],
+											[
+												980,
+												1104
+											]
+										],
+										"c": true
+									}
+								]
+							},
+							{
+								"t": 162,
+								"s": [
+									{
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												88,
+												796
+											],
+											[
+												-820,
+												796
+											],
+											[
+												-820,
+												1104
+											],
+											[
+												88,
+												1104
+											]
+										],
+										"c": true
+									}
+								]
+							}
+						],
+						"ix": 1
+					},
+					"o": {
+						"a": 0,
+						"k": 100,
+						"ix": 3
+					},
+					"x": {
+						"a": 0,
+						"k": 0,
+						"ix": 4
+					},
+					"nm": "Mask 1"
+				}
+			],
+			"w": 1080,
+			"h": 1920,
+			"ip": 0,
+			"op": 360,
+			"st": 0,
+			"bm": 0
+		},
+		{
+			"ddd": 0,
+			"ind": 2,
+			"ty": 2,
+			"nm": "Line",
+			"refId": "image_0",
+			"sr": 1,
+			"ks": {
+				"o": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": [
+									0.833
+								],
+								"y": [
+									0.833
+								]
+							},
+							"o": {
+								"x": [
+									0.167
+								],
+								"y": [
+									0.167
+								]
+							},
+							"t": 104,
+							"s": [
+								0
+							]
+						},
+						{
+							"i": {
+								"x": [
+									0.467
+								],
+								"y": [
+									1
+								]
+							},
+							"o": {
+								"x": [
+									0.167
+								],
+								"y": [
+									0
+								]
+							},
+							"t": 111,
+							"s": [
+								100
+							]
+						},
+						{
+							"i": {
+								"x": [
+									0.195
+								],
+								"y": [
+									1
+								]
+							},
+							"o": {
+								"x": [
+									0.817
+								],
+								"y": [
+									0
+								]
+							},
+							"t": 217,
+							"s": [
+								100
+							]
+						},
+						{
+							"t": 262,
+							"s": [
+								0
+							]
+						}
+					],
+					"ix": 11
+				},
+				"r": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": [
+									0.053
+								],
+								"y": [
+									1
+								]
+							},
+							"o": {
+								"x": [
+									1
+								],
+								"y": [
+									0
+								]
+							},
+							"t": 187,
+							"s": [
+								0
+							]
+						},
+						{
+							"t": 217,
+							"s": [
+								90
+							]
+						}
+					],
+					"ix": 10
+				},
+				"p": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": 0,
+								"y": 1
+							},
+							"o": {
+								"x": 0,
+								"y": 0
+							},
+							"t": 132,
+							"s": [
+								992,
+								953,
+								0
+							],
+							"to": [
+								-152.833,
+								0,
+								0
+							],
+							"ti": [
+								74.364,
+								0,
+								0
+							]
+						},
+						{
+							"i": {
+								"x": 0.399,
+								"y": 1
+							},
+							"o": {
+								"x": 0.175,
+								"y": 0
+							},
+							"t": 162,
+							"s": [
+								75,
+								953,
+								0
+							],
+							"to": [
+								-74.364,
+								0,
+								0
+							],
+							"ti": [
+								-78.469,
+								0,
+								0
+							]
+						},
+						{
+							"i": {
+								"x": 0.015,
+								"y": 0.015
+							},
+							"o": {
+								"x": 0.333,
+								"y": 0.333
+							},
+							"t": 182,
+							"s": [
+								545.815,
+								953,
+								0
+							],
+							"to": [
+								0,
+								0,
+								0
+							],
+							"ti": [
+								0,
+								0,
+								0
+							]
+						},
+						{
+							"i": {
+								"x": 0.101,
+								"y": 1
+							},
+							"o": {
+								"x": 0.935,
+								"y": 0
+							},
+							"t": 217,
+							"s": [
+								545.815,
+								953,
+								0
+							],
+							"to": [
+								0,
+								-62,
+								0
+							],
+							"ti": [
+								0,
+								62,
+								0
+							]
+						},
+						{
+							"t": 262,
+							"s": [
+								545.815,
+								581,
+								0
+							]
+						}
+					],
+					"ix": 2,
+					"l": 2
+				},
+				"a": {
+					"a": 0,
+					"k": [
+						210.365,
+						346.039,
+						0
+					],
+					"ix": 1,
+					"l": 2
+				},
+				"s": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": [
+									0.833,
+									0.833,
+									0.833
+								],
+								"y": [
+									1,
+									1,
+									1
+								]
+							},
+							"o": {
+								"x": [
+									0.167,
+									0.167,
+									0.167
+								],
+								"y": [
+									0,
+									0,
+									0
+								]
+							},
+							"t": 132,
+							"s": [
+								310.529,
+								310.529,
+								100
+							]
+						},
+						{
+							"i": {
+								"x": [
+									0.13,
+									0.13,
+									0.667
+								],
+								"y": [
+									1,
+									1,
+									1
+								]
+							},
+							"o": {
+								"x": [
+									0.864,
+									0.864,
+									0.333
+								],
+								"y": [
+									0,
+									0,
+									0
+								]
+							},
+							"t": 187,
+							"s": [
+								246.648,
+								246.648,
+								100
+							]
+						},
+						{
+							"t": 217,
+							"s": [
+								377.648,
+								377.648,
+								100
+							]
+						}
+					],
+					"ix": 6,
+					"l": 2
+				}
+			},
+			"ao": 0,
+			"hasMask": true,
+			"masksProperties": [
+				{
+					"inv": false,
+					"mode": "a",
+					"pt": {
+						"a": 1,
+						"k": [
+							{
+								"i": {
+									"x": 0.183,
+									"y": 1
+								},
+								"o": {
+									"x": 0.793,
+									"y": 0
+								},
+								"t": 106,
+								"s": [
+									{
+										"i": [
+											[
+												4.142,
+												0
+											],
+											[
+												0,
+												-4.142
+											],
+											[
+												-4.142,
+												0
+											],
+											[
+												0,
+												4.142
+											]
+										],
+										"o": [
+											[
+												-4.142,
+												0
+											],
+											[
+												0,
+												4.142
+											],
+											[
+												4.142,
+												0
+											],
+											[
+												0,
+												-4.142
+											]
+										],
+										"v": [
+											[
+												210.973,
+												339.552
+											],
+											[
+												203.473,
+												347.053
+											],
+											[
+												210.973,
+												354.553
+											],
+											[
+												218.474,
+												347.053
+											]
+										],
+										"c": true
+									}
+								]
+							},
+							{
+								"t": 130,
+								"s": [
+									{
+										"i": [
+											[
+												18.447,
+												0
+											],
+											[
+												-1.411,
+												-11.526
+											],
+											[
+												-25.745,
+												0
+											],
+											[
+												0,
+												8.311
+											]
+										],
+										"o": [
+											[
+												-25.34,
+												0
+											],
+											[
+												1.216,
+												9.933
+											],
+											[
+												19.814,
+												0
+											],
+											[
+												0,
+												-7.906
+											]
+										],
+										"v": [
+											[
+												210.568,
+												272.655
+											],
+											[
+												190.904,
+												348.269
+											],
+											[
+												210.973,
+												402.395
+											],
+											[
+												229.826,
+												348.675
+											]
+										],
+										"c": true
+									}
+								]
+							}
+						],
+						"ix": 1
+					},
+					"o": {
+						"a": 0,
+						"k": 100,
+						"ix": 3
+					},
+					"x": {
+						"a": 0,
+						"k": 0,
+						"ix": 4
+					},
+					"nm": "Mask 1"
+				}
+			],
+			"ip": 0,
+			"op": 360,
+			"st": 0,
+			"bm": 0
+		},
+		{
+			"ddd": 0,
+			"ind": 3,
+			"ty": 2,
+			"nm": "Bike",
+			"refId": "image_1",
+			"sr": 1,
+			"ks": {
+				"o": {
+					"a": 0,
+					"k": 100,
+					"ix": 11
+				},
+				"r": {
+					"a": 0,
+					"k": 0,
+					"ix": 10
+				},
+				"p": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": 0,
+								"y": 0.934
+							},
+							"o": {
+								"x": 0,
+								"y": 0
+							},
+							"t": 242,
+							"s": [
+								540,
+								790,
+								0
+							],
+							"to": [
+								0,
+								35.744,
+								0
+							],
+							"ti": [
+								0,
+								-37.26,
+								0
+							]
+						},
+						{
+							"i": {
+								"x": 0.655,
+								"y": 1
+							},
+							"o": {
+								"x": 0.321,
+								"y": 0.659
+							},
+							"t": 286,
+							"s": [
+								540,
+								1005.215,
+								0
+							],
+							"to": [
+								0,
+								0.267,
+								0
+							],
+							"ti": [
+								0,
+								-0.256,
+								0
+							]
+						},
+						{
+							"i": {
+								"x": 0.122,
+								"y": 0.98
+							},
+							"o": {
+								"x": 0.906,
+								"y": 0
+							},
+							"t": 291,
+							"s": [
+								540,
+								1006,
+								0
+							],
+							"to": [
+								0,
+								36,
+								0
+							],
+							"ti": [
+								0,
+								0,
+								0
+							]
+						},
+						{
+							"t": 350,
+							"s": [
+								1377,
+								1006,
+								0
+							]
+						}
+					],
+					"ix": 2,
+					"l": 2
+				},
+				"a": {
+					"a": 0,
+					"k": [
+						205.5,
+						365.5,
+						0
+					],
+					"ix": 1,
+					"l": 2
+				},
+				"s": {
+					"a": 0,
+					"k": [
+						100,
+						100,
+						100
+					],
+					"ix": 6,
+					"l": 2
+				}
+			},
+			"ao": 0,
+			"hasMask": true,
+			"masksProperties": [
+				{
+					"inv": false,
+					"mode": "a",
+					"pt": {
+						"a": 1,
+						"k": [
+							{
+								"i": {
+									"x": 0.068,
+									"y": 1
+								},
+								"o": {
+									"x": 0.874,
+									"y": 0
+								},
+								"t": 217,
+								"s": [
+									{
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												421.5,
+												515.5
+											],
+											[
+												5.5,
+												515.5
+											],
+											[
+												5.5,
+												835.5
+											],
+											[
+												421.5,
+												835.5
+											]
+										],
+										"c": true
+									}
+								]
+							},
+							{
+								"t": 261,
+								"s": [
+									{
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												421.5,
+												123.5
+											],
+											[
+												5.5,
+												123.5
+											],
+											[
+												5.5,
+												443.5
+											],
+											[
+												421.5,
+												443.5
+											]
+										],
+										"c": true
+									}
+								]
+							}
+						],
+						"ix": 1
+					},
+					"o": {
+						"a": 0,
+						"k": 100,
+						"ix": 3
+					},
+					"x": {
+						"a": 0,
+						"k": 0,
+						"ix": 4
+					},
+					"nm": "Mask 1"
+				}
+			],
+			"ip": 0,
+			"op": 360,
+			"st": 0,
+			"bm": 0
+		},
+		{
+			"ddd": 0,
+			"ind": 4,
+			"ty": 2,
+			"nm": "Smoke",
+			"refId": "image_2",
+			"sr": 1,
+			"ks": {
+				"o": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": [
+									0.847
+								],
+								"y": [
+									1
+								]
+							},
+							"o": {
+								"x": [
+									1
+								],
+								"y": [
+									0
+								]
+							},
+							"t": 281.359,
+							"s": [
+								0
+							]
+						},
+						{
+							"i": {
+								"x": [
+									0.118
+								],
+								"y": [
+									1
+								]
+							},
+							"o": {
+								"x": [
+									0.321
+								],
+								"y": [
+									0
+								]
+							},
+							"t": 324,
+							"s": [
+								100
+							]
+						},
+						{
+							"t": 338.359375,
+							"s": [
+								0
+							]
+						}
+					],
+					"ix": 11
+				},
+				"r": {
+					"a": 0,
+					"k": 6,
+					"ix": 10
+				},
+				"p": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": 0.652,
+								"y": 1
+							},
+							"o": {
+								"x": 1,
+								"y": 0
+							},
+							"t": 281,
+							"s": [
+								384,
+								1039,
+								0
+							],
+							"to": [
+								-14,
+								-8.5,
+								0
+							],
+							"ti": [
+								14,
+								8.5,
+								0
+							]
+						},
+						{
+							"t": 331,
+							"s": [
+								300,
+								988,
+								0
+							]
+						}
+					],
+					"ix": 2,
+					"l": 2
+				},
+				"a": {
+					"a": 0,
+					"k": [
+						187,
+						208.5,
+						0
+					],
+					"ix": 1,
+					"l": 2
+				},
+				"s": {
+					"a": 1,
+					"k": [
+						{
+							"i": {
+								"x": [
+									0.642,
+									0.642,
+									0.667
+								],
+								"y": [
+									1,
+									1,
+									1
+								]
+							},
+							"o": {
+								"x": [
+									1,
+									1,
+									0.333
+								],
+								"y": [
+									0,
+									0,
+									0
+								]
+							},
+							"t": 281,
+							"s": [
+								52.406,
+								52.406,
+								100
+							]
+						},
+						{
+							"t": 331,
+							"s": [
+								120.406,
+								120.406,
+								100
+							]
+						}
+					],
+					"ix": 6,
+					"l": 2
+				}
+			},
+			"ao": 0,
+			"ip": 0,
+			"op": 360,
+			"st": 0,
+			"bm": 0
+		}
+	],
+	"markers": [
+		
+	],
+	"chars": [
+		{
+			"ch": "R",
+			"size": 36,
+			"style": "?",
+			"w": 71,
+			"data": {
+				"shapes": [
+					{
+						"ty": "gr",
+						"it": [
+							{
+								"ind": 0,
+								"ty": "sh",
+								"ix": 1,
+								"ks": {
+									"a": 0,
+									"k": {
+										"i": [
+											[
+												-1.634,
+												-1.264
+											],
+											[
+												0,
+												-3.328
+											],
+											[
+												8.917,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												1.633,
+												1.266
+											],
+											[
+												0,
+												7.056
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												3.933,
+												0
+											]
+										],
+										"v": [
+											[
+												43.15,
+												-58.403
+											],
+											[
+												45.6,
+												-51.514
+											],
+											[
+												32.223,
+												-40.93
+											],
+											[
+												28.803,
+												-40.93
+											],
+											[
+												31.2,
+												-60.3
+											],
+											[
+												34.8,
+												-60.3
+											]
+										],
+										"c": true
+									},
+									"ix": 2
+								},
+								"nm": "R",
+								"mn": "ADBE Vector Shape - Group",
+								"hd": false
+							},
+							{
+								"ind": 1,
+								"ty": "sh",
+								"ix": 2,
+								"ks": {
+									"a": 0,
+									"k": {
+										"i": [
+											[
+												0,
+												11.334
+											],
+											[
+												4.331,
+												3.834
+											],
+											[
+												9.064,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												-7.933
+											],
+											[
+												-4.333,
+												-3.833
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												10.666,
+												-3.866
+											]
+										],
+										"v": [
+											[
+												65.2,
+												-52
+											],
+											[
+												58.702,
+												-69.65
+											],
+											[
+												38.606,
+												-75.4
+											],
+											[
+												14.012,
+												-75.4
+											],
+											[
+												4.7,
+												0
+											],
+											[
+												23.742,
+												0
+											],
+											[
+												27.464,
+												-30.1
+											],
+											[
+												45.6,
+												0
+											],
+											[
+												67.7,
+												0
+											],
+											[
+												49.2,
+												-29.2
+											]
+										],
+										"c": true
+									},
+									"ix": 2
+								},
+								"nm": "R",
+								"mn": "ADBE Vector Shape - Group",
+								"hd": false
+							}
+						],
+						"nm": "R",
+						"np": 5,
+						"cix": 2,
+						"bm": 0,
+						"ix": 1,
+						"mn": "ADBE Vector Group",
+						"hd": false
+					}
+				]
+			},
+			"fFamily": "FuturaNDAlt-BoldOblique"
+		},
+		{
+			"ch": "I",
+			"size": 36,
+			"style": "?",
+			"w": 35,
+			"data": {
+				"shapes": [
+					{
+						"ty": "gr",
+						"it": [
+							{
+								"ind": 0,
+								"ty": "sh",
+								"ix": 1,
+								"ks": {
+									"a": 0,
+									"k": {
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												4.7,
+												0
+											],
+											[
+												23.742,
+												0
+											],
+											[
+												33.1,
+												-75.4
+											],
+											[
+												14.058,
+												-75.4
+											]
+										],
+										"c": true
+									},
+									"ix": 2
+								},
+								"nm": "I",
+								"mn": "ADBE Vector Shape - Group",
+								"hd": false
+							}
+						],
+						"nm": "I",
+						"np": 3,
+						"cix": 2,
+						"bm": 0,
+						"ix": 1,
+						"mn": "ADBE Vector Group",
+						"hd": false
+					}
+				]
+			},
+			"fFamily": "FuturaNDAlt-BoldOblique"
+		},
+		{
+			"ch": "D",
+			"size": 36,
+			"style": "?",
+			"w": 77.7,
+			"data": {
+				"shapes": [
+					{
+						"ty": "gr",
+						"it": [
+							{
+								"ind": 0,
+								"ty": "sh",
+								"ix": 1,
+								"ks": {
+									"a": 0,
+									"k": {
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												-2.767,
+												-2.933
+											],
+											[
+												0,
+												-6.333
+											],
+											[
+												2.409,
+												-4.266
+											],
+											[
+												4.016,
+												-1.133
+											],
+											[
+												3.948,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												6.066,
+												0
+											],
+											[
+												2.766,
+												2.934
+											],
+											[
+												0,
+												5.534
+											],
+											[
+												-2.409,
+												4.267
+											],
+											[
+												-2.613,
+												0.734
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												38,
+												-58.8
+											],
+											[
+												51.25,
+												-54.4
+											],
+											[
+												55.4,
+												-40.5
+											],
+											[
+												51.784,
+												-25.8
+											],
+											[
+												42.147,
+												-17.7
+											],
+											[
+												32.306,
+												-16.6
+											],
+											[
+												25.78,
+												-16.6
+											],
+											[
+												31.1,
+												-58.8
+											]
+										],
+										"c": true
+									},
+									"ix": 2
+								},
+								"nm": "D",
+								"mn": "ADBE Vector Shape - Group",
+								"hd": false
+							},
+							{
+								"ind": 1,
+								"ty": "sh",
+								"ix": 2,
+								"ks": {
+									"a": 0,
+									"k": {
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												-6.2,
+												3.2
+											],
+											[
+												-3.467,
+												7.334
+											],
+											[
+												0,
+												7.134
+											],
+											[
+												3.827,
+												6.167
+											],
+											[
+												6.391,
+												1.867
+											],
+											[
+												6.989,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												11.533,
+												0
+											],
+											[
+												6.2,
+												-3.2
+											],
+											[
+												2.866,
+												-6.133
+											],
+											[
+												0,
+												-7.866
+											],
+											[
+												-3.828,
+												-6.166
+											],
+											[
+												-3.994,
+												-1.2
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												29.6,
+												0
+											],
+											[
+												56.2,
+												-4.8
+											],
+											[
+												70.7,
+												-20.6
+											],
+											[
+												75,
+												-40.5
+											],
+											[
+												69.259,
+												-61.55
+											],
+											[
+												53.933,
+												-73.6
+											],
+											[
+												37.459,
+												-75.4
+											],
+											[
+												14.097,
+												-75.4
+											],
+											[
+												4.7,
+												0
+											]
+										],
+										"c": true
+									},
+									"ix": 2
+								},
+								"nm": "D",
+								"mn": "ADBE Vector Shape - Group",
+								"hd": false
+							}
+						],
+						"nm": "D",
+						"np": 5,
+						"cix": 2,
+						"bm": 0,
+						"ix": 1,
+						"mn": "ADBE Vector Group",
+						"hd": false
+					}
+				]
+			},
+			"fFamily": "FuturaNDAlt-BoldOblique"
+		},
+		{
+			"ch": "E",
+			"size": 36,
+			"style": "?",
+			"w": 54.6,
+			"data": {
+				"shapes": [
+					{
+						"ty": "gr",
+						"it": [
+							{
+								"ind": 0,
+								"ty": "sh",
+								"ix": 1,
+								"ks": {
+									"a": 0,
+									"k": {
+										"i": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"o": [
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											],
+											[
+												0,
+												0
+											]
+										],
+										"v": [
+											[
+												4.7,
+												0
+											],
+											[
+												46.78,
+												0
+											],
+											[
+												48.88,
+												-16.6
+											],
+											[
+												25.78,
+												-16.6
+											],
+											[
+												27.367,
+												-29.2
+											],
+											[
+												48.959,
+												-29.2
+											],
+											[
+												51.059,
+												-45.8
+											],
+											[
+												29.459,
+												-45.8
+											],
+											[
+												31.1,
+												-58.8
+											],
+											[
+												53.3,
+												-58.8
+											],
+											[
+												55.3,
+												-75.4
+											],
+											[
+												14.097,
+												-75.4
+											]
+										],
+										"c": true
+									},
+									"ix": 2
+								},
+								"nm": "E",
+								"mn": "ADBE Vector Shape - Group",
+								"hd": false
+							}
+						],
+						"nm": "E",
+						"np": 3,
+						"cix": 2,
+						"bm": 0,
+						"ix": 1,
+						"mn": "ADBE Vector Group",
+						"hd": false
+					}
+				]
+			},
+			"fFamily": "FuturaNDAlt-BoldOblique"
+		}
+	]
+}

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash_background"
-    tools:context=".VerifyPhoneNumber">
+    tools:context=".Verify_Phone_For_Pin">
 
     <TextView
         android:id="@+id/textView"
@@ -14,8 +14,8 @@
         android:text="Verifi\ncation"
         android:textColor="@android:color/white"
         android:textSize="55dp"
-        android:layout_marginBottom="5dp"
         android:gravity="center"
+        android:layout_marginBottom="5dp"
         android:fontFamily="@font/futra"
         android:transitionName="rider"
         app:layout_constraintBottom_toBottomOf="parent"

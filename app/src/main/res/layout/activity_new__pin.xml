@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash_background"
-    tools:context=".ForgotPassword">
+    tools:context=".New_Pin">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot\nPin"
+        android:text="Create\nPin"
         android:textColor="@android:color/white"
         android:textSize="55dp"
-        android:fontFamily="@font/futra"
         android:gravity="center"
+        android:fontFamily="@font/futra"
         android:layout_marginBottom="5dp"
         android:transitionName="rider"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,13 +23,13 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.148"/>
+        app:layout_constraintVertical_bias="0.148" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please write your current phone number for verification and press verify button."
+        android:text="Write your new 6 digit pin and press signup button."
         android:textColor="@android:color/white"
         android:textSize="20dp"
         android:textStyle="bold"
@@ -57,70 +57,68 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.819">
 
-        <FrameLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etPin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/myColor"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etPhoneNumberForgot"
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLength="10"
-                    android:inputType="phone"
-                    android:textSize="16dp"
-                    android:hint="3012345678"
-                    android:paddingStart="70dp"
-                    android:transitionName="phone" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/prefix"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textColor="@android:color/black"
+                android:inputType="numberPassword"
+                android:maxLength="6"
                 android:textSize="16dp"
-                android:text="+92"
-                android:layout_marginStart="55dp"
-                android:layout_marginTop="7.3dp"/>
+                android:hint="Pin"
+                android:transitionName="phone"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/etRe_Pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingStart="10dp"
-                android:background="@drawable/phone"
-                android:backgroundTint="@color/myColor"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="8dp"/>
+                android:inputType="numberPassword"
+                android:maxLength="6"
+                android:textSize="16dp"
+                android:hint="Re-enter pin"
+                android:transitionName="phone"/>
 
-        </FrameLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVerifyForgot"
+            android:id="@+id/btnCreate_Pin"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Verify"
-            android:textSize="16dp"
-            android:layout_gravity="center"
             android:layout_marginTop="30dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
+            android:text="Create Pin"
+            android:textSize="16dp"
+            android:layout_gravity="center"
             app:cornerRadius="10dp"
             android:transitionName="signVerify"
             style="@style/Widget.MaterialComponents.Button" />
@@ -128,7 +126,29 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/lottieLayoutForgot"
+        android:id="@+id/lottieLayoutPassword"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@color/transparent">
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottiePasswordCreation"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/good_progress">
+
+        </com.airbnb.lottie.LottieAnimationView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lottieLayoutPassword2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"
@@ -142,7 +162,7 @@
 
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieForgot"
+            android:id="@+id/lottiePasswordCreation2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:lottie_autoPlay="true"
@@ -154,7 +174,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvInkHornSolutionForgot"
+        android:id="@+id/tvInkHornSolutionPass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Designed by inkhorn solutions"

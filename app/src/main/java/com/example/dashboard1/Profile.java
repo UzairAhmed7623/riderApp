@@ -93,6 +93,8 @@ public class Profile extends AppCompatActivity {
         lottieProfile.setVisibility(View.VISIBLE);
         lottieLayout_Profile.setVisibility(View.VISIBLE);
 
+        ivAddImage.setEnabled(false); btnSave.setEnabled(false); etFirstName.setEnabled(false); etLastName.setEnabled(false); etEmailAddress.setEnabled(false);
+
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -105,6 +107,9 @@ public class Profile extends AppCompatActivity {
                             public void run() {
                                 lottieProfile.setVisibility(View.GONE);
                                 lottieLayout_Profile.setVisibility(View.GONE);
+
+                                ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
+
                                 String phone = documentSnapshot.getString("Phone");
                                 etPhoneNumber.setText(phone);
 
@@ -135,6 +140,9 @@ public class Profile extends AppCompatActivity {
                             public void run() {
                                 lottieProfile.setVisibility(View.GONE);
                                 lottieLayout_Profile.setVisibility(View.GONE);
+
+                                ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
+
                             }
                         }, 2500);
                         Snackbar.make(findViewById(android.R.id.content), "No data found!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
@@ -147,6 +155,8 @@ public class Profile extends AppCompatActivity {
                         public void run() {
                             lottieProfile.setVisibility(View.GONE);
                             lottieLayout_Profile.setVisibility(View.GONE);
+
+                            ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
                         }
                     }, 2500);
                     Log.d("TAG", task.getException().getMessage());
@@ -199,6 +209,8 @@ public class Profile extends AppCompatActivity {
                     lottieProfile.setVisibility(View.VISIBLE);
                     lottieLayout_Profile.setVisibility(View.VISIBLE);
 
+                    ivAddImage.setEnabled(false); btnSave.setEnabled(false); etFirstName.setEnabled(false); etLastName.setEnabled(false); etEmailAddress.setEnabled(false);
+
                     HashMap<String, Object> userProfile = new HashMap<>();
                     userProfile.put("First Name", fName);
                     userProfile.put("Last Name", lName);
@@ -215,6 +227,8 @@ public class Profile extends AppCompatActivity {
                                     public void run() {
                                         lottieProfile.setVisibility(View.GONE);
                                         lottieLayout_Profile.setVisibility(View.GONE);
+
+                                        ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
                                     }
                                 }, 2500);
 
@@ -225,8 +239,9 @@ public class Profile extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         Intent intent = new Intent(Profile.this, MainActivity.class);
-                                        ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Profile.this);
-                                        startActivity(intent, activityOptions.toBundle());
+                                        startActivity(intent);
+                                        finish();
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                     }
                                 }, 2500);
                             }
@@ -237,6 +252,8 @@ public class Profile extends AppCompatActivity {
                                     public void run() {
                                         lottieProfile.setVisibility(View.GONE);
                                         lottieLayout_Profile.setVisibility(View.GONE);
+
+                                        ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
                                     }
                                 }, 2500);
                                 Toast.makeText(Profile.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -246,8 +263,6 @@ public class Profile extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
     @Override
@@ -276,8 +291,7 @@ public class Profile extends AppCompatActivity {
 
         StorageReference riversRef = storageReference.child("images/Users" + "." + getFileExtention(imageUri) +" "+ userId);
 
-        riversRef.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        riversRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
@@ -304,7 +318,6 @@ public class Profile extends AppCompatActivity {
                                         Snackbar.make(findViewById(android.R.id.content), e.getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                                     }
                                 });
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -313,7 +326,5 @@ public class Profile extends AppCompatActivity {
                         Snackbar.make(findViewById(android.R.id.content), "Failed to Upload", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                     }
                 });
-
     }
-
 }

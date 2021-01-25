@@ -83,6 +83,7 @@ public class SignUp extends AppCompatActivity {
 
                     lottieLayoutSignUp.setVisibility(View.VISIBLE);
                     lottieSignUp.setVisibility(View.VISIBLE);
+                    etPhoneNumber.setEnabled(false); btnVerify.setEnabled(false);
 
                     if (firebaseAuth.getUid() != null) {
 
@@ -99,6 +100,8 @@ public class SignUp extends AppCompatActivity {
                                         public void run() {
                                             lottieLayoutSignUp.setVisibility(View.GONE);
                                             lottieSignUp.setVisibility(View.GONE);
+                                            etPhoneNumber.setEnabled(true); btnVerify.setEnabled(true);
+
                                         }
                                     }, 2500);
 
@@ -117,6 +120,8 @@ public class SignUp extends AppCompatActivity {
                             public void run() {
                                 lottieLayoutSignUp.setVisibility(View.GONE);
                                 lottieSignUp.setVisibility(View.GONE);
+                                etPhoneNumber.setEnabled(true); btnVerify.setEnabled(true);
+
                             }
                         }, 2500);
 
@@ -126,15 +131,9 @@ public class SignUp extends AppCompatActivity {
                             public void run() {
                                 Intent SignUpIntent = new Intent(SignUp.this, VerifyPhoneNumber.class);
                                 SignUpIntent.putExtra("phone_number", phone_number);
-
-                                Pair[] pair = new Pair[4];
-                                pair[0] = new Pair<>(textView, "rider");
-                                pair[1] = new Pair<>(etPhoneNumber, "phone");
-                                pair[2] = new Pair<>(btnVerify, "signVerify");
-                                pair[3] = new Pair<>(tvInkHornSolutionSign, "inkhorn");
-
-                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SignUp.this, pair);
-                                startActivity(SignUpIntent, activityOptions.toBundle());
+                                startActivity(SignUpIntent);
+                                finish();
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             }
                         }, 2500);
                     }
@@ -143,11 +142,5 @@ public class SignUp extends AppCompatActivity {
 
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        SplashScreen.getInstance().finish();
-        super.onBackPressed();
     }
 }

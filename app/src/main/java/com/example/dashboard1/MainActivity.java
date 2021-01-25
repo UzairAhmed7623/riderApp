@@ -137,58 +137,64 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void headerTextView(){
-        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()){
-                        if (documentSnapshot.getString("First Name") != null && documentSnapshot.getString("Last Name") != null){
-                            String fuser_Name = documentSnapshot.getString("First Name");
-                            String luser_Name = documentSnapshot.getString("Last Name");
-                            tvUserName.setText(fuser_Name +" "+luser_Name);
+        if (firebaseAuth != null) {
+            DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
+            documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()){
+                            if (documentSnapshot.getString("First Name") != null && documentSnapshot.getString("Last Name") != null){
+                                String fuser_Name = documentSnapshot.getString("First Name");
+                                String luser_Name = documentSnapshot.getString("Last Name");
+                                tvUserName.setText(fuser_Name +" "+luser_Name);
+                            }
+                            else {
+                                Log.d("TAG", "No data found!");
+                            }
+                        }
+                        else {
+                            Toast.makeText(MainActivity.this, "No data found!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else {
+                        Log.d("TAG", task.getException().getMessage());
+                    }
+                }
+            });
+        }
+
+    }
+
+    public void headerImage(){
+        if (firebaseAuth != null) {
+            DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
+            documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()){
+                            if (documentSnapshot.getString("imageProfile") != null){
+                                String imageUri = documentSnapshot.getString("imageProfile");
+                                Glide.with(MainActivity.this).load(imageUri).into(ivProfilePic);
+                            }
+                            else {
+                                Log.d("TAG", "Not found!");
+                            }
                         }
                         else {
                             Log.d("TAG", "No data found!");
                         }
                     }
                     else {
-                        Toast.makeText(MainActivity.this, "No data found!", Toast.LENGTH_SHORT).show();
+                        Log.d("TAG", task.getException().getMessage());
                     }
                 }
-                else {
-                    Log.d("TAG", task.getException().getMessage());
-                }
-            }
-        });
-    }
+            });
+        }
 
-    public void headerImage(){
-        DocumentReference documentReference = firebaseFirestore.collection("Users").document(firebaseAuth.getUid());
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()){
-                        if (documentSnapshot.getString("imageProfile") != null){
-                            String imageUri = documentSnapshot.getString("imageProfile");
-                            Glide.with(MainActivity.this).load(imageUri).into(ivProfilePic);
-                        }
-                        else {
-                            Log.d("TAG", "Not found!");
-                        }
-                    }
-                    else {
-                        Log.d("TAG", "No data found!");
-                    }
-                }
-                else {
-                    Log.d("TAG", task.getException().getMessage());
-                }
-            }
-        });
     }
 
     private void isGPSOn() {
@@ -359,8 +365,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         else {
-            LoginActivity.getInstance().finish();
-            SplashScreen.getInstance().finish();
             super.onBackPressed();
         }
     }
@@ -371,10 +375,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()){
             case R.id.profile:
                 startActivity(new Intent(MainActivity.this, Profile.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
 
             case R.id.history:
                 startActivity(new Intent(MainActivity.this, History.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
 
             case R.id.contactUs:
@@ -415,10 +421,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 bottomSheetDialog.setContentView(bottomSheetLayout1);
                 bottomSheetDialog.show();
                 bottomSheetDialog.setCancelable(false);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
 
             case R.id.about:
-                final View bottomSheetLayout2 = getLayoutInflater().inflate(R.layout.about_dialog, null);
+                View bottomSheetLayout2 = getLayoutInflater().inflate(R.layout.about_dialog, null);
                 (bottomSheetLayout2.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -430,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 bottomSheetDialog.setContentView(bottomSheetLayout2);
                 bottomSheetDialog.show();
                 bottomSheetDialog.setCancelable(false);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
 
             case R.id.signOut:
@@ -440,6 +448,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
 
             case R.id.nav_log_version:

@@ -18,10 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SplashScreen extends AppCompatActivity {
 
-    private LottieAnimationView lottieSplash;
+    private LottieAnimationView lottieSondi, lottiesplash;
     private FirebaseAuth firebaseAuth;
-    private Animation animation;
-    private TextView textView;
     static SplashScreen splashScreenInstance;
 
     public static SplashScreen getInstance() {
@@ -39,32 +37,32 @@ public class SplashScreen extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        textView = (TextView) findViewById(R.id.textView);
-        lottieSplash = (LottieAnimationView) findViewById(R.id.lottieSplash);
-        animation = AnimationUtils.loadAnimation(this, R.anim.splash);
+        lottiesplash =(LottieAnimationView) findViewById(R.id.lottiesplash);
+        lottieSondi = (LottieAnimationView) findViewById(R.id.lottieSondi);
 
-        textView.setAnimation(animation);
+        lottiesplash.setVisibility(View.VISIBLE);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                lottieSplash.setVisibility(View.VISIBLE);
+                lottieSondi.setVisibility(View.VISIBLE);
             }
-        },2500);
+        },5000);
 
         if (firebaseAuth.getUid() != null){
-            Handler handler1 = new Handler();
-            handler1.postDelayed(new Runnable() {
+            Handler handler2 = new Handler();
+            handler2.postDelayed(new Runnable() {
                 @Override
                 public void run() {
 //                    lottieSplash.setVisibility(View.GONE);
 
                     Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
-                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SplashScreen.this);
-                    startActivity(intent, activityOptions.toBundle());
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
-            }, 5000);
+            }, 7000);
 
         }
         else {
@@ -74,10 +72,11 @@ public class SplashScreen extends AppCompatActivity {
                 public void run() {
 //                    lottieSplash.cancelAnimation();
                     Intent intent = new Intent(SplashScreen.this, SignUp.class);
-                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SplashScreen.this);
-                    startActivity(intent, activityOptions.toBundle());
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
-            }, 2500);
+            }, 7000);
         }
     }
 }
