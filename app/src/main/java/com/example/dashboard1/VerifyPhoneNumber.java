@@ -138,8 +138,9 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                 public void run() {
                     Toast.makeText(VerifyPhoneNumber.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(VerifyPhoneNumber.this, SignUp.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+                    finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }, 2500);
 
@@ -195,15 +196,9 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                                         public void run() {
                                             Intent VerifyIntent = new Intent(VerifyPhoneNumber.this, Password_Creation.class);
                                             VerifyIntent.putExtra("phone", ph);
-
-                                            Pair[] pair = new Pair[4];
-                                            pair[0] = new Pair<>(textView, "rider");
-                                            pair[1] = new Pair<>(etOtp, "phone");
-                                            pair[2] = new Pair<>(btnVerify, "signVerify");
-                                            pair[3] = new Pair<>(tvInkHornSolutionVerify, "inkhorn");
-
-                                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(VerifyPhoneNumber.this, pair);
-                                            startActivity(VerifyIntent, activityOptions.toBundle());
+                                            startActivity(VerifyIntent);
+                                            finish();
+                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                         }
                                     }, 2500);
                                 }

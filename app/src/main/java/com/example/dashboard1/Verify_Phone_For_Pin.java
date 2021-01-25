@@ -136,8 +136,9 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
                 public void run() {
                     Toast.makeText(Verify_Phone_For_Pin.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(Verify_Phone_For_Pin.this, SignUp.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+                    finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }, 2500);
 
@@ -197,7 +198,6 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
                                         public void run() {
                                             Intent VerifyIntent = new Intent(Verify_Phone_For_Pin.this, New_Pin.class);
                                             VerifyIntent.putExtra("phone", ph);
-
                                             startActivity(VerifyIntent);
                                             finish();
                                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
