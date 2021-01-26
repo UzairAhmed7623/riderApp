@@ -143,9 +143,9 @@ public class New_Pin extends AppCompatActivity {
                                                 @Override
                                                 public void run() {
                                                     Intent intent = new Intent(New_Pin.this, LoginActivity.class);
-                                                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(New_Pin.this);
-                                                    startActivity(intent, activityOptions.toBundle());
+                                                    startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                                 }
                                             },2500);
                                         }

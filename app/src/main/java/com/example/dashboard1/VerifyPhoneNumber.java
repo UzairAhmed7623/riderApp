@@ -188,6 +188,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                                     Intent intent = new Intent(VerifyPhoneNumber.this, LoginActivity.class);
                                     startActivity(intent);
                                     finish();
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 }
                                 else {
                                     Handler handler1 = new Handler();

@@ -93,15 +93,9 @@ public class ForgotPassword extends AppCompatActivity {
                                             public void run() {
                                                 Intent SignUpIntent = new Intent(ForgotPassword.this, Verify_Phone_For_Pin.class);
                                                 SignUpIntent.putExtra("phone_number", phone_number);
-
-                                                Pair[] pair = new Pair[4];
-                                                pair[0] = new Pair<>(textView, "rider");
-                                                pair[1] = new Pair<>(etPhoneNumberForgot, "phone");
-                                                pair[2] = new Pair<>(btnVerifyForgot, "signVerify");
-                                                pair[3] = new Pair<>(tvInkHornSolutionForgot, "inkhorn");
-
-                                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(ForgotPassword.this, pair);
-                                                startActivity(SignUpIntent, activityOptions.toBundle());
+                                                startActivity(SignUpIntent);
+                                                finish();
+                                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                             }
                                         }, 2500);
                                     }
