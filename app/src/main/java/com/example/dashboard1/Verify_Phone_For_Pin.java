@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class Verify_Phone_For_Pin extends AppCompatActivity {
 
     private TextView textView, tvInkHornSolutionVerify;
-    private String verificationCodeBySystem;
+    private String verificationCodeBySystem, phone;
     private PinView etOtp;
     private Button btnVerify;
     private FirebaseAuth firebaseAuth;
@@ -51,7 +51,7 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        String phone = getIntent().getStringExtra("phone_number");
+        phone = getIntent().getStringExtra("phone");
 
         firebaseAuth = firebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -135,7 +135,8 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
                 @Override
                 public void run() {
                     Toast.makeText(Verify_Phone_For_Pin.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(Verify_Phone_For_Pin.this, SignUp.class);
+                    Intent intent = new Intent(Verify_Phone_For_Pin.this, ForgotPassword.class);
+                    intent.putExtra("phone", phone);
                     startActivity(intent);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

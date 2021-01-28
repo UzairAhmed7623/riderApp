@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private LottieAnimationView lottieLogin;
     private LinearLayout lottieLayoutLogin;
-    private String checkBox1;
+    private String checkBox1, phone;
     static LoginActivity loginActivityInstance;
 
     public static LoginActivity getInstance() {
@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
+                intent.putExtra("phone", phone);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
@@ -101,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()) {
-                            String phone = documentSnapshot.getString("Phone");
+                            phone = documentSnapshot.getString("Phone");
                             String pass = documentSnapshot.getString("Pin");
 
                             etPhoneNumber.setText(phone);

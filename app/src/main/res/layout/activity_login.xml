@@ -39,20 +39,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.819">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
-
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
+            app:startIconDrawable="@drawable/phone"
+            app:startIconTint="@color/myColor"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
@@ -63,30 +61,9 @@
                 android:inputType="phone"
                 android:enabled="false"
                 android:transitionName="phone"
-                android:hint="Phone number"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.584" />
+                android:hint="Phone number" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingStart="10dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/phone"
-            android:backgroundTint="@color/myColor"
-            android:layout_marginStart="30dp" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etPassword"
@@ -100,6 +77,8 @@
             app:boxCornerRadiusTopStart="10dp"
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="@color/myColor"
+            app:startIconDrawable="@drawable/ic_round_lock_24"
+            app:startIconTint="@color/myColor"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
@@ -108,26 +87,9 @@
                 android:maxLength="6"
                 android:paddingStart="45dp"
                 android:hint="@string/prompt_password"
-                android:inputType="numberPassword"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.584" />
+                android:inputType="numberPassword" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingStart="10dp"
-                android:background="@drawable/ic_round_lock_24"
-                android:backgroundTint="@color/myColor"
-                android:layout_marginTop="2dp"
-                android:layout_marginStart="30dp" />
-
-        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout5"
@@ -181,7 +143,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:gravity="right"
                     android:orientation="horizontal">
 
@@ -189,6 +151,7 @@
                         android:id="@+id/tvForgotPass"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:gravity="right"
                         android:text="Forgot pin?"
                         android:textColor="@android:color/black"

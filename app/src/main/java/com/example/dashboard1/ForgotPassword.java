@@ -7,8 +7,10 @@ import android.os.Handler;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -26,7 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class ForgotPassword extends AppCompatActivity {
 
     private TextView textView, textView1, tvInkHornSolutionForgot;
-    private TextInputLayout etPhoneNumberForgot;
+    private EditText etPhoneNumberForgot;
     private Button btnVerifyForgot;
     private LinearLayout lottieLayoutForgot;
     private LottieAnimationView lottieForgot;
@@ -45,19 +47,21 @@ public class ForgotPassword extends AppCompatActivity {
         textView1 = (TextView) findViewById(R.id.textView1);
         tvInkHornSolutionForgot = (TextView) findViewById(R.id.tvInkHornSolutionForgot);
         btnVerifyForgot = (Button) findViewById(R.id.btnVerifyForgot);
-        etPhoneNumberForgot = (TextInputLayout) findViewById(R.id.etPhoneNumberForgot);
+        etPhoneNumberForgot = (EditText) findViewById(R.id.etPhoneNumberForgot);
         lottieLayoutForgot = (LinearLayout) findViewById(R.id.lottieLayoutForgot);
         lottieForgot = (LottieAnimationView) findViewById(R.id.lottieForgot);
 
         firebaseAuth = firebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
+        String phone = getIntent().getStringExtra("phone");
+        etPhoneNumberForgot.setText(phone);
+
         btnVerifyForgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String phone_number = "+92" + etPhoneNumberForgot.getEditText().getText().toString();
 
-                if (etPhoneNumberForgot.getEditText().getText().toString().isEmpty() || etPhoneNumberForgot.getEditText().getText().toString().length() < 10) {
+                if (etPhoneNumberForgot.getText().toString().isEmpty() || etPhoneNumberForgot.getText().toString().length() < 10) {
                     Snackbar.make(findViewById(android.R.id.content), "Please write a valid phone number!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                 }
 
@@ -69,7 +73,7 @@ public class ForgotPassword extends AppCompatActivity {
 
                     if (firebaseAuth.getUid() != null) {
 
-                        firebaseFirestore.collection("Users").whereEqualTo("Phone", phone_number).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        firebaseFirestore.collection("Users").whereEqualTo("Phone", phone).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -92,7 +96,7 @@ public class ForgotPassword extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 Intent SignUpIntent = new Intent(ForgotPassword.this, Verify_Phone_For_Pin.class);
-                                                SignUpIntent.putExtra("phone_number", phone_number);
+                                                SignUpIntent.putExtra("phone", phone);
                                                 startActivity(SignUpIntent);
                                                 finish();
                                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
