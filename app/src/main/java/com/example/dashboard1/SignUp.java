@@ -46,7 +46,6 @@ public class SignUp extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private LottieAnimationView lottieSignUp;
     private LinearLayout lottieLayoutSignUp;
-    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,7 @@ public class SignUp extends AppCompatActivity {
         lottieLayoutSignUp = (LinearLayout) findViewById(R.id.lottieLayoutSignUp);
         lottieSignUp = (LottieAnimationView) findViewById(R.id.lottieSignUp);
 
-        firebaseAuth = firebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         btnVerify.setOnClickListener(new View.OnClickListener() {

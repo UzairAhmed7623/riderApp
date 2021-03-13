@@ -10,6 +10,10 @@
             android:title="Profile"/>
 
         <item
+            android:id="@+id/orders"
+            android:title="Orders"/>
+
+        <item
             android:id="@+id/history"
             android:title="History"/>
 

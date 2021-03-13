@@ -99,8 +99,8 @@ public class ViewHistoryOnMap extends AppCompatActivity implements OnMapReadyCal
 
                         LatLng initialLatLng = new LatLng(latLngs.get(0).latitude,latLngs.get(0).longitude);
                         LatLng LastLatLng = new LatLng(latLngs.get(latLngs.size()-1).latitude,latLngs.get(latLngs.size()-1).longitude);
-                        marker = mgoogleMap.addMarker(new MarkerOptions().position(initialLatLng));
-                        marker = mgoogleMap.addMarker(new MarkerOptions().position(LastLatLng));
+                        marker = mgoogleMap.addMarker(new MarkerOptions().position(initialLatLng).title("Starting Point!"));
+                        marker = mgoogleMap.addMarker(new MarkerOptions().position(LastLatLng).title("End Point!"));
 
                         getDistance(latLngs);
 

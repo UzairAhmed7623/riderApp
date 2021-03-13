@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/launcher_icon_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".New_Pin"></activity>
+        <activity android:name=".Orders"></activity>
+        <activity android:name=".New_Pin" />
         <activity android:name=".Verify_Phone_For_Pin" />
         <activity android:name=".Password_Creation" />
         <activity android:name=".VerifyPhoneNumber" />

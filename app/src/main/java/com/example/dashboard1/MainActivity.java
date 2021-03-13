@@ -378,6 +378,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
 
+            case R.id.orders:
+                startActivity(new Intent(MainActivity.this, Orders.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                break;
+
             case R.id.history:
                 startActivity(new Intent(MainActivity.this, History.class));
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
