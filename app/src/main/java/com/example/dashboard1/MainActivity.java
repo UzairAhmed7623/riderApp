@@ -83,9 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mgoogleMap;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private FusedLocationProviderClient fusedLocationProviderClient;
     private DrawerLayout drawerLayout;
-    private ArrayList<LatLng> latLngs = new ArrayList<>();
+    private final ArrayList<LatLng> latLngs = new ArrayList<>();
     boolean check = true;
     private Menu menu;
     private AlarmManager alarmManager;
@@ -129,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         headerImage();
 
         tvDis = (TextView) findViewById(R.id.tvDis);
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);

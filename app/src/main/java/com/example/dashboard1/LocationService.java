@@ -37,6 +37,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -77,58 +79,52 @@ public class LocationService extends android.app.Service{
         locationCallback = new LocationCallback() {
             @SuppressLint("MissingPermission")
             @Override
-            public void onLocationResult(LocationResult locationResult) {
+            public void onLocationResult(@NotNull LocationResult locationResult) {
 
                 Location location = locationResult.getLastLocation();
 
-                if (location == null){
-                    return;
-                }
-                else {
-                    location_helper = new Location_Helper(location.getLongitude(), location.getLatitude());
+                location_helper = new Location_Helper(location.getLongitude(), location.getLatitude());
 
-                    Double Latitude = location_helper.getLatitude();
-                    Double Longitude = location_helper.getLongitude();
+                double Latitude = location_helper.getLatitude();
+                double Longitude = location_helper.getLongitude();
+                 latLng = new LatLng(Latitude, Longitude);
 
-                    latLng = new LatLng(Latitude, Longitude);
+                 Long timeStamp = System.currentTimeMillis()/1000;
 
-                    Long timeStamp = System.currentTimeMillis()/1000;
+                 String time = getDate(timeStamp);
 
-                    String time = getDate(timeStamp);
+                 Log.d(TAG,"Latitude: "+Latitude+" Longitude: "+Longitude+" Time: "+time);
 
-                    Log.d(TAG,"Latitude: "+Latitude+" Longitude: "+Longitude+" Time: "+time);
-
-                    uploadFirebase(Latitude, Longitude);
+                 uploadFirebase(Latitude, Longitude);
 
 //                String locationString = new StringBuilder("" + location.getLatitude()).append("/").append(location.getLongitude()).toString();
 
-//                    Intent dialogIntent = new Intent(getApplicationContext(), MainActivity.class);
-//                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(dialogIntent);
+//                Intent dialogIntent = new Intent(getApplicationContext(), MainActivity.class);
+//                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(dialogIntent);
 
-                    if (latLngs == null) {
-                        latLngs = new ArrayList<LatLng>();
-                    }
-                    latLngs.add(new LatLng(Latitude, Longitude));
-
-                    uploadHistory(latLngs, time);
-
-                    calculateDistance(time);
-
-                    if (isRunning(getApplicationContext())){
-                        MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
-                    }
-
-                    if (serviceIsRunningInForeground(LocationService.this)) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                            notificationManager.notify(1001, getNotification());
-                        }
-                        else {
-                            notificationManager.notify(1002, getNotification());
-                        }
-                    }
-//                Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
+                if (latLngs == null) {
+                    latLngs = new ArrayList<LatLng>();
                 }
+                latLngs.add(new LatLng(Latitude, Longitude));
+
+                uploadHistory(latLngs, time);
+
+                calculateDistance(time);
+
+                if (isRunning(getApplicationContext())){
+                    MainActivity.getInstance().showLocationTextView(Latitude, Longitude);
+                }
+
+                if (serviceIsRunningInForeground(LocationService.this)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                        notificationManager.notify(1001, getNotification());
+                    }
+                    else {
+                        notificationManager.notify(1002, getNotification());
+                    }
+                }
+//              Toast.makeText(getApplicationContext(), Latitude+" / "+Longitude +" / "+ time, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -159,7 +155,7 @@ public class LocationService extends android.app.Service{
     }
 
     private void getLocationUpdates() {
-        LocationRequest locationRequest = new LocationRequest();
+        LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(9000);
