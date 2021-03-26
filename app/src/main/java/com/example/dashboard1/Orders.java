@@ -7,7 +7,10 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -56,8 +59,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -88,7 +93,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private String destination;
 
 
-//new wale sare is k neche hn.
+    //new wale sare is k neche hn.
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -101,7 +106,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private ValueEventListener onlineValueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            if (snapshot.exists()) {
+            if (snapshot.exists() && currentUserRef != null) {
                 currentUserRef.onDisconnect().removeValue();
             }
         }
@@ -149,7 +154,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
         init();
 
-        if (firebaseAuth.getCurrentUser() != null){
+        if (firebaseAuth.getCurrentUser() != null) {
             updateFirebaseToken();
         }
 
@@ -177,10 +182,6 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
     private void init() {
         onlineRef = FirebaseDatabase.getInstance().getReference().child("info/connected");
-        driversLocationRef = FirebaseDatabase.getInstance().getReference("DriverInfo");
-        currentUserRef = FirebaseDatabase.getInstance().getReference("DriversLocation")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        geoFire = new GeoFire(driversLocationRef);
 
         registerOnlineSystem();
 
@@ -220,6 +221,36 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+
+                LatLng newPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, 18f));
+
+                Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
+                List<Address> addressList;
+                try {
+                    addressList = geocoder.getFromLocation(location.getLatitude(),
+                            location.getLongitude(), 1);
+                    String cityName = addressList.get(0).getLocality();
+
+                    driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
+                    currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    geoFire = new GeoFire(driversLocationRef);
+
+
+                } catch (IOException e) {
+                    Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
