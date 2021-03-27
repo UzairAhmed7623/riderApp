@@ -142,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (task.isSuccessful()){
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()){
-                            if (documentSnapshot.getString("First Name") != null && documentSnapshot.getString("Last Name") != null){
-                                String fuser_Name = documentSnapshot.getString("First Name");
-                                String luser_Name = documentSnapshot.getString("Last Name");
+                            if (documentSnapshot.getString("firstName") != null && documentSnapshot.getString("Last Name") != null){
+                                String fuser_Name = documentSnapshot.getString("firstName");
+                                String luser_Name = documentSnapshot.getString("lastName");
                                 tvUserName.setText(fuser_Name +" "+luser_Name);
                             }
                             else {

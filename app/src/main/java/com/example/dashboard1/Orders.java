@@ -100,6 +100,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
     SupportMapFragment mapFragment;
 
+    private boolean isFirstTime = true;
 
     private DatabaseReference onlineRef, currentUserRef, driversLocationRef;
     private GeoFire geoFire;
@@ -108,6 +109,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if (snapshot.exists() && currentUserRef != null) {
                 currentUserRef.onDisconnect().removeValue();
+                isFirstTime = true;
             }
         }
 
@@ -150,8 +152,6 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        String id = firebaseAuth.getCurrentUser().getUid();
-
         init();
 
         if (firebaseAuth.getCurrentUser() != null) {
@@ -186,10 +186,10 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         registerOnlineSystem();
 
         locationRequest = LocationRequest.create();
-        locationRequest.setSmallestDisplacement(10f);
+//        locationRequest.setSmallestDisplacement(5f);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(9000);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(1000);
 
         locationCallback = new LocationCallback() {
             @Override
@@ -199,20 +199,24 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                 LatLng newPosition = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
                 mgoogleMap.moveCamera(CameraUpdateFactory.newLatLng(newPosition));
 
-                geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                        new GeoLocation(locationResult.getLastLocation().getLatitude(),
-                                locationResult.getLastLocation().getLongitude()),
-                        new GeoFire.CompletionListener() {
-                            @Override
-                            public void onComplete(String key, DatabaseError error) {
-                                if (error != null){
-                                    Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
-                                }
-                                else {
-                                    Snackbar.make(mapFragment.getView(), "You're online!", Snackbar.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                Location location = locationResult.getLastLocation();
+                String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                geoFire.setLocation(id, new GeoLocation(location.getLatitude() , location.getLongitude()));
+//                        new GeoFire.CompletionListener() {
+//                    @Override
+//                    public void onComplete(String key, DatabaseError error) {
+//                        if (error != null){
+//                            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+//                        }
+//                        else {
+//                            if (isFirstTime){
+//                                Snackbar.make(mapFragment.getView(), "You're online!", Snackbar.LENGTH_LONG).show();
+//                                isFirstTime = false;
+//                            }
+//                        }
+//                    }
+//                });
 
             }
         };

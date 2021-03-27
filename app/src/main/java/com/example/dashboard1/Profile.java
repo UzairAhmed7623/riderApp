@@ -110,19 +110,19 @@ public class Profile extends AppCompatActivity {
 
                                 ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
 
-                                String phone = documentSnapshot.getString("Phone");
+                                String phone = documentSnapshot.getString("phoneNumber");
                                 etPhoneNumber.setText(phone);
 
-                                if (documentSnapshot.getString("First Name") != null &&
-                                        documentSnapshot.getString("Last Name") != null &&
-                                        documentSnapshot.getString("Email Address") != null &&
+                                if (documentSnapshot.getString("firstName") != null ||
+                                        documentSnapshot.getString("lastName") != null ||
+                                        documentSnapshot.getString("emailAddress") != null ||
                                         documentSnapshot.getString("imageProfile")!= null){
 
-                                    String fName = documentSnapshot.getString("First Name");
+                                    String fName = documentSnapshot.getString("firstName");
                                     etFirstName.setText(fName);
-                                    String lName = documentSnapshot.getString("Last Name");
+                                    String lName = documentSnapshot.getString("lastName");
                                     etLastName.setText(lName);
-                                    String email = documentSnapshot.getString("Email Address");
+                                    String email = documentSnapshot.getString("emailAddress");
                                     etEmailAddress.setText(email);
                                     String imageUri = documentSnapshot.getString("imageProfile");
                                     Glide.with(Profile.this).load(imageUri).into(ivProfile);
@@ -212,9 +212,9 @@ public class Profile extends AppCompatActivity {
                     ivAddImage.setEnabled(false); btnSave.setEnabled(false); etFirstName.setEnabled(false); etLastName.setEnabled(false); etEmailAddress.setEnabled(false);
 
                     HashMap<String, Object> userProfile = new HashMap<>();
-                    userProfile.put("First Name", fName);
-                    userProfile.put("Last Name", lName);
-                    userProfile.put("Email Address", email);
+                    userProfile.put("firstName", fName);
+                    userProfile.put("lastName", lName);
+                    userProfile.put("emailAddress", email);
 
                     documentReference.update(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

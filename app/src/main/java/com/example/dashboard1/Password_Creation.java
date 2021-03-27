@@ -116,7 +116,7 @@ public class Password_Creation extends AppCompatActivity {
                             @Override
                             public void run() {
                                 HashMap<String, Object> new_User = new HashMap<>();
-                                new_User.put("Phone", phone);
+                                new_User.put("phoneNumber", phone);
                                 new_User.put("Pin", pin);
 
                                 firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(new_User).addOnCompleteListener(new OnCompleteListener<Void>() {
