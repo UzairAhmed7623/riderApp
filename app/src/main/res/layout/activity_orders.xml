@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,70 +11,120 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
         tools:context=".Orders" />
 
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipDecline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="16dp"
+        android:text="Decline"
+        android:textColor="@android:color/white"
+        app:chipBackgroundColor="@android:color/holo_red_dark"
+        app:chipIcon="@drawable/clear"
+        app:chipIconTint="@android:color/white"/>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layout_accept"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="bottom"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@color/myColor"
+        app:cardCornerRadius="8dp">
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
 
+                <TextView
+                    android:id="@+id/tvTypeUber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/uber_move"
+                    android:text="Uber"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"/>
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/layout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:background="@color/lightGreen"-->
-<!--        android:visibility="gone"-->
-<!--        map:layout_constraintVertical_bias="0.999"-->
-<!--        map:layout_constraintBottom_toBottomOf="parent"-->
-<!--        map:layout_constraintEnd_toEndOf="parent"-->
-<!--        map:layout_constraintStart_toStartOf="parent"-->
-<!--        map:layout_constraintTop_toTopOf="parent">-->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:gravity="center">
 
-<!--        <de.hdodenhof.circleimageview.CircleImageView-->
-<!--            android:id="@+id/cusImage"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="100dp"-->
-<!--            android:padding="5dp" />-->
+                    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                        android:id="@+id/progress_circular_bar"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cpb_background_progressbar_color="@android:color/white"
+                        app:cpb_background_progressbar_width="3dp"
+                        app:cpb_progress="0"
+                        app:cpb_progress_direction="to_right"
+                        app:cpb_progress_max="100"
+                        app:cpb_progressbar_color="#151828"
+                        app:cpb_progressbar_width="3dp"
+                        app:cpb_round_border="false"/>
 
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                        android:src="@drawable/person"
+                        app:tint="@android:color/white" />
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_gravity="center_vertical">-->
+                </RelativeLayout>
 
-<!--            <TextView-->
-<!--                android:id="@+id/cusName"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="3dp"-->
-<!--                android:text="Your Driver"-->
-<!--                android:textSize="16dp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:padding="5dp"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                android:background="@color/lightGreen"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:layout_marginStart="10dp"/>-->
+                <TextView
+                    android:id="@+id/tvRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:drawableRight="@drawable/star"
+                    android:fontFamily="@font/uber_move"
+                    android:text="4.25"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"/>
 
-<!--            <TextView-->
-<!--                android:id="@+id/cusPhone"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="3dp"-->
-<!--                android:text="Your Driver"-->
-<!--                android:textSize="16dp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:padding="5dp"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                android:background="@color/lightGreen"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:layout_marginStart="10dp"/>-->
+            </LinearLayout>
 
-<!--        </LinearLayout>-->
+            <TextView
+                android:id="@+id/tvEstimatedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/uber_move_bold"
+                android:text="2 min"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"/>
 
-<!--    </LinearLayout>-->
+            <TextView
+                android:id="@+id/tvEstimatedDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/uber_move"
+                android:text="0.4 km"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

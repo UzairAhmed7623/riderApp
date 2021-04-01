@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.dashboard1.Common.Common;
 import com.example.dashboard1.CustomerCall;
+import com.example.dashboard1.EventBus.DriverRequestRecieved;
 import com.example.dashboard1.LocationService;
 import com.example.dashboard1.Models.TokenModel;
 import com.example.dashboard1.R;
@@ -25,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Map;
 import java.util.Random;
@@ -54,9 +57,15 @@ public class MyFirebaseService extends FirebaseMessagingService {
 
             Log.d("TAG", "Message recieved from: " + title + " " + body);
 
-            Intent intent = new Intent(this, MyFirebaseService.class);
+            if (title.equals("RequestDriver")){
+                EventBus.getDefault().postSticky(new DriverRequestRecieved("RiderKey", "PickupLocation"));
+            }
+            else {
+                Intent intent = new Intent(this, MyFirebaseService.class);
 
-            Common.showNotification(this, new Random().nextInt(), title, body, intent);
+                Common.showNotification(this, new Random().nextInt(), title, body, intent);
+            }
+
 
         }
     }
