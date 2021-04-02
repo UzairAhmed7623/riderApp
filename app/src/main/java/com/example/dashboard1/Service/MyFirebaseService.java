@@ -50,18 +50,24 @@ public class MyFirebaseService extends FirebaseMessagingService {
         Log.d("TAG", "Message recieved from: " + remoteMessage.getFrom());
 
         if (remoteMessage.getData().size() > 0){
-            Log.d("TAG", "Message recieved from: " + remoteMessage.getData().toString());
+            Log.d("TAG", "Data received: " + remoteMessage.getData().toString());
 
             String title = remoteMessage.getData().get("title");
-            String body = remoteMessage.getData().get("body");
+            String riderKey = remoteMessage.getData().get("RiderKey");
+            String body = remoteMessage.getData().get("PickupLocation");
 
-            Log.d("TAG", "Message recieved from: " + title + " " + body);
+            Log.d("TAG", "Title: " + title + "Body: " + body);
 
             if (title.equals("RequestDriver")){
-                EventBus.getDefault().postSticky(new DriverRequestRecieved("RiderKey", "PickupLocation"));
+                Log.d("TAG", "Title: " + title);
+
+                EventBus.getDefault().postSticky(new DriverRequestRecieved(riderKey, body));
+                Log.d("TAG", "Chala");
+
             }
             else {
                 Intent intent = new Intent(this, MyFirebaseService.class);
+                Log.d("TAG", "Chala");
 
                 Common.showNotification(this, new Random().nextInt(), title, body, intent);
             }

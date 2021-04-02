@@ -96,6 +96,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final String DIRECTION_API_KEY = "AIzaSyDl7YXtTZQNBkthV3PjFS0fQOKvL8SIR7k";
     private GoogleMap mgoogleMap;
 
     private FirebaseAuth firebaseAuth;
@@ -146,7 +147,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         if (EventBus.getDefault().hasSubscriberForEvent(DriverRequestRecieved.class)) {
             EventBus.getDefault().removeStickyEvent(DriverRequestRecieved.class);
         }
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().unregister(this);
 
         compositeDisposable.clear();
 
@@ -346,13 +347,14 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                 try {
 
                     LatLng originLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    String[] LatLng = event.getPickupLocation().split(",");
-                    LatLng destinationLatLng = new LatLng(Double.parseDouble(LatLng[0]), Double.parseDouble(LatLng[1]));
+                    LatLng destinationLatLng = new LatLng(Double.parseDouble(event.getPickupLocation().split(",")[0]),
+                            Double.parseDouble(event.getPickupLocation().split(",")[1]));
 
+                    Log.d("address: ","Chala1");
 
                     Log.d("address: ",""+destinationLatLng);
 
-                    GoogleDirection.withServerKey("AIzaSyDl7YXtTZQNBkthV3PjFS0fQOKvL8SIR7k")
+                    GoogleDirection.withServerKey(DIRECTION_API_KEY)
                                 .from(originLatLng)
                                 .to(destinationLatLng)
                                 .execute(new DirectionCallback() {
@@ -408,9 +410,6 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                                         String distance = distanceInfo.getText();
                                         String duration = durationInfo.getText();
 
-                                        String startAddress = leg.getStartAddress().replace(", Punjab,","").replace("Pakistan","");
-                                        String endAddress = leg.getEndAddress().replace(", Punjab,","").replace("Pakistan","");
-
                                         tvEstimatedDistance.setText(distance);
                                         tvEstimatedTime.setText(duration);
 
@@ -428,7 +427,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                                         Observable.interval(100, TimeUnit.MILLISECONDS)
                                                 .observeOn(AndroidSchedulers.mainThread())
                                                 .doOnNext(x -> {
-                                                    progress_circular_bar.setProgress(progress_circular_bar.getProgress() + 1f);
+                                                    progress_circular_bar.setProgress(progress_circular_bar.getProgress()+1f);
                                                 })
                                                 .takeUntil(aLong -> aLong == 100)
                                                 .doOnComplete(()->{
@@ -439,17 +438,23 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
                                     @Override
                                     public void onDirectionFailure(@NonNull Throwable t) {
+                                        Log.d("address: ","Chala2");
 
+                                        Snackbar.make(mapFragment.getView(), t.getMessage(), Snackbar.LENGTH_LONG).show();
                                     }
                                 });
                     }
                     catch (Exception e){
                         Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                        Log.d("address: ","Chala3");
+
                     }
 
             }
         }).addOnFailureListener(e -> {
             Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+            Log.d("address: ","Chala4");
+
         });
     }
 }
