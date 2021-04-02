@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -93,6 +94,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -104,6 +106,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
     private Chip chipDecline;
     private CardView layout_accept;
+    private FrameLayout rootLayout;
     private CircularProgressBar progress_circular_bar;
     private TextView tvRating, tvEstimatedTime, tvEstimatedDistance, tvTypeUber;
 
@@ -112,6 +115,9 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private Polyline blackPolyLine, greyPolyline;
     private PolylineOptions polylineOptions, blackPolylineOptions;
     private List<LatLng> polylineList;
+
+    private DriverRequestRecieved driverRequestReceived;
+    private Disposable countDownEvent;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
@@ -157,7 +163,10 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)){
+
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -187,6 +196,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         tvEstimatedTime = (TextView) findViewById(R.id.tvEstimatedTime);
         tvEstimatedDistance = (TextView) findViewById(R.id.tvEstimatedDistance);
         tvTypeUber = (TextView) findViewById(R.id.tvTypeUber);
+        rootLayout = (FrameLayout) findViewById(R.id.rootLayout);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -198,6 +208,22 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         if (firebaseAuth.getCurrentUser() != null) {
             updateFirebaseToken();
         }
+
+        chipDecline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (driverRequestReceived != null){
+                    if (countDownEvent != null){
+                        countDownEvent.dispose();
+                    }
+                    chipDecline.setVisibility(View.GONE);
+                    layout_accept.setVisibility(View.GONE);
+                    mgoogleMap.clear();
+                    UserUtils.sendDeclineRequest(rootLayout, Orders.this, driverRequestReceived.getKey());
+                    driverRequestReceived = null;
+                }
+            }
+        });
 
     }
 
@@ -224,59 +250,75 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private void init() {
         onlineRef = FirebaseDatabase.getInstance().getReference().child("info/connected");
 
-        locationRequest = LocationRequest.create();
-        locationRequest.setSmallestDisplacement(20f);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(15000);
-        locationRequest.setFastestInterval(10000);
+        buildLocationRequest();
+        buildLocationCallBack();
+        updateLocation();
 
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
+    }
 
-                LatLng newPosition = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
-                mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, 18f));
-
-                Location location = locationResult.getLastLocation();
-                String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
-                List<Address> addressList;
-                try {
-                    addressList = geocoder.getFromLocation(location.getLatitude(),
-                            location.getLongitude(), 1);
-                    String cityName = addressList.get(0).getLocality();
-
-                    driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
-                    currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    geoFire = new GeoFire(driversLocationRef);
-
-                    geoFire.setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()),
-                            new GeoFire.CompletionListener() {
-                                @Override
-                                public void onComplete(String key, DatabaseError error) {
-                                    if (error != null) {
-                                        Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
-                                    }
-
-                                }
-                            });
-
-                    registerOnlineSystem();
-
-                } catch (IOException e) {
-                    Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-
-            }
-        };
+    private void updateLocation() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
 
+    }
+
+    private void buildLocationCallBack() {
+        if (locationCallback == null) {
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+
+                    LatLng newPosition = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
+                    mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, 18f));
+
+                    Location location = locationResult.getLastLocation();
+                    String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
+                    List<Address> addressList;
+                    try {
+                        addressList = geocoder.getFromLocation(location.getLatitude(),
+                                location.getLongitude(), 1);
+                        String cityName = addressList.get(0).getLocality();
+
+                        driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
+                        currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        geoFire = new GeoFire(driversLocationRef);
+
+                        geoFire.setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()),
+                                new GeoFire.CompletionListener() {
+                                    @Override
+                                    public void onComplete(String key, DatabaseError error) {
+                                        if (error != null) {
+                                            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                                        }
+
+                                    }
+                                });
+
+                        registerOnlineSystem();
+
+                    } catch (IOException e) {
+                        Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                    }
+
+                }
+            };
+        }
+    }
+
+    private void buildLocationRequest() {
+        if (locationRequest == null) {
+            locationRequest = LocationRequest.create();
+            locationRequest.setSmallestDisplacement(20f);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(15000);
+            locationRequest.setFastestInterval(10000);
+        }
     }
 
     @Override
@@ -292,10 +334,12 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                 mgoogleMap.setMyLocationEnabled(true);
                 mgoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
                 mgoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @SuppressLint("MissingPermission")
                     @Override
                     public boolean onMyLocationButtonClick() {
 
+                        if (ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return false;
+                        }
                         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
@@ -319,6 +363,13 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                 params.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
                 params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
                 params.setMargins(0, 0, 0, 50);
+
+                buildLocationRequest();
+                buildLocationCallBack();
+                updateLocation();
+
+                Snackbar.make(mapFragment.getView(), "You're online!", Snackbar.LENGTH_LONG).show();
+
             }
 
             @Override
@@ -333,11 +384,13 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             }
         }).check();
 
-        Snackbar.make(mapFragment.getView(), "You're online!", Snackbar.LENGTH_LONG).show();
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onDriverRequestReceived(DriverRequestRecieved event) {
+
+        driverRequestReceived = event;
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -424,13 +477,14 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                                         chipDecline.setVisibility(View.VISIBLE);
                                         layout_accept.setVisibility(View.VISIBLE);
 
-                                        Observable.interval(100, TimeUnit.MILLISECONDS)
+                                        countDownEvent = Observable.interval(100, TimeUnit.MILLISECONDS)
                                                 .observeOn(AndroidSchedulers.mainThread())
                                                 .doOnNext(x -> {
                                                     progress_circular_bar.setProgress(progress_circular_bar.getProgress()+1f);
                                                 })
                                                 .takeUntil(aLong -> aLong == 100)
                                                 .doOnComplete(()->{
+                                                    progress_circular_bar.setProgress(0);
                                                     Toast.makeText(Orders.this, "Fake accept action", Toast.LENGTH_SHORT).show();
                                                 }).subscribe();
 
