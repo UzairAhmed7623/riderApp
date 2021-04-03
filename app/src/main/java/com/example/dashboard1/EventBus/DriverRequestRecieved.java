@@ -2,11 +2,10 @@ package com.example.dashboard1.EventBus;
 
 public class DriverRequestRecieved {
     private String key;
-    private String pickupLocation;
+    private String pickupLocation, pickupLocationString;
+    private String destinationLocation, destinationLocationString;
 
-    public DriverRequestRecieved(String key, String pickupLocation) {
-        this.key = key;
-        this.pickupLocation = pickupLocation;
+    public DriverRequestRecieved() {
     }
 
     public String getKey() {
@@ -23,5 +22,29 @@ public class DriverRequestRecieved {
 
     public void setPickupLocation(String pickupLocation) {
         this.pickupLocation = pickupLocation;
+    }
+
+    public String getPickupLocationString() {
+        return pickupLocationString;
+    }
+
+    public void setPickupLocationString(String pickupLocationString) {
+        this.pickupLocationString = pickupLocationString;
+    }
+
+    public String getDestinationLocation() {
+        return destinationLocation;
+    }
+
+    public void setDestinationLocation(String destinationLocation) {
+        this.destinationLocation = destinationLocation;
+    }
+
+    public String getDestinationLocationString() {
+        return destinationLocationString;
+    }
+
+    public void setDestinationLocationString(String destinationLocationString) {
+        this.destinationLocationString = destinationLocationString;
     }
 }

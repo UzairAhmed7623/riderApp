@@ -14,7 +14,10 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.dashboard1.Models.DriverInfoModel;
 import com.example.dashboard1.R;
+
+import java.util.Random;
 
 
 public class Common {
@@ -56,4 +59,15 @@ public class Common {
             notificationManager.notify(id, notification);
         }
     }
+
+    public static String createUniqueTripIdNumber(long timeOffset) {
+
+        Random random = new Random();
+        Long current = System.currentTimeMillis() + timeOffset;
+        Long unique = current + random.nextLong();
+        if (unique < 0) unique *= (-1);
+
+        return String.valueOf(unique);
+    }
+
 }

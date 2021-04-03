@@ -5,5 +5,6 @@
     <color name="transparent">#99252525</color>
     <color name="transparent_pin">#5200B552</color>
     <color name="lightGreen">#AEFFD3</color>
+    <color name="dark_grey">#656565</color>
 
 </resources>

@@ -84,4 +84,7 @@ dependencies {
 
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
 
+    implementation 'com.github.koushikcse:LoadingButton:1.7'
+
+
 }

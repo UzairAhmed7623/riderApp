@@ -5,26 +5,25 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +34,11 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
+import com.example.dashboard1.Common.Common;
 import com.example.dashboard1.EventBus.DriverRequestRecieved;
+import com.example.dashboard1.Models.DriverInfoModel;
+import com.example.dashboard1.Models.RiderModel;
+import com.example.dashboard1.Models.TripPlanModel;
 import com.example.dashboard1.Utils.UserUtils;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -52,7 +55,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -69,9 +71,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -79,6 +82,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.kusu.loadingbutton.LoadingButton;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import org.greenrobot.eventbus.EventBus;
@@ -86,9 +90,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -109,6 +114,12 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private FrameLayout rootLayout;
     private CircularProgressBar progress_circular_bar;
     private TextView tvRating, tvEstimatedTime, tvEstimatedDistance, tvTypeUber;
+    private ImageView ivRound;
+
+    private CardView layout_start_ride;
+    private ImageView ivStartRide, ivPhoneCall, ivThreeDot;
+    private TextView tvStartRiderEstimateTime, tvStartRiderEstimateDistance, tvRiderName;
+    private LoadingButton btnStartRide;
 
     //Routes
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -143,6 +154,9 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         }
     };
 
+    private String tripNumberId = "";
+    private boolean isTripStart = false, onlineSystemAlreadyRegister = false;
+
     @Override
     protected void onDestroy() {
 
@@ -157,13 +171,15 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
         compositeDisposable.clear();
 
+        onlineSystemAlreadyRegister = false;
+
         super.onDestroy();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (!EventBus.getDefault().isRegistered(this)){
+        if (!EventBus.getDefault().isRegistered(this)) {
 
             EventBus.getDefault().register(this);
         }
@@ -176,7 +192,11 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     private void registerOnlineSystem() {
-        onlineRef.addValueEventListener(onlineValueEventListener);
+        if (!onlineSystemAlreadyRegister)
+        {
+            onlineRef.addValueEventListener(onlineValueEventListener);
+            onlineSystemAlreadyRegister = true;
+        }
     }
 
     @Override
@@ -197,6 +217,15 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         tvEstimatedDistance = (TextView) findViewById(R.id.tvEstimatedDistance);
         tvTypeUber = (TextView) findViewById(R.id.tvTypeUber);
         rootLayout = (FrameLayout) findViewById(R.id.rootLayout);
+        ivRound = (ImageView) findViewById(R.id.ivRound);
+        layout_start_ride = (CardView) findViewById(R.id.layout_start_ride);
+        ivStartRide = (ImageView) findViewById(R.id.ivStartRide);
+        ivPhoneCall = (ImageView) findViewById(R.id.ivPhoneCall);
+        ivThreeDot = (ImageView) findViewById(R.id.ivThreeDot);
+        tvStartRiderEstimateTime = (TextView) findViewById(R.id.tvStartRiderEstimateTime);
+        tvStartRiderEstimateDistance = (TextView) findViewById(R.id.tvStartRiderEstimateDistance);
+        tvRiderName = (TextView) findViewById(R.id.tvRiderName);
+        btnStartRide = (LoadingButton) findViewById(R.id.btnStartRide);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -212,8 +241,8 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         chipDecline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (driverRequestReceived != null){
-                    if (countDownEvent != null){
+                if (driverRequestReceived != null) {
+                    if (countDownEvent != null) {
                         countDownEvent.dispose();
                     }
                     chipDecline.setVisibility(View.GONE);
@@ -278,34 +307,51 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                     Location location = locationResult.getLastLocation();
                     String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                    Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
-                    List<Address> addressList;
-                    try {
-                        addressList = geocoder.getFromLocation(location.getLatitude(),
-                                location.getLongitude(), 1);
-                        String cityName = addressList.get(0).getLocality();
+                    if (!isTripStart){
+                        Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
+                        List<Address> addressList;
+                        try {
+                            addressList = geocoder.getFromLocation(location.getLatitude(),
+                                    location.getLongitude(), 1);
+                            String cityName = addressList.get(0).getLocality();
 
-                        driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
-                        currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        geoFire = new GeoFire(driversLocationRef);
+                            driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
+                            currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            geoFire = new GeoFire(driversLocationRef);
 
-                        geoFire.setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()),
-                                new GeoFire.CompletionListener() {
-                                    @Override
-                                    public void onComplete(String key, DatabaseError error) {
-                                        if (error != null) {
-                                            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                            geoFire.setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()),
+                                    new GeoFire.CompletionListener() {
+                                        @Override
+                                        public void onComplete(String key, DatabaseError error) {
+                                            if (error != null) {
+                                                Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                                            }
+
                                         }
+                                    });
 
-                                    }
-                                });
+                            registerOnlineSystem();
 
-                        registerOnlineSystem();
-
-                    } catch (IOException e) {
-                        Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
                     }
+                    else {
+                        if (!TextUtils.isEmpty(tripNumberId)){
+                            Map<String, Object> updateData = new HashMap<>();
+                            updateData.put("currentLat", locationResult.getLastLocation().getLatitude());
+                            updateData.put("currentLng", locationResult.getLastLocation().getLongitude());
 
+                            FirebaseDatabase.getInstance().getReference("Trips")
+                                    .child(tripNumberId)
+                                    .updateChildren(updateData)
+                                    .addOnSuccessListener(aVoid -> {
+
+
+
+                                    }).addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show());
+                        }
+                    }
                 }
             };
         }
@@ -403,112 +449,234 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                     LatLng destinationLatLng = new LatLng(Double.parseDouble(event.getPickupLocation().split(",")[0]),
                             Double.parseDouble(event.getPickupLocation().split(",")[1]));
 
-                    Log.d("address: ","Chala1");
+                    Log.d("address: ", "Chala1");
 
-                    Log.d("address: ",""+destinationLatLng);
+                    Log.d("address: ", "" + destinationLatLng);
 
                     GoogleDirection.withServerKey(DIRECTION_API_KEY)
-                                .from(originLatLng)
-                                .to(destinationLatLng)
-                                .execute(new DirectionCallback() {
-                                    @Override
-                                    public void onDirectionSuccess(@Nullable Direction direction) {
-                                        Route route = direction.getRouteList().get(0);
-                                        Leg leg = route.getLegList().get(0);
+                            .from(originLatLng)
+                            .to(destinationLatLng)
+                            .execute(new DirectionCallback() {
+                                @Override
+                                public void onDirectionSuccess(@Nullable Direction direction) {
+                                    Route route = direction.getRouteList().get(0);
+                                    Leg leg = route.getLegList().get(0);
 
-                                        polylineList = leg.getDirectionPoint();
+                                    polylineList = leg.getDirectionPoint();
 
 
-                                        polylineOptions = new PolylineOptions();
-                                        polylineOptions.color(Color.GRAY);
-                                        polylineOptions.width(12);
-                                        polylineOptions.startCap(new SquareCap());
-                                        polylineOptions.jointType(JointType.ROUND);
-                                        polylineOptions.addAll(polylineList);
-                                        greyPolyline = mgoogleMap.addPolyline(polylineOptions);
+                                    polylineOptions = new PolylineOptions();
+                                    polylineOptions.color(Color.GRAY);
+                                    polylineOptions.width(12);
+                                    polylineOptions.startCap(new SquareCap());
+                                    polylineOptions.jointType(JointType.ROUND);
+                                    polylineOptions.addAll(polylineList);
+                                    greyPolyline = mgoogleMap.addPolyline(polylineOptions);
 
-                                        blackPolylineOptions = new PolylineOptions();
-                                        blackPolylineOptions.color(Color.BLACK);
-                                        blackPolylineOptions.width(5);
-                                        blackPolylineOptions.startCap(new SquareCap());
-                                        blackPolylineOptions.jointType(JointType.ROUND);
-                                        blackPolylineOptions.addAll(polylineList);
-                                        greyPolyline = mgoogleMap.addPolyline(polylineOptions);
-                                        blackPolyLine = mgoogleMap.addPolyline(blackPolylineOptions);
+                                    blackPolylineOptions = new PolylineOptions();
+                                    blackPolylineOptions.color(Color.BLACK);
+                                    blackPolylineOptions.width(5);
+                                    blackPolylineOptions.startCap(new SquareCap());
+                                    blackPolylineOptions.jointType(JointType.ROUND);
+                                    blackPolylineOptions.addAll(polylineList);
+                                    greyPolyline = mgoogleMap.addPolyline(polylineOptions);
+                                    blackPolyLine = mgoogleMap.addPolyline(blackPolylineOptions);
 
-                                        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
-                                        valueAnimator.setDuration(1000);
-                                        valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                                        valueAnimator.setInterpolator(new LinearInterpolator());
-                                        valueAnimator.addUpdateListener(animation -> {
-                                            List<LatLng> points = greyPolyline.getPoints();
-                                            int percentValue = (int) animation.getAnimatedValue();
-                                            int size = points.size();
-                                            int newPoints = (int) (size*(percentValue/100.0f));
-                                            List<LatLng> p = points.subList(0, newPoints);
-                                            blackPolyLine.setPoints(p);
-                                        });
+                                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
+                                    valueAnimator.setDuration(1000);
+                                    valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                                    valueAnimator.setInterpolator(new LinearInterpolator());
+                                    valueAnimator.addUpdateListener(animation -> {
+                                        List<LatLng> points = greyPolyline.getPoints();
+                                        int percentValue = (int) animation.getAnimatedValue();
+                                        int size = points.size();
+                                        int newPoints = (int) (size * (percentValue / 100.0f));
+                                        List<LatLng> p = points.subList(0, newPoints);
+                                        blackPolyLine.setPoints(p);
+                                    });
 
-                                        valueAnimator.start();
+                                    valueAnimator.start();
 
-                                        LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                                                .include(originLatLng)
-                                                .include(destinationLatLng)
-                                                .build();
+                                    LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                                            .include(originLatLng)
+                                            .include(destinationLatLng)
+                                            .build();
 
-                                        //Add car icon for origin
+                                    //Add car icon for origin
 
-                                        Info distanceInfo = leg.getDistance();
-                                        Info durationInfo = leg.getDuration();
-                                        String distance = distanceInfo.getText();
-                                        String duration = durationInfo.getText();
+                                    Info distanceInfo = leg.getDistance();
+                                    Info durationInfo = leg.getDuration();
+                                    String distance = distanceInfo.getText();
+                                    String duration = durationInfo.getText();
 
-                                        tvEstimatedDistance.setText(distance);
-                                        tvEstimatedTime.setText(duration);
+                                    tvEstimatedDistance.setText(distance);
+                                    tvEstimatedTime.setText(duration);
 
-                                        mgoogleMap.addMarker(new MarkerOptions()
-                                        .position(destinationLatLng)
-                                        .icon(BitmapDescriptorFactory.defaultMarker())
-                                        .title("Pickup Location"));
+                                    mgoogleMap.addMarker(new MarkerOptions()
+                                            .position(destinationLatLng)
+                                            .icon(BitmapDescriptorFactory.defaultMarker())
+                                            .title("Pickup Location"));
 
-                                        mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 160));
-                                        mgoogleMap.moveCamera(CameraUpdateFactory.zoomTo(mgoogleMap.getCameraPosition().zoom - 1));
+                                    mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 160));
+                                    mgoogleMap.moveCamera(CameraUpdateFactory.zoomTo(mgoogleMap.getCameraPosition().zoom - 1));
 
-                                        chipDecline.setVisibility(View.VISIBLE);
-                                        layout_accept.setVisibility(View.VISIBLE);
+                                    chipDecline.setVisibility(View.VISIBLE);
+                                    layout_accept.setVisibility(View.VISIBLE);
 
-                                        countDownEvent = Observable.interval(100, TimeUnit.MILLISECONDS)
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .doOnNext(x -> {
-                                                    progress_circular_bar.setProgress(progress_circular_bar.getProgress()+1f);
-                                                })
-                                                .takeUntil(aLong -> aLong == 100)
-                                                .doOnComplete(()->{
-                                                    progress_circular_bar.setProgress(0);
-                                                    Toast.makeText(Orders.this, "Fake accept action", Toast.LENGTH_SHORT).show();
-                                                }).subscribe();
+                                    countDownEvent = Observable.interval(100, TimeUnit.MILLISECONDS)
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .doOnNext(x -> {
+                                                progress_circular_bar.setProgress(progress_circular_bar.getProgress() + 1f);
+                                            })
+                                            .takeUntil(aLong -> aLong == 100)
+                                            .doOnComplete(() -> {
 
-                                    }
+                                                createTripPlan(event, duration, distance);
 
-                                    @Override
-                                    public void onDirectionFailure(@NonNull Throwable t) {
-                                        Log.d("address: ","Chala2");
+                                            }).subscribe();
 
-                                        Snackbar.make(mapFragment.getView(), t.getMessage(), Snackbar.LENGTH_LONG).show();
-                                    }
-                                });
-                    }
-                    catch (Exception e){
-                        Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
-                        Log.d("address: ","Chala3");
+                                }
 
-                    }
+                                @Override
+                                public void onDirectionFailure(@NonNull Throwable t) {
+                                    Log.d("address: ", "Chala2");
+
+                                    Snackbar.make(mapFragment.getView(), t.getMessage(), Snackbar.LENGTH_LONG).show();
+                                }
+                            });
+                } catch (Exception e) {
+                    Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                    Log.d("address: ", "Chala3");
+
+                }
 
             }
         }).addOnFailureListener(e -> {
             Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
-            Log.d("address: ","Chala4");
+            Log.d("address: ", "Chala4");
 
         });
+    }
+
+    private void createTripPlan(DriverRequestRecieved event, String duration, String distance) {
+        setProcessLayout(true);
+
+        FirebaseDatabase.getInstance().getReference(".info/serverTimeOffset").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                long timeOffset = snapshot.getValue(Long.class);
+
+                firebaseFirestore.collection("Users").document(event.getKey())
+                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+                        if (snapshot.exists()) {
+                            RiderModel riderModel = snapshot.toObject(RiderModel.class);
+
+                            if (ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                return;
+                            }
+                            fusedLocationProviderClient.getLastLocation()
+                                    .addOnSuccessListener(location -> {
+
+                                        TripPlanModel tripPlanModel = new TripPlanModel();
+                                        tripPlanModel.setDriver(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        tripPlanModel.setRider(event.getKey());
+
+                                        firebaseFirestore.collection("Users").document(firebaseAuth.getCurrentUser().getUid())
+                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                DriverInfoModel driverInfoModel = documentSnapshot.toObject(DriverInfoModel.class);
+
+
+                                                tripPlanModel.setDriverInfoModel(driverInfoModel);
+                                                tripPlanModel.setRiderModel(riderModel);
+                                                tripPlanModel.setOrigin(event.getPickupLocation());
+                                                tripPlanModel.setOriginString(event.getPickupLocationString());
+                                                tripPlanModel.setDestination(event.getDestinationLocation());
+                                                tripPlanModel.setDestinationString(event.getDestinationLocationString());
+                                                tripPlanModel.setDistancePickup(distance);
+                                                tripPlanModel.setDurationPickup(duration);
+                                                tripPlanModel.setCurrentLat(location.getLatitude());
+                                                tripPlanModel.setCurrentLng(location.getLongitude());
+
+                                                tripNumberId = Common.createUniqueTripIdNumber(timeOffset);
+
+                                                FirebaseDatabase.getInstance().getReference("Trips")
+                                                        .child(tripNumberId)
+                                                        .setValue(tripPlanModel)
+                                                        .addOnSuccessListener(aVoid -> {
+
+                                                            tvRiderName.setText(riderModel.getFirstName());
+                                                            tvStartRiderEstimateTime.setText(duration);
+                                                            tvStartRiderEstimateDistance.setText(distance);
+
+                                                            setOfflineModeForDriver(event, duration, distance);
+
+                                                        }).addOnFailureListener(e -> {
+                                                    Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                                });
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                            }
+                                        });
+
+                                    }).addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show());
+                        }
+                        else {
+                            Snackbar.make(mapFragment.getView(), "Cannot find rider with key"+" "+event.getKey(), Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void setOfflineModeForDriver(DriverRequestRecieved event, String duration, String distance) {
+
+        UserUtils.sendAcceptRequestToRider(mapFragment.getView(), this, event.getKey(), tripNumberId);
+
+        if (currentUserRef != null){
+            currentUserRef.removeValue();
+        }
+        setProcessLayout(false);
+        layout_accept.setVisibility(View.GONE);
+
+        layout_start_ride.setVisibility(View.VISIBLE);
+
+        isTripStart = true;
+    }
+
+    private void setProcessLayout(boolean isProcess) {
+        int color = -1;
+        if (isProcess) {
+            color = ContextCompat.getColor(this, R.color.dark_grey);
+            progress_circular_bar.setIndeterminateMode(true);
+            tvRating.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.star, 0);
+
+        }
+        else {
+            color = ContextCompat.getColor(this, android.R.color.white);
+            progress_circular_bar.setIndeterminateMode(false);
+            progress_circular_bar.setProgress(0);
+            tvRating.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.star, 0);
+
+        }
+
+            tvEstimatedTime.setTextColor(color);
+            tvEstimatedDistance.setTextColor(color);
+            ImageViewCompat.setImageTintList(ivRound, ColorStateList.valueOf(color));
+            tvRating.setTextColor(color);
+            tvTypeUber.setTextColor(color);
+
     }
 }

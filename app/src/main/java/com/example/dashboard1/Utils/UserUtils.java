@@ -86,15 +86,65 @@ public class UserUtils {
                             }));
                 }
                 else {
+                    compositeDisposable.clear();
                     Snackbar.make(view, "Token not found!", Snackbar.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                compositeDisposable.clear();
                 Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
 
+    }
+
+    public static void sendAcceptRequestToRider(View view, Context context, String key, String tripNumberId) {
+        CompositeDisposable compositeDisposable = new CompositeDisposable();
+        IFCMService ifcmService = RetrofitFCMClient.getInstance().create(IFCMService.class);
+
+        FirebaseDatabase.getInstance()
+                .getReference("Tokens")
+                .child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    TokenModel tokenModel = snapshot.getValue(TokenModel.class);
+
+                    Map<String, String> notificationdata = new HashMap<>();
+                    notificationdata.put("title", "Accept");
+                    notificationdata.put("body", "This message represent action driver accept");
+                    notificationdata.put("DriverKey", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    notificationdata.put("TripKey", tripNumberId);
+
+                    FCMSendData fcmSendData = new FCMSendData(tokenModel.getToken(), notificationdata);
+                    compositeDisposable.add(ifcmService.sendNotification(fcmSendData)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(fcmResponse -> {
+                                if (fcmResponse.getSuccess() == 0){
+                                    compositeDisposable.clear();
+                                    Snackbar.make(view, "Accept Failed", Snackbar.LENGTH_LONG).show();
+                                }
+
+                            }, throwable -> {
+                                compositeDisposable.clear();
+                                Snackbar.make(view, throwable.getMessage(), Snackbar.LENGTH_LONG).show();
+                            }));
+                }
+                else {
+                    compositeDisposable.clear();
+                    Snackbar.make(view, "Token not found!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                compositeDisposable.clear();
+                Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 }
