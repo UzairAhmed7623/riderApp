@@ -196,6 +196,34 @@
                 android:layout_marginBottom="16dp"
                 android:background="@android:color/darker_gray"/>
 
+        <LinearLayout
+            android:id="@+id/layout_notify_rider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvNotifyRider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="02.00"
+                android:textSize="18sp"
+                android:gravity="center_horizontal"
+                android:fontFamily="@font/uber_move"/>
+
+            <ProgressBar
+                android:id="@+id/progressNotify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:min="0"
+                android:max="120"
+                android:indeterminate="false"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
+
+        </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -229,6 +257,7 @@
                 android:id="@+id/btnStartRide"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:layout_marginTop="20dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"

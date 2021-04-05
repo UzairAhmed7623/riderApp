@@ -17,6 +17,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,6 +25,8 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +39,15 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.example.dashboard1.Common.Common;
 import com.example.dashboard1.EventBus.DriverRequestRecieved;
+import com.example.dashboard1.EventBus.NotifyToRiderEvent;
 import com.example.dashboard1.Models.DriverInfoModel;
 import com.example.dashboard1.Models.RiderModel;
 import com.example.dashboard1.Models.TripPlanModel;
 import com.example.dashboard1.Utils.UserUtils;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -75,6 +81,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -101,7 +108,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-public class Orders extends AppCompatActivity implements OnMapReadyCallback {
+public class Orders extends AppCompatActivity implements OnMapReadyCallback, GeoQueryEventListener {
 
     private static final String DIRECTION_API_KEY = "AIzaSyDl7YXtTZQNBkthV3PjFS0fQOKvL8SIR7k";
     private GoogleMap mgoogleMap;
@@ -121,6 +128,9 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private TextView tvStartRiderEstimateTime, tvStartRiderEstimateDistance, tvRiderName;
     private LoadingButton btnStartRide;
 
+    private LinearLayout layout_notify_rider;
+    private TextView tvNotifyRider;
+    private ProgressBar progressNotify;
     //Routes
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Polyline blackPolyLine, greyPolyline;
@@ -157,6 +167,9 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     private String tripNumberId = "";
     private boolean isTripStart = false, onlineSystemAlreadyRegister = false;
 
+    private GeoFire pickupGeoFire;
+    private GeoQuery pickupGeoQuery;
+
     @Override
     protected void onDestroy() {
 
@@ -166,6 +179,9 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
         if (EventBus.getDefault().hasSubscriberForEvent(DriverRequestRecieved.class)) {
             EventBus.getDefault().removeStickyEvent(DriverRequestRecieved.class);
+        }
+        if (EventBus.getDefault().hasSubscriberForEvent(NotifyToRiderEvent.class)) {
+            EventBus.getDefault().removeStickyEvent(NotifyToRiderEvent.class);
         }
         EventBus.getDefault().unregister(this);
 
@@ -226,6 +242,10 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         tvStartRiderEstimateDistance = (TextView) findViewById(R.id.tvStartRiderEstimateDistance);
         tvRiderName = (TextView) findViewById(R.id.tvRiderName);
         btnStartRide = (LoadingButton) findViewById(R.id.btnStartRide);
+        layout_notify_rider = (LinearLayout) findViewById(R.id.layout_notify_rider);
+        tvNotifyRider = (TextView) findViewById(R.id.tvNotifyRider);
+        progressNotify = (ProgressBar) findViewById(R.id.progressNotify);
+
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -306,6 +326,13 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
                     Location location = locationResult.getLastLocation();
                     String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    if (pickupGeoFire != null){
+                        pickupGeoQuery = pickupGeoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.05);
+
+                        pickupGeoQuery.addGeoQueryEventListener(Orders.this);
+                    }
+
 
                     if (!isTripStart){
                         Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
@@ -516,6 +543,8 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                                             .position(destinationLatLng)
                                             .icon(BitmapDescriptorFactory.defaultMarker())
                                             .title("Pickup Location"));
+                                    
+                                    createGeoFirePickupLocation(event.getKey(), destinationLatLng);
 
                                     mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 160));
                                     mgoogleMap.moveCamera(CameraUpdateFactory.zoomTo(mgoogleMap.getCameraPosition().zoom - 1));
@@ -556,6 +585,25 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             Log.d("address: ", "Chala4");
 
         });
+    }
+
+    private void createGeoFirePickupLocation(String key, LatLng destinationLatLng) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("TripPickupLocation");
+
+        pickupGeoFire = new GeoFire(ref);
+        pickupGeoFire.setLocation(key, new GeoLocation(destinationLatLng.latitude, destinationLatLng.longitude),
+                new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+                        if (error != null){
+                            Snackbar.make(rootLayout, error.getMessage(), Snackbar.LENGTH_LONG).show();
+                        }
+                        else {
+                            Log.d("Success", key+"was create success on geofire");
+                        }
+                    }
+                });
+
     }
 
     private void createTripPlan(DriverRequestRecieved event, String duration, String distance) {
@@ -678,5 +726,56 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             tvRating.setTextColor(color);
             tvTypeUber.setTextColor(color);
 
+    }
+
+    @Override
+    public void onKeyEntered(String key, GeoLocation location) {
+        btnStartRide.setEnabled(true);
+        UserUtils.sendNotifyToRider(this, rootLayout, key);
+        if (pickupGeoQuery != null){
+            pickupGeoFire.removeLocation(key);
+            pickupGeoFire = null;
+            pickupGeoQuery.removeAllListeners();
+        }
+    }
+
+    @Override
+    public void onKeyExited(String key) {
+        btnStartRide.setEnabled(false);
+    }
+
+    @Override
+    public void onKeyMoved(String key, GeoLocation location) {
+
+    }
+
+    @Override
+    public void onGeoQueryReady() {
+
+    }
+
+    @Override
+    public void onGeoQueryError(DatabaseError error) {
+
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onNotifytoRider(NotifyToRiderEvent event){
+        layout_notify_rider.setVisibility(View.VISIBLE);
+        progressNotify.setMax(1 * 60);
+        CountDownTimer countDownTimer = new CountDownTimer(1*60*1000, 1000) {
+            @Override
+            public void onTick(long l) {
+                progressNotify.setProgress(progressNotify.getProgress() + 1);
+                tvNotifyRider.setText(String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l)),
+                        TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l))));
+            }
+
+            @Override
+            public void onFinish() {
+                Snackbar.make(rootLayout, "Time Over", Snackbar.LENGTH_LONG).show();
+            }
+        }.start();
     }
 }

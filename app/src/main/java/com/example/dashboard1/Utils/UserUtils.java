@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.dashboard1.EventBus.NotifyToRiderEvent;
 import com.example.dashboard1.Models.FCMSendData;
 import com.example.dashboard1.Models.TokenModel;
 import com.example.dashboard1.Orders;
@@ -20,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +130,57 @@ public class UserUtils {
                                 if (fcmResponse.getSuccess() == 0){
                                     compositeDisposable.clear();
                                     Snackbar.make(view, "Accept Failed", Snackbar.LENGTH_LONG).show();
+                                }
+
+                            }, throwable -> {
+                                compositeDisposable.clear();
+                                Snackbar.make(view, throwable.getMessage(), Snackbar.LENGTH_LONG).show();
+                            }));
+                }
+                else {
+                    compositeDisposable.clear();
+                    Snackbar.make(view, "Token not found!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                compositeDisposable.clear();
+                Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public static void sendNotifyToRider(Context context, View view, String key) {
+        CompositeDisposable compositeDisposable = new CompositeDisposable();
+        IFCMService ifcmService = RetrofitFCMClient.getInstance().create(IFCMService.class);
+
+        FirebaseDatabase.getInstance()
+                .getReference("Tokens")
+                .child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    TokenModel tokenModel = snapshot.getValue(TokenModel.class);
+
+                    Map<String, String> notificationdata = new HashMap<>();
+                    notificationdata.put("title", "DriverArrived");
+                    notificationdata.put("body", "Your driver arrived!");
+                    notificationdata.put("DriverKey", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    notificationdata.put("RiderKey", key);
+
+                    FCMSendData fcmSendData = new FCMSendData(tokenModel.getToken(), notificationdata);
+                    compositeDisposable.add(ifcmService.sendNotification(fcmSendData)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(fcmResponse -> {
+                                if (fcmResponse.getSuccess() == 0){
+                                    compositeDisposable.clear();
+                                    Snackbar.make(view, "Accept Failed", Snackbar.LENGTH_LONG).show();
+                                }
+                                else {
+                                    EventBus.getDefault().postSticky(new NotifyToRiderEvent());
                                 }
 
                             }, throwable -> {
