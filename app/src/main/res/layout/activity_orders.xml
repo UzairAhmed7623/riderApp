@@ -253,18 +253,38 @@
 
             </RelativeLayout>
 
-            <com.kusu.loadingbutton.LoadingButton
-                android:id="@+id/btnStartRide"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:layout_marginTop="20dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Start Ride!"
-                android:textColor="@color/white"
-                app:lb_buttonColor="@color/myColor"
-                app:lb_isCircular="false" />
+                android:layout_height="wrap_content">
+
+                <com.kusu.loadingbutton.LoadingButton
+                    android:id="@+id/btnStartRide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:layout_marginTop="20dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Start Ride!"
+                    android:textColor="@color/white"
+                    app:lb_buttonColor="@color/myColor"
+                    app:lb_isCircular="false" />
+
+                <com.kusu.loadingbutton.LoadingButton
+                    android:id="@+id/btnCompleteRide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:visibility="gone"
+                    android:layout_marginTop="20dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Complete Ride!"
+                    android:textColor="@color/white"
+                    app:lb_buttonColor="@color/myColor"
+                    app:lb_isCircular="false" />
+
+            </FrameLayout>
 
             </LinearLayout>
 

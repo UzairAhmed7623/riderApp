@@ -108,7 +108,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-public class Orders extends AppCompatActivity implements OnMapReadyCallback, GeoQueryEventListener {
+public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String DIRECTION_API_KEY = "AIzaSyDl7YXtTZQNBkthV3PjFS0fQOKvL8SIR7k";
     private GoogleMap mgoogleMap;
@@ -127,6 +127,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback, Geo
     private ImageView ivStartRide, ivPhoneCall, ivThreeDot;
     private TextView tvStartRiderEstimateTime, tvStartRiderEstimateDistance, tvRiderName;
     private LoadingButton btnStartRide;
+    private LoadingButton btnCompleteRide;
 
     private LinearLayout layout_notify_rider;
     private TextView tvNotifyRider;
@@ -167,8 +168,74 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback, Geo
     private String tripNumberId = "";
     private boolean isTripStart = false, onlineSystemAlreadyRegister = false;
 
-    private GeoFire pickupGeoFire;
-    private GeoQuery pickupGeoQuery;
+    private GeoFire pickupGeoFire, destinationGeoFire;
+    private GeoQuery pickupGeoQuery, destinationGeoQuery;
+
+    private GeoQueryEventListener pickupGeoQueryEventListner = new GeoQueryEventListener() {
+        @Override
+        public void onKeyEntered(String key, GeoLocation location) {
+            btnStartRide.setEnabled(true);
+            UserUtils.sendNotifyToRider(Orders.this, rootLayout, key);
+            if (pickupGeoQuery != null){
+                pickupGeoFire.removeLocation(key);
+                pickupGeoFire = null;
+                pickupGeoQuery.removeAllListeners();
+            }
+        }
+
+        @Override
+        public void onKeyExited(String key) {
+            btnStartRide.setEnabled(false);
+        }
+
+        @Override
+        public void onKeyMoved(String key, GeoLocation location) {
+
+        }
+
+        @Override
+        public void onGeoQueryReady() {
+
+        }
+
+        @Override
+        public void onGeoQueryError(DatabaseError error) {
+
+        }
+    };
+    private GeoQueryEventListener destinationGeoQueryEventListner = new GeoQueryEventListener() {
+        @Override
+        public void onKeyEntered(String key, GeoLocation location) {
+            btnCompleteRide.setEnabled(true);
+            if (destinationGeoQuery != null){
+                destinationGeoFire.removeLocation(key);
+                destinationGeoFire = null;
+                destinationGeoQuery.removeAllListeners();
+            }
+        }
+
+        @Override
+        public void onKeyExited(String key) {
+
+        }
+
+        @Override
+        public void onKeyMoved(String key, GeoLocation location) {
+
+        }
+
+        @Override
+        public void onGeoQueryReady() {
+
+        }
+
+        @Override
+        public void onGeoQueryError(DatabaseError error) {
+
+        }
+    };
+
+    private CountDownTimer waitingTimer;
 
     @Override
     protected void onDestroy() {
@@ -245,6 +312,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback, Geo
         layout_notify_rider = (LinearLayout) findViewById(R.id.layout_notify_rider);
         tvNotifyRider = (TextView) findViewById(R.id.tvNotifyRider);
         progressNotify = (ProgressBar) findViewById(R.id.progressNotify);
+        btnCompleteRide = (LoadingButton) findViewById(R.id.btnCompleteRide);
 
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -273,6 +341,126 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback, Geo
                 }
             }
         });
+
+        btnStartRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (blackPolyLine != null) blackPolyLine.remove();
+                if (greyPolyline != null) greyPolyline.remove();
+                if (waitingTimer != null) waitingTimer.cancel();
+
+                layout_notify_rider.setVisibility(View.GONE);
+                if (driverRequestReceived != null){
+                    LatLng destinationLatLng = new LatLng(
+                            Double.parseDouble(driverRequestReceived.getDestinationLocation().split(",")[0]),
+                            Double.parseDouble(driverRequestReceived.getDestinationLocation().split(",")[1]));
+
+                    mgoogleMap.addMarker(new MarkerOptions()
+                    .position(destinationLatLng)
+                    .title(driverRequestReceived.getDestinationLocationString())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+
+                    //draw path
+                    drawPathFromCurrentLocation(driverRequestReceived.getDestinationLocation());
+                }
+                btnStartRide.setVisibility(View.GONE);
+                chipDecline.setVisibility(View.GONE);
+                btnCompleteRide.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnCompleteRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(Orders.this, "Delivered!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void drawPathFromCurrentLocation(String destinationLocation) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                try {
+
+                    LatLng originLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    LatLng destinationLatLng = new LatLng(
+                            Double.parseDouble(destinationLocation.split(",")[0]),
+                            Double.parseDouble(destinationLocation.split(",")[1]));
+
+                    Log.d("address: ", "Chala1");
+
+                    Log.d("address: ", "" + destinationLatLng);
+
+                    GoogleDirection.withServerKey(DIRECTION_API_KEY)
+                            .from(originLatLng)
+                            .to(destinationLatLng)
+                            .execute(new DirectionCallback() {
+                                @Override
+                                public void onDirectionSuccess(@Nullable Direction direction) {
+                                    Route route = direction.getRouteList().get(0);
+                                    Leg leg = route.getLegList().get(0);
+
+                                    polylineList = leg.getDirectionPoint();
+
+
+                                    polylineOptions = new PolylineOptions();
+                                    polylineOptions.color(Color.GRAY);
+                                    polylineOptions.width(12);
+                                    polylineOptions.startCap(new SquareCap());
+                                    polylineOptions.jointType(JointType.ROUND);
+                                    polylineOptions.addAll(polylineList);
+                                    greyPolyline = mgoogleMap.addPolyline(polylineOptions);
+
+                                    blackPolylineOptions = new PolylineOptions();
+                                    blackPolylineOptions.color(Color.BLACK);
+                                    blackPolylineOptions.width(5);
+                                    blackPolylineOptions.startCap(new SquareCap());
+                                    blackPolylineOptions.jointType(JointType.ROUND);
+                                    blackPolylineOptions.addAll(polylineList);
+                                    greyPolyline = mgoogleMap.addPolyline(polylineOptions);
+                                    blackPolyLine = mgoogleMap.addPolyline(blackPolylineOptions);
+
+
+
+                                    LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                                            .include(originLatLng)
+                                            .include(destinationLatLng)
+                                            .build();
+
+                                    createGeoFireDestinationLocation(driverRequestReceived.getKey(), destinationLatLng);
+
+                                    mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 160));
+                                    mgoogleMap.moveCamera(CameraUpdateFactory.zoomTo(mgoogleMap.getCameraPosition().zoom - 1));
+
+                                }
+
+                                @Override
+                                public void onDirectionFailure(@NonNull Throwable t) {
+                                    Log.d("address: ", "Chala2");
+
+                                    Snackbar.make(rootLayout, t.getMessage(), Snackbar.LENGTH_LONG).show();
+                                }
+                            });
+                } catch (Exception e) {
+                    Snackbar.make(rootLayout, e.getMessage(), Snackbar.LENGTH_LONG).show();
+                    Log.d("address: ", "Chala3");
+
+                }
+
+            }
+        }).addOnFailureListener(e -> {
+            Snackbar.make(rootLayout, e.getMessage(), Snackbar.LENGTH_LONG).show();
+            Log.d("address: ", "Chala4");
+
+        });
+    }
+
+    private void createGeoFireDestinationLocation(String key, LatLng destinationLatLng) {
 
     }
 
@@ -330,9 +518,14 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback, Geo
                     if (pickupGeoFire != null){
                         pickupGeoQuery = pickupGeoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.05);
 
-                        pickupGeoQuery.addGeoQueryEventListener(Orders.this);
+                        pickupGeoQuery.addGeoQueryEventListener(pickupGeoQueryEventListner);
                     }
 
+                    if (destinationGeoFire != null){
+                        destinationGeoQuery = destinationGeoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.05);
+
+                        destinationGeoQuery.addGeoQueryEventListener(destinationGeoQueryEventListner);
+                    }
 
                     if (!isTripStart){
                         Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
@@ -728,42 +921,11 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback, Geo
 
     }
 
-    @Override
-    public void onKeyEntered(String key, GeoLocation location) {
-        btnStartRide.setEnabled(true);
-        UserUtils.sendNotifyToRider(this, rootLayout, key);
-        if (pickupGeoQuery != null){
-            pickupGeoFire.removeLocation(key);
-            pickupGeoFire = null;
-            pickupGeoQuery.removeAllListeners();
-        }
-    }
-
-    @Override
-    public void onKeyExited(String key) {
-        btnStartRide.setEnabled(false);
-    }
-
-    @Override
-    public void onKeyMoved(String key, GeoLocation location) {
-
-    }
-
-    @Override
-    public void onGeoQueryReady() {
-
-    }
-
-    @Override
-    public void onGeoQueryError(DatabaseError error) {
-
-    }
-
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onNotifytoRider(NotifyToRiderEvent event){
         layout_notify_rider.setVisibility(View.VISIBLE);
         progressNotify.setMax(1 * 60);
-        CountDownTimer countDownTimer = new CountDownTimer(1*60*1000, 1000) {
+        waitingTimer = new CountDownTimer(1*60*1000, 1000) {
             @Override
             public void onTick(long l) {
                 progressNotify.setProgress(progressNotify.getProgress() + 1);
