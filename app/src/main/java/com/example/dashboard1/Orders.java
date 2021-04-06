@@ -83,6 +83,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firestore.v1.StructuredQuery;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -148,6 +149,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     SupportMapFragment mapFragment;
 
     private boolean isFirstTime = true;
+    private String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     private DatabaseReference onlineRef, currentUserRef, driversLocationRef;
     private GeoFire geoFire;
@@ -176,7 +178,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         public void onKeyEntered(String key, GeoLocation location) {
             btnStartRide.setEnabled(true);
             UserUtils.sendNotifyToRider(Orders.this, rootLayout, key);
-            if (pickupGeoQuery != null){
+            if (pickupGeoQuery != null) {
                 pickupGeoFire.removeLocation(key);
                 pickupGeoFire = null;
                 pickupGeoQuery.removeAllListeners();
@@ -207,7 +209,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         @Override
         public void onKeyEntered(String key, GeoLocation location) {
             btnCompleteRide.setEnabled(true);
-            if (destinationGeoQuery != null){
+            if (destinationGeoQuery != null) {
                 destinationGeoFire.removeLocation(key);
                 destinationGeoFire = null;
                 destinationGeoQuery.removeAllListeners();
@@ -275,8 +277,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     private void registerOnlineSystem() {
-        if (!onlineSystemAlreadyRegister)
-        {
+        if (!onlineSystemAlreadyRegister) {
             onlineRef.addValueEventListener(onlineValueEventListener);
             onlineSystemAlreadyRegister = true;
         }
@@ -330,14 +331,35 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 if (driverRequestReceived != null) {
-                    if (countDownEvent != null) {
-                        countDownEvent.dispose();
+                    if (TextUtils.isEmpty(tripNumberId)) {
+                        if (countDownEvent != null) {
+                            countDownEvent.dispose();
+                        }
+                        chipDecline.setVisibility(View.GONE);
+                        layout_accept.setVisibility(View.GONE);
+                        mgoogleMap.clear();
+                        UserUtils.sendDeclineRequest(rootLayout, Orders.this, driverRequestReceived.getKey());
+                        driverRequestReceived = null;
+
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
+
+                            chipDecline.setVisibility(View.GONE);
+                            layout_start_ride.setVisibility(View.GONE);
+                            mgoogleMap.clear();
+                            UserUtils.sendDeclineAndRemoveRiderRequest(rootLayout, Orders.this,
+                                    driverRequestReceived.getKey(), tripNumberId);
+
+                            tripNumberId = "";
+                            driverRequestReceived = null;
+
+                            makeDriverOnline(location);
+
+                        }).addOnFailureListener(e -> Snackbar.make(rootLayout, e.getMessage(), Snackbar.LENGTH_LONG).show());
                     }
-                    chipDecline.setVisibility(View.GONE);
-                    layout_accept.setVisibility(View.GONE);
-                    mgoogleMap.clear();
-                    UserUtils.sendDeclineRequest(rootLayout, Orders.this, driverRequestReceived.getKey());
-                    driverRequestReceived = null;
                 }
             }
         });
@@ -350,15 +372,15 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                 if (waitingTimer != null) waitingTimer.cancel();
 
                 layout_notify_rider.setVisibility(View.GONE);
-                if (driverRequestReceived != null){
+                if (driverRequestReceived != null) {
                     LatLng destinationLatLng = new LatLng(
                             Double.parseDouble(driverRequestReceived.getDestinationLocation().split(",")[0]),
                             Double.parseDouble(driverRequestReceived.getDestinationLocation().split(",")[1]));
 
                     mgoogleMap.addMarker(new MarkerOptions()
-                    .position(destinationLatLng)
-                    .title(driverRequestReceived.getDestinationLocationString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                            .position(destinationLatLng)
+                            .title(driverRequestReceived.getDestinationLocationString())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
                     //draw path
                     drawPathFromCurrentLocation(driverRequestReceived.getDestinationLocation());
@@ -372,7 +394,45 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
         btnCompleteRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(Orders.this, "Delivered!", Toast.LENGTH_SHORT).show();
+                Map<String, Object> updateTrip = new HashMap<>();
+                updateTrip.put("done", true);
+
+                FirebaseDatabase.getInstance()
+                        .getReference("Trips")
+                        .child(tripNumberId)
+                        .updateChildren(updateTrip).addOnSuccessListener(aVoid -> {
+
+                    if (ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Orders.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            UserUtils.sendCompleteTripToRider(rootLayout, Orders.this, driverRequestReceived.getKey(), tripNumberId);
+
+                            mgoogleMap.clear();
+                            tripNumberId = "";
+                            chipDecline.setVisibility(View.GONE);
+                            layout_accept.setVisibility(View.GONE);
+                            progress_circular_bar.setProgress(0);
+                            layout_start_ride.setVisibility(View.GONE);
+                            layout_notify_rider.setVisibility(View.GONE);
+                            progressNotify.setProgress(0);
+                            btnCompleteRide.setEnabled(false);
+                            btnCompleteRide.setVisibility(View.GONE);
+                            btnStartRide.setEnabled(false);
+                            btnStartRide.setVisibility(View.GONE);
+                            destinationGeoFire = null;
+                            pickupGeoFire = null;
+                            driverRequestReceived = null;
+
+                            makeDriverOnline(location);
+                        }
+                    });
+
+                        }).addOnFailureListener(e -> {
+                    Snackbar.make(rootLayout, e.getMessage(), Snackbar.LENGTH_LONG).show();
+                });
             }
         });
 
@@ -461,7 +521,14 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     private void createGeoFireDestinationLocation(String key, LatLng destinationLatLng) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("TripDestinationLocation");
+        destinationGeoFire = new GeoFire(ref);
+        destinationGeoFire.setLocation(key, new GeoLocation(destinationLatLng.latitude, destinationLatLng.longitude), new GeoFire.CompletionListener() {
+            @Override
+            public void onComplete(String key, DatabaseError error) {
 
+            }
+        });
     }
 
     private void updateFirebaseToken() {
@@ -513,7 +580,6 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                     mgoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, 18f));
 
                     Location location = locationResult.getLastLocation();
-                    String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                     if (pickupGeoFire != null){
                         pickupGeoQuery = pickupGeoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.05);
@@ -528,33 +594,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                     }
 
                     if (!isTripStart){
-                        Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
-                        List<Address> addressList;
-                        try {
-                            addressList = geocoder.getFromLocation(location.getLatitude(),
-                                    location.getLongitude(), 1);
-                            String cityName = addressList.get(0).getLocality();
-
-                            driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
-                            currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            geoFire = new GeoFire(driversLocationRef);
-
-                            geoFire.setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()),
-                                    new GeoFire.CompletionListener() {
-                                        @Override
-                                        public void onComplete(String key, DatabaseError error) {
-                                            if (error != null) {
-                                                Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
-                                            }
-
-                                        }
-                                    });
-
-                            registerOnlineSystem();
-
-                        } catch (IOException e) {
-                            Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                        }
+                        makeDriverOnline(locationResult.getLastLocation());
                     }
                     else {
                         if (!TextUtils.isEmpty(tripNumberId)){
@@ -567,13 +607,40 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
                                     .updateChildren(updateData)
                                     .addOnSuccessListener(aVoid -> {
 
-
-
                                     }).addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show());
                         }
                     }
                 }
             };
+        }
+    }
+
+    private void makeDriverOnline(Location location) {
+        Geocoder geocoder = new Geocoder(Orders.this, Locale.getDefault());
+        List<Address> addressList;
+        try {
+            addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            String cityName = addressList.get(0).getLocality();
+
+            driversLocationRef = FirebaseDatabase.getInstance().getReference("driversLocation").child(cityName);
+            currentUserRef = driversLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            geoFire = new GeoFire(driversLocationRef);
+
+            geoFire.setLocation(id, new GeoLocation(location.getLatitude(), location.getLongitude()),
+                    new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                            if (error != null) {
+                                Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+
+            registerOnlineSystem();
+
+        } catch (IOException e) {
+            Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
         }
     }
 

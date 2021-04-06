@@ -25,18 +25,18 @@
         android:theme="@style/AppTheme">
         <activity android:name=".CustomerCall"></activity>
         <activity android:name=".Orders" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".New_Pin" />
         <activity android:name=".Verify_Phone_For_Pin" />
         <activity android:name=".Password_Creation" />
         <activity android:name=".VerifyPhoneNumber" />
         <activity android:name=".SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Profile"
