@@ -102,6 +102,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -179,7 +180,9 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             btnStartRide.setEnabled(true);
             UserUtils.sendNotifyToRider(Orders.this, rootLayout, key);
             if (pickupGeoQuery != null) {
-                pickupGeoFire.removeLocation(key);
+                if (pickupGeoFire != null){
+                    pickupGeoFire.removeLocation(key);
+                }
                 pickupGeoFire = null;
                 pickupGeoQuery.removeAllListeners();
             }
@@ -1004,6 +1007,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onFinish() {
                 Snackbar.make(rootLayout, "Time Over", Snackbar.LENGTH_LONG).show();
+                UserUtils.sendTimeOverNotification(rootLayout, Orders.this, driverRequestReceived.getKey());
             }
         }.start();
     }
