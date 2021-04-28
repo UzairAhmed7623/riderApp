@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.dashboard1">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.inkhornsolutions.riderapp">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,7 +15,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:allowBackup="true"
@@ -23,15 +25,15 @@
         android:roundIcon="@mipmap/launcher_icon_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CustomerCall"></activity>
-        <activity android:name=".Orders" >
+        <activity android:name="com.inkhornsolutions.riderapp.CustomerCall"></activity>
+        <activity android:name="com.inkhornsolutions.riderapp.Orders" >
 
         </activity>
-        <activity android:name=".New_Pin" />
-        <activity android:name=".Verify_Phone_For_Pin" />
-        <activity android:name=".Password_Creation" />
-        <activity android:name=".VerifyPhoneNumber" />
-        <activity android:name=".SplashScreen">
+        <activity android:name="com.inkhornsolutions.riderapp.New_Pin" />
+        <activity android:name="com.inkhornsolutions.riderapp.Verify_Phone_For_Pin" />
+        <activity android:name="com.inkhornsolutions.riderapp.Password_Creation" />
+        <activity android:name="com.inkhornsolutions.riderapp.VerifyPhoneNumber" />
+        <activity android:name="com.inkhornsolutions.riderapp.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,29 +41,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Profile"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".SignUp" />
-        <activity android:name=".ForgotPassword" />
+            android:name="com.inkhornsolutions.riderapp.Profile"
+            android:parentActivityName="com.inkhornsolutions.riderapp.MainActivity" />
+        <activity android:name="com.inkhornsolutions.riderapp.SignUp" />
+        <activity android:name="com.inkhornsolutions.riderapp.ForgotPassword" />
         <activity
-            android:name=".ViewHistoryOnMap"
-            android:parentActivityName=".History" />
+            android:name="com.inkhornsolutions.riderapp.ViewHistoryOnMap"
+            android:parentActivityName="com.inkhornsolutions.riderapp.History" />
         <activity
-            android:name=".History"
+            android:name="com.inkhornsolutions.riderapp.History"
             android:label="@string/title_activity_DocumentView"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.inkhornsolutions.riderapp.MainActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".LoginActivity" />
+        <activity android:name="com.inkhornsolutions.riderapp.LoginActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.inkhornsolutions.riderapp.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".Service.MyFirebaseService"
+            android:name="com.inkhornsolutions.riderapp.Service.MyFirebaseService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -69,7 +71,7 @@
         </service>
 
         <service
-            android:name=".LocationService"
+            android:name="com.inkhornsolutions.riderapp.LocationService"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"
@@ -77,7 +79,7 @@
             android:foregroundServiceType="location" />
 
         <receiver
-            android:name=".AlarmReceiver"
+            android:name="com.inkhornsolutions.riderapp.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
