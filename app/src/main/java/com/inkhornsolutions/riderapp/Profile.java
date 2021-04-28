@@ -1,6 +1,7 @@
 package com.inkhornsolutions.riderapp;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
@@ -58,10 +59,10 @@ public class Profile extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     private DocumentReference documentReference;
-    private LottieAnimationView lottieProfile;
-    private LinearLayout lottieLayout_Profile;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +80,6 @@ public class Profile extends AppCompatActivity {
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
 
-        lottieLayout_Profile = (LinearLayout) findViewById(R.id.lottieLayout_Profile);
-        lottieProfile = (LottieAnimationView) findViewById(R.id.lottieProfile);
         etFirstName = (EditText) findViewById(R.id.etFirstName);
         etLastName = (EditText) findViewById(R.id.etLastName);
         etEmailAddress = (EditText) findViewById(R.id.etEmailAddress);
@@ -89,75 +88,63 @@ public class Profile extends AppCompatActivity {
         ivAddImage = (ImageButton) findViewById(R.id.ivAddImage);
         ivProfile = (CircleImageView) findViewById(R.id.ivProfile);
 
-        lottieProfile.setVisibility(View.VISIBLE);
-        lottieLayout_Profile.setVisibility(View.VISIBLE);
-
-        ivAddImage.setEnabled(false); btnSave.setEnabled(false); etFirstName.setEnabled(false); etLastName.setEnabled(false); etEmailAddress.setEnabled(false);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.setContentView(R.layout.progress_layout);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()){
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                lottieProfile.setVisibility(View.GONE);
-                                lottieLayout_Profile.setVisibility(View.GONE);
+                    if (documentSnapshot.exists()) {
 
-                                ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
+                        progressDialog.dismiss();
 
-                                String phone = documentSnapshot.getString("phoneNumber");
-                                etPhoneNumber.setText(phone);
+                        String phone = documentSnapshot.getString("phoneNumber");
+                        etPhoneNumber.setText(phone);
 
-                                if (documentSnapshot.getString("firstName") != null ||
-                                        documentSnapshot.getString("lastName") != null ||
-                                        documentSnapshot.getString("emailAddress") != null ||
-                                        documentSnapshot.getString("driverProfileImage")!= null){
+                        if (documentSnapshot.getString("firstName") != null ||
+                                documentSnapshot.getString("lastName") != null ||
+                                documentSnapshot.getString("emailAddress") != null ||
+                                documentSnapshot.getString("driverProfileImage") != null) {
 
-                                    String fName = documentSnapshot.getString("firstName");
-                                    etFirstName.setText(fName);
-                                    String lName = documentSnapshot.getString("lastName");
-                                    etLastName.setText(lName);
-                                    String email = documentSnapshot.getString("emailAddress");
-                                    etEmailAddress.setText(email);
-                                    String imageUri = documentSnapshot.getString("driverProfileImage");
-                                    Glide.with(Profile.this).load(imageUri).placeholder(ContextCompat.getDrawable(getApplicationContext(), R.drawable.person)).into(ivProfile);
-                                }
-                                else {
-                                    Snackbar.make(findViewById(android.R.id.content), "No data found!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
-                                }
-                            }
-                        }, 2500);
+                            String fName = documentSnapshot.getString("firstName");
+                            etFirstName.setText(fName);
+                            String lName = documentSnapshot.getString("lastName");
+                            etLastName.setText(lName);
+                            String email = documentSnapshot.getString("emailAddress");
+                            etEmailAddress.setText(email);
+                            String imageUri = documentSnapshot.getString("driverProfileImage");
+                            Glide.with(Profile.this).load(imageUri).placeholder(ContextCompat.getDrawable(getApplicationContext(), R.drawable.person)).into(ivProfile);
+                        } else {
+                            Snackbar.make(findViewById(android.R.id.content), "No data found!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
+                        }
                     }
                     else {
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                lottieProfile.setVisibility(View.GONE);
-                                lottieLayout_Profile.setVisibility(View.GONE);
 
-                                ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
+                                progressDialog.dismiss();
 
                             }
-                        }, 2500);
+                        }, 1000);
                         Snackbar.make(findViewById(android.R.id.content), "No data found!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                     }
-                }
-                else {
+                } else {
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            lottieProfile.setVisibility(View.GONE);
-                            lottieLayout_Profile.setVisibility(View.GONE);
 
-                            ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
+                            progressDialog.dismiss();
+
                         }
-                    }, 2500);
+                    }, 1000);
                     Log.d("TAG", task.getException().getMessage());
                 }
             }
@@ -174,9 +161,10 @@ public class Profile extends AppCompatActivity {
                         intent.setAction(Intent.ACTION_GET_CONTENT);
                         startActivityForResult(intent, 1002);
                     }
+
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Snackbar.make(findViewById(android.R.id.content),"Please accept permission!",Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(findViewById(android.R.id.content), "Please accept permission!", Snackbar.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -194,21 +182,18 @@ public class Profile extends AppCompatActivity {
                 String lName = etLastName.getText().toString().trim();
                 String email = etEmailAddress.getText().toString().trim();
 
-                if (etFirstName.getText().toString().isEmpty()){
+                if (etFirstName.getText().toString().isEmpty()) {
                     etFirstName.setError("Please write your first name!");
-                }
-                else if (etLastName.getText().toString().isEmpty()){
+                } else if (etLastName.getText().toString().isEmpty()) {
                     etLastName.setError("Please write your last name!");
-                }
-                else if (etEmailAddress.getText().toString().isEmpty()){
+                } else if (etEmailAddress.getText().toString().isEmpty()) {
                     etEmailAddress.setError("Please write your email!");
-                }
-                else {
+                } else {
 
-                    lottieProfile.setVisibility(View.VISIBLE);
-                    lottieLayout_Profile.setVisibility(View.VISIBLE);
-
-                    ivAddImage.setEnabled(false); btnSave.setEnabled(false); etFirstName.setEnabled(false); etLastName.setEnabled(false); etEmailAddress.setEnabled(false);
+                    progressDialog.show();
+                    progressDialog.setCancelable(false);
+                    progressDialog.setContentView(R.layout.progress_layout);
+                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                     HashMap<String, Object> userProfile = new HashMap<>();
                     userProfile.put("firstName", fName);
@@ -218,18 +203,10 @@ public class Profile extends AppCompatActivity {
                     documentReference.update(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 uploadImage(imageUri);
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        lottieProfile.setVisibility(View.GONE);
-                                        lottieLayout_Profile.setVisibility(View.GONE);
 
-                                        ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
-                                    }
-                                }, 2500);
+                                progressDialog.dismiss();
 
                                 Snackbar.make(findViewById(android.R.id.content), "Profile created successfully!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
 
@@ -245,16 +222,9 @@ public class Profile extends AppCompatActivity {
                                 }, 2500);
                             }
                             else {
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        lottieProfile.setVisibility(View.GONE);
-                                        lottieLayout_Profile.setVisibility(View.GONE);
 
-                                        ivAddImage.setEnabled(true); btnSave.setEnabled(true); etFirstName.setEnabled(true); etLastName.setEnabled(true); etEmailAddress.setEnabled(true);
-                                    }
-                                }, 2500);
+                                progressDialog.dismiss();
+
                                 Toast.makeText(Profile.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -268,13 +238,11 @@ public class Profile extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1002 && resultCode == RESULT_OK && data!= null && data.getData() != null)
-        {
+        if (requestCode == 1002 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             ivProfile.setImageURI(imageUri);
-        }
-        else {
-            Snackbar.make(findViewById(R.id.content),"No data found!", Snackbar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(findViewById(R.id.content), "No data found!", Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -288,37 +256,37 @@ public class Profile extends AppCompatActivity {
 
         String userId = firebaseAuth.getUid();
 
-        StorageReference riversRef = storageReference.child("images/Drivers" + "." + getFileExtention(imageUri) +" "+ userId);
+        StorageReference riversRef = storageReference.child("images/Drivers" + "." + getFileExtention(imageUri) + " " + userId);
 
         riversRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                        Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!urlTask.isSuccessful());
-                        Uri downloadUrl = urlTask.getResult();
+                Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+                while (!urlTask.isSuccessful()) ;
+                Uri downloadUrl = urlTask.getResult();
 
-                        final String sdownload_url = String.valueOf(downloadUrl);
+                final String sdownload_url = String.valueOf(downloadUrl);
 
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("driverProfileImage", sdownload_url);
-                        hashMap.put("userId",userId);
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("driverProfileImage", sdownload_url);
+                hashMap.put("userId", userId);
 
-                        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update(hashMap)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Snackbar.make(findViewById(android.R.id.content), "Image Uploaded", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(findViewById(android.R.id.content), e.getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
-                                    }
-                                });
-                    }
-                })
+                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update(hashMap)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Snackbar.make(findViewById(android.R.id.content), "Image Uploaded", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Snackbar.make(findViewById(android.R.id.content), e.getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
+                            }
+                        });
+            }
+        })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {

@@ -1,5 +1,6 @@
 package com.inkhornsolutions.riderapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -40,11 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnSignIn;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private String password;
-    private LottieAnimationView lottieLogin;
-    private LinearLayout lottieLayoutLogin;
+    private String Pin;
     private String checkBox1, phone;
     static LoginActivity loginActivityInstance;
+    private ProgressDialog progressDialog;
 
     public static LoginActivity getInstance() {
         return loginActivityInstance;
@@ -69,11 +69,12 @@ public class LoginActivity extends AppCompatActivity {
         tvForgotPass = (TextView) findViewById(R.id.tvForgotPass);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
         checkBox = (CheckBox) findViewById(R.id.checkbox);
-        lottieLayoutLogin = (LinearLayout) findViewById(R.id.lottieLayoutLogin);
-        lottieLogin = (LottieAnimationView) findViewById(R.id.lottieLogin);
 
-        String forgotPass = "Forgot password?";
+        String forgotPass = "Forgot Pin?";
         tvForgotPass.setText(boldSignUptext(forgotPass));
+
+        progressDialog = new ProgressDialog(this);
+
 
         tvForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,33 +95,26 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()) {
-                            phone = documentSnapshot.getString("Phone");
-                            String pass = documentSnapshot.getString("Pin");
+                            phone = documentSnapshot.getString("phoneNumber");
+                            String pin = documentSnapshot.getString("Pin");
 
                             etPhoneNumber.setText(phone);
 
                             btnSignIn.setOnClickListener((View v) -> {
-                                password = etPassword.getEditText().getText().toString();
+                                Pin = etPassword.getEditText().getText().toString();
 
                                 if (etPassword.getEditText().getText().toString().isEmpty()) {
                                     Toast.makeText(LoginActivity.this, "Please write your pin!", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    lottieLayoutLogin.setVisibility(View.VISIBLE);
-                                    lottieLogin.setVisibility(View.VISIBLE);
 
-                                    tvForgotPass.setEnabled(false); etPhoneNumber.setEnabled(false); etPassword.setEnabled(false); checkBox.setEnabled(false); btnSignIn.setEnabled(false);
+                                    progressDialog.show();
+                                    progressDialog.setCancelable(false);
+                                    progressDialog.setContentView(R.layout.progress_layout);
+                                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
+                                    if (Pin.equals(pin)) {
 
-                                    if (password.equals(pass)) {
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                lottieLayoutLogin.setVisibility(View.GONE);
-                                                lottieLogin.setVisibility(View.GONE);
-                                                tvForgotPass.setEnabled(true); etPhoneNumber.setEnabled(true); etPassword.setEnabled(true); checkBox.setEnabled(true); btnSignIn.setEnabled(true);
-                                            }
-                                        }, 2500);
+                                        progressDialog.dismiss();
 
                                         Handler handler1 = new Handler();
                                         handler1.postDelayed(new Runnable() {
@@ -134,37 +128,24 @@ public class LoginActivity extends AppCompatActivity {
                                         }, 2500);
                                     }
                                     else {
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                lottieLayoutLogin.setVisibility(View.GONE);
-                                                lottieLogin.setVisibility(View.GONE);
-                                                tvForgotPass.setEnabled(true); etPhoneNumber.setEnabled(true); etPassword.setEnabled(true); checkBox.setEnabled(true); btnSignIn.setEnabled(true);
-                                            }
-                                        }, 2500);
+
+                                        progressDialog.dismiss();
+
                                         Toast.makeText(LoginActivity.this, "Wrong Pin!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-
                             });
-                        } else {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    lottieLayoutLogin.setVisibility(View.GONE);
-                                    lottieLogin.setVisibility(View.GONE);
-                                    tvForgotPass.setEnabled(true); etPhoneNumber.setEnabled(true); etPassword.setEnabled(true); checkBox.setEnabled(true); btnSignIn.setEnabled(true);
-                                }
-                            }, 2500);
+                        }
+                        else {
+
+                            progressDialog.dismiss();
+
                             Toast.makeText(LoginActivity.this, "Phone number not found!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             });
-        }
-        else {
+        } else {
             Intent intent = new Intent(LoginActivity.this, SignUp.class);
             startActivity(intent);
             finish();
@@ -172,30 +153,28 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void rememberLogin(){
+    public void rememberLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
         checkBox1 = sharedPreferences.getString("remember", "");
-        if (checkBox1.equals("true")){
+        if (checkBox1.equals("true")) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }
-        else if (checkBox1.equals("false")){
+        } else if (checkBox1.equals("false")) {
             Log.d("TAG", "Please SignIn.");
         }
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (compoundButton.isChecked()){
+                if (compoundButton.isChecked()) {
                     SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("remember", "true");
                     editor.apply();
 //                    Toast.makeText(LoginActivity.this, "Checked", Toast.LENGTH_SHORT).show();
-                }
-                else if (!compoundButton.isChecked()){
+                } else if (!compoundButton.isChecked()) {
                     SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("remember", "false");
@@ -206,19 +185,17 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public SpannableString boldSignUptext(String text){
+    public SpannableString boldSignUptext(String text) {
 
         SpannableString spannable = new SpannableString(text);
 
-        if (text.length() <= 16){
+        if (text.length() <= 11) {
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
-            spannable.setSpan(styleSpan, 0, 16, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(styleSpan, 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             UnderlineSpan underlineSpan = new UnderlineSpan();
-            spannable.setSpan(underlineSpan, 0, 16, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        else
-        {
+            spannable.setSpan(underlineSpan, 0, 11, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        } else {
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
             spannable.setSpan(styleSpan, 23, 29, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 

@@ -33,33 +33,4 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/lottieLayout_Histoy"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieHistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/bike_progress_bar">
-
-        </com.airbnb.lottie.LottieAnimationView>
-
-    </LinearLayout>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

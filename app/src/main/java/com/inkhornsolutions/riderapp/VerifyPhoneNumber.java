@@ -3,6 +3,7 @@ package com.inkhornsolutions.riderapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,8 +37,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
     private Button btnVerify;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
-    private LottieAnimationView lottie_Verify_Phone;
-    private LinearLayout lottieLayout_Verify_Phone;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +53,10 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         tvInkHornSolutionVerify = (TextView) findViewById(R.id.tvInkHornSolutionVerify);
         etOtp = (PinView) findViewById(R.id.etOtp);
         btnVerify = (Button) findViewById(R.id.btnVerify);
-        lottieLayout_Verify_Phone = (LinearLayout) findViewById(R.id.lottieLayout_Verify_Phone);
-        lottie_Verify_Phone = (LottieAnimationView) findViewById(R.id.lottie_Verify_Phone);
 
         String phone = getIntent().getStringExtra("phone_number");
+
+        progressDialog = new ProgressDialog(this);
 
         verification(phone);
 
@@ -69,8 +69,11 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                     etOtp.requestFocus();
                     return;
                 }
-                lottieLayout_Verify_Phone.setVisibility(View.VISIBLE);
-                lottie_Verify_Phone.setVisibility(View.VISIBLE);
+
+                progressDialog.show();
+                progressDialog.setCancelable(false);
+                progressDialog.setContentView(R.layout.progress_layout);
+                progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                 verifyCode(otp);
             }
@@ -101,8 +104,12 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             String code = phoneAuthCredential.getSmsCode();
             if (code != null){
-                lottieLayout_Verify_Phone.setVisibility(View.VISIBLE);
-                lottie_Verify_Phone.setVisibility(View.VISIBLE);
+
+                progressDialog.show();
+                progressDialog.setCancelable(false);
+                progressDialog.setContentView(R.layout.progress_layout);
+                progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
                 verifyCode(code);
             }
         }
@@ -110,14 +117,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    lottieLayout_Verify_Phone.setVisibility(View.GONE);
-                    lottie_Verify_Phone.setVisibility(View.GONE);
-                }
-            }, 2500);
+            progressDialog.dismiss();
 
             Handler handler1 = new Handler();
             handler1.postDelayed(new Runnable() {
@@ -129,7 +129,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
-            }, 2500);
+            }, 1000);
 
         }
     };
@@ -145,14 +145,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            lottieLayout_Verify_Phone.setVisibility(View.GONE);
-                            lottie_Verify_Phone.setVisibility(View.GONE);
-                        }
-                    }, 2500);
+                    progressDialog.dismiss();
 
                     String ph = task.getResult().getUser().getPhoneNumber();
 
@@ -163,14 +156,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 if (task.getResult().size() > 0) {
 
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            lottieLayout_Verify_Phone.setVisibility(View.GONE);
-                                            lottie_Verify_Phone.setVisibility(View.GONE);
-                                        }
-                                    }, 2500);
+                                    progressDialog.dismiss();
 
                                     Intent intent = new Intent(VerifyPhoneNumber.this, LoginActivity.class);
                                     startActivity(intent);
@@ -178,6 +164,8 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 }
                                 else {
+                                    progressDialog.dismiss();
+
                                     Handler handler1 = new Handler();
                                     handler1.postDelayed(new Runnable() {
                                         @Override
@@ -188,7 +176,7 @@ public class VerifyPhoneNumber extends AppCompatActivity {
                                             finish();
                                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                         }
-                                    }, 2500);
+                                    }, 1000);
                                 }
                             }
                             else {

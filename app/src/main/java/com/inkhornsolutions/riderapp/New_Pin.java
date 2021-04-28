@@ -3,6 +3,7 @@ package com.inkhornsolutions.riderapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -33,11 +34,10 @@ public class New_Pin extends AppCompatActivity {
     private TextInputLayout etPin, etRe_Pin;
     private Button btnCreate_Pin;
     private FirebaseAuth firebaseAuth;
-    private ProgressBar progressbar;
     private FirebaseFirestore firebaseFirestore;
     private String phone;
-    private LottieAnimationView lottiePasswordCreation, lottiePasswordCreation2;
-    private LinearLayout lottieLayoutPassword, lottieLayoutPassword2;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +51,12 @@ public class New_Pin extends AppCompatActivity {
         etPin = (TextInputLayout) findViewById(R.id.etPin);
         etRe_Pin = (TextInputLayout) findViewById(R.id.etRe_Pin);
         btnCreate_Pin = (Button) findViewById(R.id.btnCreate_Pin);
-        lottieLayoutPassword = (LinearLayout) findViewById(R.id.lottieLayoutPassword);
-        lottiePasswordCreation = (LottieAnimationView) findViewById(R.id.lottiePasswordCreation);
-        lottieLayoutPassword2 = (LinearLayout) findViewById(R.id.lottieLayoutPassword2);
-        lottiePasswordCreation2 = (LottieAnimationView) findViewById(R.id.lottiePasswordCreation2);
+
+        progressDialog = new ProgressDialog(this);
 
         phone = getIntent().getStringExtra("phone");
 
-        firebaseAuth = firebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         btnCreate_Pin.setOnClickListener(new View.OnClickListener() {
@@ -80,110 +78,83 @@ public class New_Pin extends AppCompatActivity {
                 else {
 
                     if (!isConnected()){
-                        lottiePasswordCreation2.setVisibility(View.VISIBLE);
-                        lottieLayoutPassword2.setVisibility(View.VISIBLE);
-                        etPin.setEnabled(false); etRe_Pin.setEnabled(false); btnCreate_Pin.setEnabled(false);
 
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                lottieLayoutPassword2.setVisibility(View.GONE);
-                                lottiePasswordCreation2.setVisibility(View.GONE);
-                                etPin.setEnabled(true); etRe_Pin.setEnabled(true); btnCreate_Pin.setEnabled(true);
-                                Snackbar.make(findViewById(android.R.id.content), "Internet not connected!", Snackbar.LENGTH_LONG).setBackgroundTint(getColor(R.color.myColor)).show();
-                            }
-                        },2500);
+                        progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setContentView(R.layout.progress_layout);
+                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+                        progressDialog.dismiss();
+
+                        Snackbar.make(findViewById(android.R.id.content), "Internet not connected!", Snackbar.LENGTH_LONG).setBackgroundTint(getColor(R.color.myColor)).show();
+
                     }
                     if (firebaseAuth.getUid() != null){
-                        lottiePasswordCreation2.setVisibility(View.VISIBLE);
-                        lottieLayoutPassword2.setVisibility(View.VISIBLE);
-                        etPin.setEnabled(false); etRe_Pin.setEnabled(false); btnCreate_Pin.setEnabled(false);
 
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
+                        progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setContentView(R.layout.progress_layout);
+                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+                        HashMap<String, Object> new_User = new HashMap<>();
+                        new_User.put("Pin", pin);
+
+                        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update(new_User).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void run() {
-                                lottieLayoutPassword2.setVisibility(View.GONE);
-                                lottiePasswordCreation2.setVisibility(View.GONE);
-                                etPin.setEnabled(true); etRe_Pin.setEnabled(true); btnCreate_Pin.setEnabled(true);
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
 
-                            }
-                        },2500);
+                                    progressDialog.dismiss();
 
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                HashMap<String, Object> new_User = new HashMap<>();
-                                new_User.put("Pin", pin);
+                                    progressDialog.show();
+                                    progressDialog.setCancelable(false);
+                                    progressDialog.setContentView(R.layout.good_progress_layout);
+                                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-                                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update(new_User).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
+                                    Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                                            lottiePasswordCreation.setVisibility(View.VISIBLE);
-                                            lottieLayoutPassword.setVisibility(View.VISIBLE);
-                                            etPin.setEnabled(false); etRe_Pin.setEnabled(false); btnCreate_Pin.setEnabled(false);
+                                            progressDialog.dismiss();
 
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    lottieLayoutPassword.setVisibility(View.GONE);
-                                                    lottiePasswordCreation.setVisibility(View.GONE);
-                                                    etPin.setEnabled(true); etRe_Pin.setEnabled(true); btnCreate_Pin.setEnabled(true);
-
-                                                }
-                                            },2500);
-                                            Handler handler1 = new Handler();
-                                            handler1.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Intent intent = new Intent(New_Pin.this, LoginActivity.class);
-                                                    startActivity(intent);
-                                                    finish();
-                                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                                }
-                                            },2500);
                                         }
-                                        else {
-
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    lottieLayoutPassword2.setVisibility(View.GONE);
-                                                    lottiePasswordCreation2.setVisibility(View.GONE);
-                                                    etPin.setEnabled(true); etRe_Pin.setEnabled(true); btnCreate_Pin.setEnabled(true);
-
-                                                }
-                                            },2500);
-                                            Toast.makeText(New_Pin.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                    }, 2500);
+                                    Handler handler1 = new Handler();
+                                    handler1.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Intent intent = new Intent(New_Pin.this, LoginActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                         }
-                                    }
-                                });
-                            }
-                        }, 2500);
+                                    }, 2500);
+                                } else {
 
+                                    progressDialog.dismiss();
+
+                                    Toast.makeText(New_Pin.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
                     }
                     else {
-                        lottiePasswordCreation2.setVisibility(View.VISIBLE);
-                        lottieLayoutPassword2.setVisibility(View.VISIBLE);
-                        etPin.setEnabled(false); etRe_Pin.setEnabled(false); btnCreate_Pin.setEnabled(false);
+                        progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setContentView(R.layout.progress_layout);
+                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                lottieLayoutPassword2.setVisibility(View.GONE);
-                                lottiePasswordCreation2.setVisibility(View.GONE);
-                                etPin.setEnabled(true); etRe_Pin.setEnabled(true); btnCreate_Pin.setEnabled(true);
+
+                                progressDialog.dismiss();
 
                                 Snackbar.make(findViewById(android.R.id.content), "Account not found!", Snackbar.LENGTH_LONG).setBackgroundTint(getColor(R.color.myColor)).show();
                             }
-                        },2500);
+                        },1000);
                     }
                 }
             }

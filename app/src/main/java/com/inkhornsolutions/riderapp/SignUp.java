@@ -1,5 +1,6 @@
 package com.inkhornsolutions.riderapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,8 +29,7 @@ public class SignUp extends AppCompatActivity {
     private Button btnVerify;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
-    private LottieAnimationView lottieSignUp;
-    private LinearLayout lottieLayoutSignUp;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +46,8 @@ public class SignUp extends AppCompatActivity {
         tvInkHornSolutionSign = (TextView) findViewById(R.id.tvInkHornSolutionSign);
         etPhoneNumber = (TextInputLayout) findViewById(R.id.etPhoneNumber);
         btnVerify = (Button) findViewById(R.id.btnVerify);
-        lottieLayoutSignUp = (LinearLayout) findViewById(R.id.lottieLayoutSignUp);
-        lottieSignUp = (LottieAnimationView) findViewById(R.id.lottieSignUp);
+
+        progressDialog = new ProgressDialog(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -64,9 +64,10 @@ public class SignUp extends AppCompatActivity {
 
                 else {
 
-                    lottieLayoutSignUp.setVisibility(View.VISIBLE);
-                    lottieSignUp.setVisibility(View.VISIBLE);
-                    etPhoneNumber.setEnabled(false); btnVerify.setEnabled(false);
+                    progressDialog.show();
+                    progressDialog.setCancelable(false);
+                    progressDialog.setContentView(R.layout.progress_layout);
+                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                     if (firebaseAuth.getUid() != null) {
 
@@ -77,36 +78,22 @@ public class SignUp extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 if (task.getResult().size() > 0) {
 
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            lottieLayoutSignUp.setVisibility(View.GONE);
-                                            lottieSignUp.setVisibility(View.GONE);
-                                            etPhoneNumber.setEnabled(true); btnVerify.setEnabled(true);
+                                    progressDialog.dismiss();
 
-                                        }
-                                    }, 2500);
 
                                     Snackbar.make(findViewById(android.R.id.content), "Phone number already registered!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                                 }
                             } else {
+                                progressDialog.dismiss();
+
                                 Snackbar.make(findViewById(android.R.id.content), task.getException().getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                             }
                         }
                     });
                 }
                     else {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                lottieLayoutSignUp.setVisibility(View.GONE);
-                                lottieSignUp.setVisibility(View.GONE);
-                                etPhoneNumber.setEnabled(true); btnVerify.setEnabled(true);
 
-                            }
-                        }, 2500);
+                        progressDialog.dismiss();
 
                         Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
@@ -118,7 +105,7 @@ public class SignUp extends AppCompatActivity {
                                 finish();
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             }
-                        }, 2500);
+                        }, 1000);
                     }
 
                 }

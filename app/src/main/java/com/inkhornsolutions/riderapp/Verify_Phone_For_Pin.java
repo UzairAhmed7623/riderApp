@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,8 +38,8 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
     private Button btnVerify;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
-    private LottieAnimationView lottie_Verify_Phone;
-    private LinearLayout lottieLayout_Verify_Phone;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +58,8 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
         tvInkHornSolutionVerify = (TextView) findViewById(R.id.tvInkHornSolutionVerify);
         etOtp = (PinView) findViewById(R.id.etOtp);
         btnVerify = (Button) findViewById(R.id.btnVerify);
-        lottieLayout_Verify_Phone = (LinearLayout) findViewById(R.id.lottieLayout_Verify_Phone);
-        lottie_Verify_Phone = (LottieAnimationView) findViewById(R.id.lottie_Verify_Phone);
+
+        progressDialog = new ProgressDialog(this);
 
         verification(phone);
 
@@ -66,15 +67,16 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String otp = etOtp.getText().toString();
-                if (otp.isEmpty() || otp.length() < 6){
+                if (otp.isEmpty() || otp.length() < 6) {
                     etOtp.setError("Wrong OTP!");
                     etOtp.requestFocus();
                     return;
                 }
-                lottieLayout_Verify_Phone.setVisibility(View.VISIBLE);
-                lottie_Verify_Phone.setVisibility(View.VISIBLE);
 
-                etOtp.setEnabled(false); btnVerify.setEnabled(false);
+                progressDialog.show();
+                progressDialog.setCancelable(false);
+                progressDialog.setContentView(R.layout.progress_layout);
+                progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                 verifyCode(otp);
             }
@@ -104,10 +106,12 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             String code = phoneAuthCredential.getSmsCode();
-            if (code != null){
-                lottieLayout_Verify_Phone.setVisibility(View.VISIBLE);
-                lottie_Verify_Phone.setVisibility(View.VISIBLE);
-                etOtp.setEnabled(false); btnVerify.setEnabled(false);
+            if (code != null) {
+
+                progressDialog.show();
+                progressDialog.setCancelable(false);
+                progressDialog.setContentView(R.layout.progress_layout);
+                progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                 verifyCode(code);
             }
@@ -116,16 +120,7 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    lottieLayout_Verify_Phone.setVisibility(View.GONE);
-                    lottie_Verify_Phone.setVisibility(View.GONE);
-                    etOtp.setEnabled(true); btnVerify.setEnabled(true);
-
-                }
-            }, 2500);
+            progressDialog.dismiss();
 
             Handler handler1 = new Handler();
             handler1.postDelayed(new Runnable() {
@@ -138,7 +133,7 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
-            }, 2500);
+            }, 1000);
 
         }
     };
@@ -152,17 +147,9 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
         firebaseAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(Verify_Phone_For_Pin.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            lottieLayout_Verify_Phone.setVisibility(View.GONE);
-                            lottie_Verify_Phone.setVisibility(View.GONE);
-                            etOtp.setEnabled(true); btnVerify.setEnabled(true);
-                        }
-                    }, 2500);
+                    progressDialog.dismiss();
 
                     String ph = task.getResult().getUser().getPhoneNumber();
 
@@ -173,44 +160,37 @@ public class Verify_Phone_For_Pin extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 if (task.getResult().size() > 0) {
 
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            lottieLayout_Verify_Phone.setVisibility(View.GONE);
-                                            lottie_Verify_Phone.setVisibility(View.GONE);
-                                            etOtp.setEnabled(true); btnVerify.setEnabled(true);
-
-                                        }
-                                    }, 2500);
+                                    progressDialog.dismiss();
 
                                     Intent intent = new Intent(Verify_Phone_For_Pin.this, New_Pin.class);
                                     startActivity(intent);
                                     finish();
                                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
                                 }
                                 else {
+
+                                    progressDialog.dismiss();
+
                                     Handler handler1 = new Handler();
                                     handler1.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
+
                                             Intent VerifyIntent = new Intent(Verify_Phone_For_Pin.this, New_Pin.class);
                                             VerifyIntent.putExtra("phone", ph);
                                             startActivity(VerifyIntent);
                                             finish();
                                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
                                         }
-                                    }, 2500);
+                                    }, 1000);
                                 }
-                            }
-                            else {
+                            } else {
                                 Snackbar.make(findViewById(android.R.id.content), task.getException().getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                             }
                         }
                     });
-                }
-                else {
+                } else {
                     Toast.makeText(Verify_Phone_For_Pin.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }

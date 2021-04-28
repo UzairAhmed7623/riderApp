@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -25,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 
@@ -34,11 +36,9 @@ public class Password_Creation extends AppCompatActivity {
     private TextInputLayout etPin, etRe_Pin;
     private Button btnSignUp;
     private FirebaseAuth firebaseAuth;
-    private ProgressBar progressbar;
     private FirebaseFirestore firebaseFirestore;
     private String phone;
-    private LottieAnimationView lottiePasswordCreation, lottiePasswordCreation2;
-    private LinearLayout lottieLayoutPassword, lottieLayoutPassword2;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +52,8 @@ public class Password_Creation extends AppCompatActivity {
         etPin = (TextInputLayout) findViewById(R.id.etPin);
         etRe_Pin = (TextInputLayout) findViewById(R.id.etRe_Pin);
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
-        lottieLayoutPassword = (LinearLayout) findViewById(R.id.lottieLayoutPassword);
-        lottiePasswordCreation = (LottieAnimationView) findViewById(R.id.lottiePasswordCreation);
-        lottieLayoutPassword2 = (LinearLayout) findViewById(R.id.lottieLayoutPassword2);
-        lottiePasswordCreation2 = (LottieAnimationView) findViewById(R.id.lottiePasswordCreation2);
+
+        progressDialog = new ProgressDialog(this);
 
         phone = getIntent().getStringExtra("phone");
 
@@ -81,91 +79,89 @@ public class Password_Creation extends AppCompatActivity {
                 else {
 
                     if (!isConnected()){
-                        lottiePasswordCreation2.setVisibility(View.VISIBLE);
-                        lottieLayoutPassword2.setVisibility(View.VISIBLE);
+
+                        progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setContentView(R.layout.progress_layout);
+                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
                             Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    lottieLayoutPassword2.setVisibility(View.GONE);
-                                    lottiePasswordCreation2.setVisibility(View.GONE);
+
+                                    progressDialog.dismiss();
+
                                     Snackbar.make(findViewById(android.R.id.content), "Internet not connected!", Snackbar.LENGTH_LONG).setBackgroundTint(getColor(R.color.myColor)).show();
                                 }
-                            },2500);
+                            },1000);
                     }
                     if (firebaseAuth.getUid() != null){
-                        lottiePasswordCreation2.setVisibility(View.VISIBLE);
-                        lottieLayoutPassword2.setVisibility(View.VISIBLE);
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
+
+                        progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setContentView(R.layout.progress_layout);
+                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+                        HashMap<String, Object> new_User = new HashMap<>();
+                        new_User.put("phoneNumber", phone);
+                        new_User.put("Pin", pin);
+
+                        firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(new_User, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void run() {
-                                lottieLayoutPassword2.setVisibility(View.GONE);
-                                lottiePasswordCreation2.setVisibility(View.GONE);
-                            }
-                        },2500);
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
 
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                HashMap<String, Object> new_User = new HashMap<>();
-                                new_User.put("phoneNumber", phone);
-                                new_User.put("Pin", pin);
+                                    progressDialog.dismiss();
 
-                                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).set(new_User).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
+                                    progressDialog.show();
+                                    progressDialog.setCancelable(false);
+                                    progressDialog.setContentView(R.layout.good_progress_layout);
+                                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-                                            lottiePasswordCreation.setVisibility(View.VISIBLE);
-                                            lottieLayoutPassword.setVisibility(View.VISIBLE);
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    lottieLayoutPassword.setVisibility(View.GONE);
-                                                    lottiePasswordCreation.setVisibility(View.GONE);
-                                                }
-                                            },2500);
-                                            Handler handler1 = new Handler();
-                                            handler1.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Intent intent = new Intent(Password_Creation.this, LoginActivity.class);
-                                                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Password_Creation.this);
-                                                    startActivity(intent, activityOptions.toBundle());
-                                                    finish();
-                                                }
-                                            },2500);
+                                    Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            progressDialog.dismiss();
                                         }
-                                        else {
-
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    lottieLayoutPassword2.setVisibility(View.GONE);
-                                                    lottiePasswordCreation2.setVisibility(View.GONE);
-                                                }
-                                            },2500);
-                                            Toast.makeText(Password_Creation.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                    }, 2500);
+                                    Handler handler1 = new Handler();
+                                    handler1.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Intent intent = new Intent(Password_Creation.this, LoginActivity.class);
+                                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Password_Creation.this);
+                                            startActivity(intent, activityOptions.toBundle());
+                                            finish();
                                         }
-                                    }
-                                });
+                                    }, 2500);
+                                }
+                                else {
+
+                                    progressDialog.dismiss();
+
+                                    Toast.makeText(Password_Creation.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                }
                             }
-                        }, 2500);
+                        });
 
                     }
                     else {
-                        lottiePasswordCreation2.setVisibility(View.VISIBLE);
-                        lottieLayoutPassword2.setVisibility(View.VISIBLE);
+
+                        progressDialog.show();
+                        progressDialog.setCancelable(false);
+                        progressDialog.setContentView(R.layout.progress_layout);
+                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                lottieLayoutPassword2.setVisibility(View.GONE);
-                                lottiePasswordCreation2.setVisibility(View.GONE);
+
+                                progressDialog.dismiss();
+
                                 Snackbar.make(findViewById(android.R.id.content), "Account not found!", Snackbar.LENGTH_LONG).setBackgroundTint(getColor(R.color.myColor)).show();
                             }
                         },2500);

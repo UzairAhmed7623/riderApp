@@ -1,5 +1,6 @@
 package com.inkhornsolutions.riderapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,10 +27,9 @@ public class ForgotPassword extends AppCompatActivity {
     private TextView textView, textView1, tvInkHornSolutionForgot;
     private EditText etPhoneNumberForgot;
     private Button btnVerifyForgot;
-    private LinearLayout lottieLayoutForgot;
-    private LottieAnimationView lottieForgot;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,8 @@ public class ForgotPassword extends AppCompatActivity {
         tvInkHornSolutionForgot = (TextView) findViewById(R.id.tvInkHornSolutionForgot);
         btnVerifyForgot = (Button) findViewById(R.id.btnVerifyForgot);
         etPhoneNumberForgot = (EditText) findViewById(R.id.etPhoneNumberForgot);
-        lottieLayoutForgot = (LinearLayout) findViewById(R.id.lottieLayoutForgot);
-        lottieForgot = (LottieAnimationView) findViewById(R.id.lottieForgot);
+
+        progressDialog = new ProgressDialog(this);
 
         firebaseAuth = firebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -60,12 +60,12 @@ public class ForgotPassword extends AppCompatActivity {
                 if (etPhoneNumberForgot.getText().toString().isEmpty() || etPhoneNumberForgot.getText().toString().length() < 10) {
                     Snackbar.make(findViewById(android.R.id.content), "Please write a valid phone number!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                 }
-
                 else {
 
-                    lottieLayoutForgot.setVisibility(View.VISIBLE);
-                    lottieForgot.setVisibility(View.VISIBLE);
-                    etPhoneNumberForgot.setEnabled(false); btnVerifyForgot.setEnabled(false);
+                    progressDialog.show();
+                    progressDialog.setCancelable(false);
+                    progressDialog.setContentView(R.layout.progress_layout);
+                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                     if (firebaseAuth.getUid() != null) {
 
@@ -76,16 +76,7 @@ public class ForgotPassword extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().size() > 0) {
 
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                lottieLayoutForgot.setVisibility(View.GONE);
-                                                lottieForgot.setVisibility(View.GONE);
-                                                etPhoneNumberForgot.setEnabled(true); btnVerifyForgot.setEnabled(true);
-
-                                            }
-                                        }, 2500);
+                                        progressDialog.dismiss();
 
                                         Handler handler1 = new Handler();
                                         handler1.postDelayed(new Runnable() {
@@ -97,7 +88,7 @@ public class ForgotPassword extends AppCompatActivity {
                                                 finish();
                                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                             }
-                                        }, 2500);
+                                        }, 1000);
                                     }
                                 } else {
                                     Snackbar.make(findViewById(android.R.id.content), task.getException().getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
@@ -106,15 +97,8 @@ public class ForgotPassword extends AppCompatActivity {
                         });
                     }
                     else {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                lottieLayoutForgot.setVisibility(View.GONE);
-                                lottieForgot.setVisibility(View.GONE);
-                                etPhoneNumberForgot.setEnabled(true); btnVerifyForgot.setEnabled(true);
-                            }
-                        }, 2500);
+
+                        progressDialog.dismiss();
 
                         Snackbar.make(findViewById(android.R.id.content), "Phone number not found!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
 

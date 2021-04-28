@@ -1,5 +1,6 @@
 package com.inkhornsolutions.riderapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,8 +35,7 @@ public class History extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     private ArrayList<String> docList = new ArrayList<>();
-    private LottieAnimationView lottieHistory;
-    private LinearLayout lottieLayout_Histoy;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,80 +46,61 @@ public class History extends AppCompatActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#02AA4E")));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        lottieLayout_Histoy = (LinearLayout) findViewById(R.id.lottieLayout_Histoy);
-        lottieHistory = (LottieAnimationView) findViewById(R.id.lottieHistory);
-        calHistoryView = (CalendarView)findViewById(R.id.calHistoryView);
+        progressDialog = new ProgressDialog(this);
+
+        calHistoryView = (CalendarView) findViewById(R.id.calHistoryView);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        lottieHistory.setVisibility(View.VISIBLE);
-        lottieLayout_Histoy.setVisibility(View.VISIBLE);
-
-        calHistoryView.setEnabled(false);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.setContentView(R.layout.progress_layout);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).collection("location").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
-                        Log.d("TAG",queryDocumentSnapshot.getId());
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                        Log.d("TAG", queryDocumentSnapshot.getId());
                         docList.add(queryDocumentSnapshot.getId());
 
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                lottieLayout_Histoy.setVisibility(View.GONE);
-                                lottieHistory.setVisibility(View.GONE);
-                                calHistoryView.setEnabled(true);
-                                setCalHistoryView();
-                            }
-                        },2500);
+                        progressDialog.dismiss();
+
+                        setCalHistoryView();
                     }
                 }
                 else {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            lottieLayout_Histoy.setVisibility(View.GONE);
-                            lottieHistory.setVisibility(View.GONE);
-                            calHistoryView.setEnabled(true);
-                        }
-                    },2500);
 
-                    Log.d("TAG",task.getException().toString());
+                    progressDialog.dismiss();
+
+                    Log.d("TAG", task.getException().toString());
                     Toast.makeText(History.this, task.getException().toString(), Toast.LENGTH_LONG);
 
                 }
             }
         });
-
-
-
-
     }
 
-    public void setCalHistoryView(){
+    public void setCalHistoryView() {
         calHistoryView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
 
-                String date = getDateFormat(year,month,dayOfMonth);
-                Log.d("LocationDate1",date);
+                String date = getDateFormat(year, month, dayOfMonth);
+                Log.d("LocationDate1", date);
 
                 boolean isEquals = docList.contains(date);
 
-                if (isEquals){
+                if (isEquals) {
                     Log.d("LocationDate1", date);
                     Intent intent = new Intent(History.this, ViewHistoryOnMap.class);
                     intent.putExtra("doc", date);
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
-                else {
-                    Log.d("LocationDate1","Not matched");
+                } else {
+                    Log.d("LocationDate1", "Not matched");
                     Toast.makeText(History.this, "No data found!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -127,7 +108,7 @@ public class History extends AppCompatActivity {
         });
     }
 
-    public String getDateFormat(int year, int month, int dayOfMonth){
+    public String getDateFormat(int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.set(year, month, dayOfMonth);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");

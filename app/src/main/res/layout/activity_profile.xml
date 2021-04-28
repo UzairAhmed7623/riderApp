@@ -13,9 +13,9 @@
         android:layout_height="150dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
+        android:src="@drawable/image_place_holder"
         app:civ_border_color="@color/myColor"
         app:civ_border_width="2dp"
-        android:src="@drawable/image_place_holder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -62,13 +62,13 @@
                     android:id="@+id/textView2"
                     android:layout_width="0dp"
                     android:layout_height="5dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="center"
+                    android:layout_weight="1"
                     android:background="@drawable/signin"
-                    android:textStyle="bold"
                     android:backgroundTint="@color/myColor"
+                    android:gravity="center"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -260,68 +260,6 @@
 
     </LinearLayout>
 
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:orientation="horizontal"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="0.341"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--        <RelativeLayout-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_gravity="center"-->
-    <!--            android:layout_weight="1"-->
-    <!--            android:gravity="left"-->
-    <!--            android:padding="5dp">-->
-
-    <!--            <LinearLayout-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:orientation="horizontal"-->
-    <!--                android:gravity="top">-->
-
-    <!--                <TextView-->
-    <!--                    android:layout_width="wrap_content"-->
-    <!--                    android:layout_height="wrap_content"-->
-    <!--                    android:text="CNIC"-->
-    <!--                    android:textColor="@color/myColor"/>-->
-
-    <!--            </LinearLayout>-->
-
-    <!--            <LinearLayout-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:gravity="left"-->
-    <!--                android:orientation="horizontal">-->
-
-    <!--                <EditText-->
-    <!--                    android:layout_width="0dp"-->
-    <!--                    android:layout_height="40dp"-->
-    <!--                    android:layout_marginStart="5dp"-->
-    <!--                    android:layout_marginEnd="5dp"-->
-    <!--                    android:layout_marginTop="23dp"-->
-    <!--                    android:layout_weight="1"-->
-    <!--                    android:height="0dp"-->
-    <!--                    android:background="@drawable/profile_design"-->
-    <!--                    android:textSize="18dp"-->
-    <!--                    android:inputType="number"-->
-    <!--                    android:textColor="@android:color/black"-->
-    <!--                    android:textCursorDrawable="@null"-->
-    <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-    <!--                    app:layout_constraintStart_toStartOf="parent"-->
-    <!--                    app:layout_constraintTop_toTopOf="parent" />-->
-    <!--            </LinearLayout>-->
-
-    <!--        </RelativeLayout>-->
-
-    <!--    </LinearLayout>-->
-
-
     <LinearLayout
         android:id="@+id/linearLayout8"
         android:layout_width="match_parent"
@@ -371,8 +309,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
                     android:height="0dp"
-                    android:enabled="false"
                     android:background="@drawable/profile_design"
+                    android:enabled="false"
                     android:inputType="phone"
                     android:textCursorDrawable="@null"
                     android:textSize="18dp"
@@ -408,53 +346,25 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSave"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:text="save"
                     android:layout_gravity="center"
+                    android:text="save"
                     android:textSize="16dp"
-                    app:cornerRadius="10dp"
-                    style="@style/Widget.MaterialComponents.Button"/>
+                    app:cornerRadius="10dp" />
 
             </LinearLayout>
 
         </RelativeLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lottieLayout_Profile"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/bike_progress_bar">
-
-        </com.airbnb.lottie.LottieAnimationView>
-
-    </LinearLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
