@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (task.isSuccessful()){
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()){
-                            if (documentSnapshot.getString("firstName") != null && documentSnapshot.getString("Last Name") != null){
+                            if (documentSnapshot.getString("firstName") != null && documentSnapshot.getString("lastName") != null){
                                 String fuser_Name = documentSnapshot.getString("firstName");
                                 String luser_Name = documentSnapshot.getString("lastName");
                                 tvUserName.setText(fuser_Name +" "+luser_Name);
@@ -173,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (task.isSuccessful()){
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()){
-                            if (documentSnapshot.getString("imageProfile") != null){
-                                String imageUri = documentSnapshot.getString("imageProfile");
+                            if (documentSnapshot.getString("driverProfileImage") != null){
+                                String imageUri = documentSnapshot.getString("driverProfileImage");
                                 Glide.with(MainActivity.this).load(imageUri).into(ivProfilePic);
                             }
                             else {

@@ -10,6 +10,7 @@ public class TripPlanModel {
     private String durationPickup, durationDestination;
     private double currentLat, currentLng;
     private boolean isDone, isCancel;
+    private String orderId;
 
     public TripPlanModel() {
     }
@@ -140,5 +141,13 @@ public class TripPlanModel {
 
     public void setCancel(boolean cancel) {
         isCancel = cancel;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }

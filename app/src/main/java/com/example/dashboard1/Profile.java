@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
@@ -116,7 +117,7 @@ public class Profile extends AppCompatActivity {
                                 if (documentSnapshot.getString("firstName") != null ||
                                         documentSnapshot.getString("lastName") != null ||
                                         documentSnapshot.getString("emailAddress") != null ||
-                                        documentSnapshot.getString("imageProfile")!= null){
+                                        documentSnapshot.getString("driverProfileImage")!= null){
 
                                     String fName = documentSnapshot.getString("firstName");
                                     etFirstName.setText(fName);
@@ -124,8 +125,8 @@ public class Profile extends AppCompatActivity {
                                     etLastName.setText(lName);
                                     String email = documentSnapshot.getString("emailAddress");
                                     etEmailAddress.setText(email);
-                                    String imageUri = documentSnapshot.getString("imageProfile");
-                                    Glide.with(Profile.this).load(imageUri).into(ivProfile);
+                                    String imageUri = documentSnapshot.getString("driverProfileImage");
+                                    Glide.with(Profile.this).load(imageUri).placeholder(ContextCompat.getDrawable(getApplicationContext(), R.drawable.person)).into(ivProfile);
                                 }
                                 else {
                                     Snackbar.make(findViewById(android.R.id.content), "No data found!", Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
@@ -289,7 +290,7 @@ public class Profile extends AppCompatActivity {
 
         String userId = firebaseAuth.getUid();
 
-        StorageReference riversRef = storageReference.child("images/Users" + "." + getFileExtention(imageUri) +" "+ userId);
+        StorageReference riversRef = storageReference.child("images/Drivers" + "." + getFileExtention(imageUri) +" "+ userId);
 
         riversRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -302,7 +303,7 @@ public class Profile extends AppCompatActivity {
                         final String sdownload_url = String.valueOf(downloadUrl);
 
                         HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("imageProfile", sdownload_url);
+                        hashMap.put("driverProfileImage", sdownload_url);
                         hashMap.put("userId",userId);
 
                         firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update(hashMap)

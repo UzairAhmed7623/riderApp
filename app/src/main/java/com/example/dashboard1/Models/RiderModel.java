@@ -1,7 +1,7 @@
 package com.example.dashboard1.Models;
 
 public class RiderModel {
-    private String firstName, lastName, phoneNumber, imageProfile;
+    private String firstName, lastName, phoneNumber, UsersImageProfile;
 
     public RiderModel() {
     }
@@ -30,11 +30,11 @@ public class RiderModel {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getImageProfile() {
-        return imageProfile;
+    public String getUsersImageProfile() {
+        return UsersImageProfile;
     }
 
-    public void setImageProfile(String imageProfile) {
-        this.imageProfile = imageProfile;
+    public void setUsersImageProfile(String usersImageProfile) {
+        UsersImageProfile = usersImageProfile;
     }
 }

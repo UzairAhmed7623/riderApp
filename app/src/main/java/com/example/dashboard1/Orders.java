@@ -208,6 +208,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
 
         }
     };
+
     private GeoQueryEventListener destinationGeoQueryEventListner = new GeoQueryEventListener() {
         @Override
         public void onKeyEntered(String key, GeoLocation location) {
@@ -267,6 +268,7 @@ public class Orders extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     protected void onStart() {
         super.onStart();
+
         if (!EventBus.getDefault().isRegistered(this)) {
 
             EventBus.getDefault().register(this);
