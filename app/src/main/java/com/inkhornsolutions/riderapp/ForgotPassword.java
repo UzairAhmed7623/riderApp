@@ -69,7 +69,7 @@ public class ForgotPassword extends AppCompatActivity {
 
                     if (firebaseAuth.getUid() != null) {
 
-                        firebaseFirestore.collection("Users").whereEqualTo("Phone", phone).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        firebaseFirestore.collection("Users").whereEqualTo("phoneNumber", phone).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -90,7 +90,11 @@ public class ForgotPassword extends AppCompatActivity {
                                             }
                                         }, 1000);
                                     }
-                                } else {
+                                }
+                                else {
+
+                                    progressDialog.dismiss();
+
                                     Snackbar.make(findViewById(android.R.id.content), task.getException().getMessage(), Snackbar.LENGTH_LONG).setBackgroundTint(getResources().getColor(R.color.myColor)).show();
                                 }
                             }
