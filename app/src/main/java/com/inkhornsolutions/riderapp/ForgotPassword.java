@@ -47,7 +47,7 @@ public class ForgotPassword extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        firebaseAuth = firebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         String phone = getIntent().getStringExtra("phone");
