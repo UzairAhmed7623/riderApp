@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +48,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -132,7 +136,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);
 
+        View bottomSheet = getLayoutInflater().inflate(R.layout.bottem_sheet, null);
 
+        (bottomSheet.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+
+                Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        isGPSOn();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        Snackbar.make(findViewById(android.R.id.content), "Please accept the permission!", Snackbar.LENGTH_LONG).setBackgroundTint(ContextCompat.getColor(MainActivity.this, R.color.myColor)).show();
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+            }
+        });
+
+        bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+        bottomSheetDialog.setContentView(bottomSheet);
+        bottomSheetDialog.show();
+        bottomSheetDialog.setCancelable(false);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
     }
 
@@ -372,96 +408,88 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()){
-            case R.id.profile:
-                startActivity(new Intent(MainActivity.this, Profile.class));
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
+        if (item.getItemId() == R.id.profile) {
+            startActivity(new Intent(MainActivity.this, Profile.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if (item.getItemId() == R.id.orders) {
+            startActivity(new Intent(MainActivity.this, Orders.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if (item.getItemId() == R.id.history) {
+            startActivity(new Intent(MainActivity.this, History.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if (item.getItemId() == R.id.contactUs) {
+            View bottomSheetLayout1 = getLayoutInflater().inflate(R.layout.contact_us_dialog, null);
+            (bottomSheetLayout1.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    bottomSheetDialog.dismiss();
+                }
+            });
 
-            case R.id.orders:
-                startActivity(new Intent(MainActivity.this, Orders.class));
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
+            (bottomSheetLayout1.findViewById(R.id.btnContact)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    bottomSheetDialog.dismiss();
+                    Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.CALL_PHONE).withListener(new PermissionListener() {
+                        @Override
+                        public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                            String ph = "tel:" + "03133394722";
+                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(ph));
+                            startActivity(intent);
+                        }
 
-            case R.id.history:
-                startActivity(new Intent(MainActivity.this, History.class));
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
+                        @Override
+                        public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                            Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
+                        }
 
-            case R.id.contactUs:
-                View bottomSheetLayout1 = getLayoutInflater().inflate(R.layout.contact_us_dialog, null);
-                (bottomSheetLayout1.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        bottomSheetDialog.dismiss();
-                    }
-                });
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                            permissionToken.continuePermissionRequest();
+                        }
+                    }).check();
+                }
+            });
 
-                (bottomSheetLayout1.findViewById(R.id.btnContact)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        bottomSheetDialog.dismiss();
-                        Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.CALL_PHONE).withListener(new PermissionListener() {
-                            @Override
-                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                                String ph = "tel:" + "03133394722";
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(ph));
-                                startActivity(intent);
-                            }
+            bottomSheetDialog = new BottomSheetDialog(this);
+            bottomSheetDialog.setContentView(bottomSheetLayout1);
+            bottomSheetDialog.show();
+            bottomSheetDialog.setCancelable(false);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if (item.getItemId() == R.id.about) {
+            View bottomSheetLayout2 = getLayoutInflater().inflate(R.layout.about_dialog, null);
+            (bottomSheetLayout2.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    bottomSheetDialog.dismiss();
+                }
+            });
 
-                            @Override
-                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                permissionToken.continuePermissionRequest();
-                            }
-                        }).check();
-                    }
-                });
-
-                bottomSheetDialog = new BottomSheetDialog(this);
-                bottomSheetDialog.setContentView(bottomSheetLayout1);
-                bottomSheetDialog.show();
-                bottomSheetDialog.setCancelable(false);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
-
-            case R.id.about:
-                View bottomSheetLayout2 = getLayoutInflater().inflate(R.layout.about_dialog, null);
-                (bottomSheetLayout2.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-
-                bottomSheetDialog = new BottomSheetDialog(this);
-                bottomSheetDialog.setContentView(bottomSheetLayout2);
-                bottomSheetDialog.show();
-                bottomSheetDialog.setCancelable(false);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
-
-            case R.id.signOut:
-                SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("remember", "false");
-                editor.apply();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                break;
-
-            case R.id.nav_log_version:
-                String url = "https://inkhornsolutions.com/\n";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-                break;
+            bottomSheetDialog = new BottomSheetDialog(this);
+            bottomSheetDialog.setContentView(bottomSheetLayout2);
+            bottomSheetDialog.show();
+            bottomSheetDialog.setCancelable(false);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if (item.getItemId() == R.id.signOut) {
+            SharedPreferences sharedPreferences = getSharedPreferences("checkBox", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("remember", "false");
+            editor.apply();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if (item.getItemId() == R.id.nav_log_version) {
+            String url = "https://inkhornsolutions.com/\n";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
 
@@ -477,39 +505,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-
-            case R.id.addLocation:
-                Long timeStamp = System.currentTimeMillis()/1000;
+        if (item.getItemId() == R.id.addLocation) {
+             Long timeStamp = System.currentTimeMillis() / 1000;
                 String time = getDate(timeStamp);
-                if (latLngs.size() >0){
+                if (latLngs.size() > 0) {
                     add_Location_Points(latLngs, time);
                     Toast.makeText(MainActivity.this, "Location added successfully!", Toast.LENGTH_LONG).show();
-                }
-                else {
+                } else {
                     Toast.makeText(this, "Null location cannot be added!", Toast.LENGTH_SHORT).show();
                 }
-                break;
+        }
+        else if (item.getItemId() == R.id.startLocation) {
+            Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
+                @Override
+                public void onPermissionGranted(PermissionGrantedResponse response) {
+                    isGPSOn();
+                }
 
-            case R.id.startLocation:
-                Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        isGPSOn();
-                    }
+                @Override
+                public void onPermissionDenied(PermissionDeniedResponse response) {
+                    Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
+                }
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(MainActivity.this, "Please accept the permission!", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-
-                break;
+                @Override
+                public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                    token.continuePermissionRequest();
+                }
+            }).check();
         }
 
         return true;
