@@ -59,7 +59,7 @@ closed or not in use."
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:text="This data will be uploaded in your databse with your account
+            android:text="This data will be uploaded in your databse with your account Id
 and you can view your history in the app's history section."
             android:textColor="@color/Black"
             android:textSize="16dp" />
@@ -83,13 +83,30 @@ and you can view your history in the app's history section."
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:foreground="@drawable/ripple"
+        android:backgroundTint="@color/myColor"
+        android:elevation="5dp"
         android:text="Access location"
-        android:textColor="@color/myColor"
-        android:textStyle="bold"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.955" />
+        app:layout_constraintVertical_bias="0.899" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:foreground="@drawable/ripple"
+        android:text="No thanks"
+        android:textColor="@color/myColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.965" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

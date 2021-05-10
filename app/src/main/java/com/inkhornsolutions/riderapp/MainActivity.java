@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -12,7 +13,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -24,7 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -97,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private BottomSheetDialog bottomSheetDialog;
     private TextView tvUserName;
     private CircleImageView ivProfilePic;
+    boolean isfirstTime;
 
     public static MainActivity getInstance() {
         return instance;
@@ -136,39 +143,75 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragMap);
         supportMapFragment.getMapAsync(MainActivity.this);
 
-        View bottomSheet = getLayoutInflater().inflate(R.layout.bottem_sheet, null);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("firstTime", Context.MODE_PRIVATE);
+        isfirstTime = prefs.getBoolean("firstTime", true);
 
-        (bottomSheet.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
+        if (isfirstTime){
+            View bottomSheet = getLayoutInflater().inflate(R.layout.bottem_sheet, null);
 
-                Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        isGPSOn();
-                    }
+            (bottomSheet.findViewById(R.id.btnOk)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Snackbar.make(findViewById(android.R.id.content), "Please accept the permission!", Snackbar.LENGTH_LONG).setBackgroundTint(ContextCompat.getColor(MainActivity.this, R.color.myColor)).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setCancelable(false);
+                    builder.setTitle("Location Access");
+                    builder.setMessage("Rider app collects location data to enable tracking your " +
+                            "trip to work and calculate distance travelled " +
+                            "even when the app is closed or not in use.");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.Q)
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            bottomSheetDialog.dismiss();
 
-                    }
+                            Dexter.withContext(MainActivity.this).withPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION).withListener(new PermissionListener() {
+                                @Override
+                                public void onPermissionGranted(PermissionGrantedResponse response) {
+                                    isGPSOn();
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-            }
-        });
+                                    isfirstTime = false;
 
-        bottomSheetDialog = new BottomSheetDialog(this);
-        bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
-        bottomSheetDialog.setContentView(bottomSheet);
-        bottomSheetDialog.show();
-        bottomSheetDialog.setCancelable(false);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                    SharedPreferences sharedPreferences = getSharedPreferences("firstTime", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putBoolean("firstTime", isfirstTime);
+                                    editor.apply();
+                                }
+
+                                @Override
+                                public void onPermissionDenied(PermissionDeniedResponse response) {
+                                    Snackbar.make(findViewById(android.R.id.content), "Please accept the permission!", Snackbar.LENGTH_LONG).setBackgroundTint(ContextCompat.getColor(MainActivity.this, R.color.myColor)).show();
+
+                                }
+
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                                    token.continuePermissionRequest();
+                                }
+                            }).check();
+
+                        }
+                    }).show();
+                }
+            });
+
+            (bottomSheet.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.dismiss();
+                }
+            });
+
+            bottomSheetDialog = new BottomSheetDialog(this);
+            bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+            bottomSheetDialog.setContentView(bottomSheet);
+            bottomSheetDialog.show();
+            bottomSheetDialog.setCancelable(false);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+
+
 
     }
 
